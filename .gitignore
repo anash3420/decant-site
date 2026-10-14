@@ -1,0 +1,18 @@
+# Dependencies and builds
+node_modules
+dist
+
+# Secrets: never commit these (see server/.env.example)
+.env
+.env.*
+!.env.example
+
+# Local data: MongoDB files and dev photo uploads
+server/.mongo
+server/.uploads
+
+# OS / editor / logs
+.DS_Store
+*.log
+.vscode
+.idea

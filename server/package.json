@@ -1,0 +1,34 @@
+{
+  "name": "decant-server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "db": "mkdir -p .mongo && mongod --replSet rs0 --dbpath .mongo --port 27018 --bind_ip 127.0.0.1",
+    "db:init": "mongosh --quiet --port 27018 --eval \"try { rs.status().ok } catch { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: '127.0.0.1:27018' }] }).ok }\"",
+    "dev": "tsx watch --env-file=.env src/index.ts",
+    "seed": "tsx --env-file=.env src/scripts/seed.ts",
+    "create-admin": "tsx --env-file=.env src/scripts/create-admin.ts",
+    "smoke": "tsx --env-file=.env src/scripts/smoke.ts",
+    "smoke:admin": "tsx --env-file=.env src/scripts/smoke-admin.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.1",
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.11.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.10",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.6.5",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
