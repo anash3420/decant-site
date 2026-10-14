@@ -24,7 +24,7 @@ export default function BrandSidebar({ list }: { list: Fragrance[] }) {
       <h2 className="hidden text-xs font-medium tracking-wide text-muted uppercase lg:block">Brands</h2>
 
       {/* Mobile / tablet: chips */}
-      <div className="no-scrollbar -mx-5 flex gap-2 overflow-x-auto px-5 lg:hidden">
+      <div className="-mx-5 no-scrollbar flex gap-2 overflow-x-auto px-5 lg:hidden">
         {all.map((b) => {
           const isActive = b.slug === active
           return (
@@ -34,7 +34,9 @@ export default function BrandSidebar({ list }: { list: Fragrance[] }) {
               onClick={() => select(b.slug)}
               aria-pressed={isActive}
               className={`inline-flex min-h-11 shrink-0 items-center rounded-full border px-4 text-sm whitespace-nowrap transition-colors ${
-                isActive ? 'border-accent bg-accent text-on-accent' : 'border-border bg-surface text-muted hover:text-text'
+                isActive
+                  ? 'border-accent bg-accent text-on-accent'
+                  : 'border-border bg-surface text-muted hover:text-text'
               }`}
             >
               {b.name}

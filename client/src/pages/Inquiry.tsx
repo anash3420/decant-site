@@ -12,6 +12,7 @@ import { createInquiry, ShopApiError, type CreatedInquiry, type UnavailableLine 
 import BottleArt from '../components/BottleArt.tsx'
 import QtyStepper from '../components/QtyStepper.tsx'
 import { CatalogError } from '../components/CatalogState.tsx'
+import Spinner from '../components/Spinner.tsx'
 import { scrollBehavior } from '../lib/motion.ts'
 
 const input =
@@ -69,7 +70,10 @@ export default function Inquiry() {
   // If the inquiry outgrows lettermail after it was picked, fall back to tracked rather than silently keeping it
   const preferred: FulfilmentId = chosenFulfilment === 'lettermail' && lettermailBlocked ? 'tracked' : chosenFulfilment
   // …and if that option is switched off in settings, use the first one that's on
-  const shipping = options.find((o) => o.id === preferred) ?? options.find((o) => !(o.id === 'lettermail' && lettermailBlocked)) ?? options[0]
+  const shipping =
+    options.find((o) => o.id === preferred) ??
+    options.find((o) => !(o.id === 'lettermail' && lettermailBlocked)) ??
+    options[0]
   const fulfilment = shipping?.id ?? 'pickup'
   const ships = fulfilment !== 'pickup'
   const shippingCost = shipping?.cost ?? 0
@@ -133,7 +137,8 @@ export default function Inquiry() {
       window.scrollTo({ top: 0 })
       void refresh() // stock just changed
     } catch (err) {
-      const e = err instanceof ShopApiError ? err : new ShopApiError(0, 'error', 'Something went wrong. Please try again.')
+      const e =
+        err instanceof ShopApiError ? err : new ShopApiError(0, 'error', 'Something went wrong. Please try again.')
       if (e.code === 'unavailable') {
         await refresh()
         showNotice({
@@ -158,7 +163,7 @@ export default function Inquiry() {
   if (status === 'loading' && items.length > 0) {
     return (
       <p className="flex items-center gap-2 text-muted" role="status">
-        <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />
+        <Spinner />
         Loading your inquiry…
       </p>
     )
@@ -222,8 +227,8 @@ export default function Inquiry() {
     <section>
       <h1 className="text-4xl">Your inquiry</h1>
       <p className="mt-3 max-w-prose text-muted">
-        This is a request, not a purchase. Check your picks, tell me how to reach you, and I'll follow up on Facebook
-        to confirm and arrange payment.
+        This is a request, not a purchase. Check your picks, tell me how to reach you, and I'll follow up on Facebook to
+        confirm and arrange payment.
       </p>
 
       <div className="mt-10 grid grid-cols-[minmax(0,1fr)] items-start gap-10 lg:grid-cols-[minmax(0,1fr)_380px]">
@@ -261,7 +266,10 @@ export default function Inquiry() {
                   />
                   <div className="min-w-0">
                     <p className="text-xs text-muted">{f.house}</p>
-                    <Link to={`/fragrance/${f.slug}`} className="inline-block py-0.5 font-display text-xl hover:text-accent">
+                    <Link
+                      to={`/fragrance/${f.slug}`}
+                      className="inline-block py-0.5 font-display text-xl hover:text-accent"
+                    >
                       {f.name}
                     </Link>
                     <p className="text-sm text-muted">
@@ -349,7 +357,7 @@ export default function Inquiry() {
             id="inquiry-form"
             onSubmit={handleSubmit}
             onChange={(e) => {
-              const field = (e.target as unknown as HTMLInputElement).name
+              const field = (e.target as Element).getAttribute('name') ?? ''
               if (errors[field])
                 setErrors((prev) => Object.fromEntries(Object.entries(prev).filter(([k]) => k !== field)))
             }}
@@ -416,10 +424,20 @@ export default function Inquiry() {
 
               <div>
                 <label className="-my-2 flex cursor-pointer gap-3 py-2 text-sm">
-                  <input type="checkbox" name="confirm" aria-invalid={!!errors.confirm} className={`mt-0.5 size-5 shrink-0 accent-accent ${errors.confirm ? 'outline-2 outline-offset-2 outline-error' : ''}`} />
+                  <input
+                    type="checkbox"
+                    name="confirm"
+                    aria-invalid={!!errors.confirm}
+                    className={`mt-0.5 size-5 shrink-0 accent-accent ${errors.confirm ? 'outline-2 outline-offset-2 outline-error' : ''}`}
+                  />
                   <span>I understand this is a request and I'll be contacted on Facebook to confirm and pay.</span>
                 </label>
-                {errors.confirm && <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-error"><ErrorIcon />{errors.confirm}</p>}
+                {errors.confirm && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-error">
+                    <ErrorIcon />
+                    {errors.confirm}
+                  </p>
+                )}
               </div>
             </div>
           </form>
@@ -452,7 +470,13 @@ export default function Inquiry() {
               {sending ? 'Sending…' : 'Send inquiry'}
             </button>
             {Object.keys(errors).length > 0 && (
-              <p role="alert" className="mt-3 flex items-center justify-center gap-1.5 rounded-md bg-error-soft px-3 py-2 text-sm font-medium text-error"><ErrorIcon />Please fix the highlighted fields.</p>
+              <p
+                role="alert"
+                className="mt-3 flex items-center justify-center gap-1.5 rounded-md bg-error-soft px-3 py-2 text-sm font-medium text-error"
+              >
+                <ErrorIcon />
+                Please fix the highlighted fields.
+              </p>
             )}
           </div>
 
@@ -505,7 +529,9 @@ function Field({
   children: ReactNode
 }) {
   return (
-    <label className={`block text-sm ${error ? '[&_input]:border-error [&_input]:bg-error-soft [&_input]:ring-1 [&_input]:ring-error [&_textarea]:border-error [&_textarea]:ring-1 [&_textarea]:ring-error' : ''}`}>
+    <label
+      className={`block text-sm ${error ? '[&_input]:border-error [&_input]:bg-error-soft [&_input]:ring-1 [&_input]:ring-error [&_textarea]:border-error [&_textarea]:ring-1 [&_textarea]:ring-error' : ''}`}
+    >
       <span className="font-medium">{label}</span>
       {hint && <span className="mt-0.5 block text-xs text-muted">{hint}</span>}
       {children}

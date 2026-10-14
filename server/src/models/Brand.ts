@@ -1,4 +1,4 @@
-import { Schema, model, type InferSchemaType } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
 const brandSchema = new Schema(
   {
@@ -9,5 +9,4 @@ const brandSchema = new Schema(
   { timestamps: true },
 )
 
-export type BrandDoc = InferSchemaType<typeof brandSchema>
 export const Brand = model('Brand', brandSchema)

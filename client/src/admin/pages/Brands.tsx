@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { useToast } from '../../context/ToastContext.tsx'
 import { ApiError, api, type AdminBrand } from '../api.ts'
-import { Button, ErrorBox, Loading, PageHeader, inputClass, useLoad } from '../ui.tsx'
+import { Button, ErrorBox, Loading, PageHeader, inputClass } from '../ui.tsx'
+import { useLoad } from '../useLoad.ts'
 
 export default function Brands() {
   const toast = useToast()
-  const { data, setData, error, loading, reload } = useLoad(() => api<{ brands: AdminBrand[] }>('/brands'), [])
+  const { data, setData, error, loading, reload } = useLoad(() => api<{ brands: AdminBrand[] }>('/brands'), 'brands')
   const [newName, setNewName] = useState('')
   const [editing, setEditing] = useState<{ id: string; name: string }>()
   const [busy, setBusy] = useState<string>()
@@ -43,7 +44,7 @@ export default function Brands() {
     void run('rename', async () => {
       await api(`/brands/${editing.id}`, { method: 'PATCH', json: { name: editing.name.trim() } })
       setEditing(undefined)
-      await reload()
+      reload()
       toast({ title: 'Brand renamed' })
     })
   }
@@ -53,7 +54,13 @@ export default function Brands() {
       <PageHeader title="Brands" />
 
       <form onSubmit={add} className="mb-6 flex gap-2">
-        <input value={newName} onChange={(e) => setNewName(e.target.value)} placeholder="New brand, e.g. Amouage" aria-label="New brand name" className={inputClass} />
+        <input
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          placeholder="New brand, e.g. Amouage"
+          aria-label="New brand name"
+          className={inputClass}
+        />
         <Button type="submit" busy={busy === 'add'}>
           Add
         </Button>
@@ -70,7 +77,13 @@ export default function Brands() {
           <li key={b.id} className="px-4 py-2 sm:px-5">
             {editing?.id === b.id ? (
               <form onSubmit={rename} className="flex flex-wrap items-center gap-2 py-1">
-                <input value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} aria-label={`Rename ${b.name}`} autoFocus className={`${inputClass} flex-1`} />
+                <input
+                  value={editing.name}
+                  onChange={(e) => setEditing({ ...editing, name: e.target.value })}
+                  aria-label={`Rename ${b.name}`}
+                  autoFocus
+                  className={`${inputClass} flex-1`}
+                />
                 <Button type="submit" busy={busy === 'rename'}>
                   Save
                 </Button>
@@ -111,7 +124,9 @@ export default function Brands() {
           </li>
         ))}
       </ul>
-      <p className="mt-3 text-sm text-muted">Renaming keeps the brand’s shop link the same. Brands with fragrances can’t be deleted.</p>
+      <p className="mt-3 text-sm text-muted">
+        Renaming keeps the brand’s shop link the same. Brands with fragrances can’t be deleted.
+      </p>
     </>
   )
 }

@@ -6,7 +6,16 @@
  */
 import type { Types } from 'mongoose'
 import { connectDb, disconnectDb } from '../db.ts'
-import { Brand, Fragrance, Listing, DecantListing, CatchReleaseListing, FullBottleListing, Inquiry, Settings } from '../models/index.ts'
+import {
+  Brand,
+  Fragrance,
+  Listing,
+  DecantListing,
+  CatchReleaseListing,
+  FullBottleListing,
+  Inquiry,
+  Settings,
+} from '../models/index.ts'
 import { slugify } from '../../../shared/slug.ts'
 import { defaultSettings, fragrances as mock } from './seed-data.ts'
 import { env } from '../env.ts'

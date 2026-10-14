@@ -1,13 +1,21 @@
 import { Router } from 'express'
-import { isValidObjectId, type Types } from 'mongoose'
+import type { Types } from 'mongoose'
 import { z } from 'zod'
 import { HttpError, notFound } from '../../http.ts'
-import { CatchReleaseListing, DecantListing, Fragrance, FullBottleListing, Inquiry, Listing } from '../../models/index.ts'
+import {
+  CatchReleaseListing,
+  DecantListing,
+  Fragrance,
+  FullBottleListing,
+  Inquiry,
+  Listing,
+} from '../../models/index.ts'
 import { deleteImage } from '../../services/storage.ts'
+import type { LeanFragrance, LeanListing } from '../../models/lean.ts'
+import { objectId, searchRegex } from '../../validation.ts'
 
 export const listingsRouter = Router()
 
-const objectId = z.string().refine(isValidObjectId, 'Invalid id')
 const money = z.number().min(0).max(100_000)
 const optionalMoney = money.nullish().transform((v) => v ?? undefined)
 
@@ -95,7 +103,11 @@ const fullBottleInput = z.object({
 const listingInput = z.discriminatedUnion('kind', [decantInput, catchReleaseInput, fullBottleInput])
 type ListingInput = z.infer<typeof listingInput>
 
-const MODELS = { decant: DecantListing, 'catch-release': CatchReleaseListing, 'full-bottle': FullBottleListing } as const
+const MODELS = {
+  decant: DecantListing,
+  'catch-release': CatchReleaseListing,
+  'full-bottle': FullBottleListing,
+} as const
 
 /** Turns validated input into document fields (sold → soldAt, brand slug from the fragrance) */
 async function toFields(input: ListingInput, existingSoldAt?: Date | null) {
@@ -113,7 +125,8 @@ async function toFields(input: ListingInput, existingSoldAt?: Date | null) {
 
 async function uniqueSlug(wanted: string, excludeId?: Types.ObjectId) {
   let slug = wanted
-  for (let n = 2; await Listing.exists({ slug, ...(excludeId ? { _id: { $ne: excludeId } } : {}) }); n++) slug = `${wanted}-${n}`
+  for (let n = 2; await Listing.exists({ slug, ...(excludeId ? { _id: { $ne: excludeId } } : {}) }); n++)
+    slug = `${wanted}-${n}`
   return slug
 }
 
@@ -137,21 +150,22 @@ listingsRouter.get('/', async (req, res) => {
   if (q.kind) filter.kind = q.kind
   if (q.status) filter.status = q.status
   if (q.search) {
-    const rx = new RegExp(q.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+    const rx = searchRegex(q.search)
     const fragranceIds = await Fragrance.find({ name: rx }).distinct('_id')
     filter.$or = [{ slug: rx }, { brandSlug: rx }, { fragrance: { $in: fragranceIds } }]
   }
-  const docs = await Listing.find(filter).sort({ addedAt: -1 }).populate(populate).lean()
-  res.set('Cache-Control', 'no-store')
+  const docs = await Listing.find(filter).sort({ addedAt: -1 }).populate(populate).lean<AdminListingDoc[]>()
   res.json({ listings: docs.map(toAdminListing) })
 })
 
 listingsRouter.get('/:id', async (req, res) => {
   const id = objectId.parse(req.params.id)
-  const doc = await Listing.findById(id).populate(populate).lean()
+  const doc = await Listing.findById(id).populate(populate).lean<AdminListingDoc>()
   if (!doc) throw notFound('Listing')
-  const openInquiries = await Inquiry.countDocuments({ 'items.listing': id, status: { $in: ['new', 'contacted', 'confirmed'] } })
-  res.set('Cache-Control', 'no-store')
+  const openInquiries = await Inquiry.countDocuments({
+    'items.listing': id,
+    status: { $in: ['new', 'contacted', 'confirmed'] },
+  })
   res.json({ listing: { ...toAdminListing(doc), openInquiries } })
 })
 
@@ -160,7 +174,7 @@ listingsRouter.post('/', async (req, res) => {
   const { fields, fragranceSlug } = await toFields(input)
   const slug = await uniqueSlug(input.slug ?? defaultSlug(input, fragranceSlug))
   const created = await (MODELS[input.kind] as typeof Listing).create({ ...fields, slug })
-  const doc = await Listing.findById(created._id).populate(populate).lean()
+  const doc = await Listing.findById(created._id).populate(populate).lean<AdminListingDoc>()
   res.status(201).json({ listing: toAdminListing(doc!) })
 })
 
@@ -183,7 +197,7 @@ listingsRouter.patch('/:id', async (req, res) => {
   await existing.save()
   await Promise.all(removedPhotos.map((p) => deleteImage(p)))
 
-  const doc = await Listing.findById(id).populate(populate).lean()
+  const doc = await Listing.findById(id).populate(populate).lean<AdminListingDoc>()
   res.json({ listing: toAdminListing(doc!) })
 })
 
@@ -193,14 +207,25 @@ listingsRouter.delete('/:id', async (req, res) => {
   const doc = await Listing.findById(id)
   if (!doc) throw notFound('Listing')
   if (await Inquiry.exists({ 'items.listing': id }))
-    throw new HttpError(409, 'in_use', 'This listing appears in inquiries. Archive it instead so their history stays intact.')
+    throw new HttpError(
+      409,
+      'in_use',
+      'This listing appears in inquiries. Archive it instead so their history stays intact.',
+    )
   await doc.deleteOne()
   await Promise.all(doc.photos.map((p) => deleteImage(p)))
   res.json({ ok: true })
 })
 
 // Admin view: everything, including costs. Never reuse for public responses.
-function toAdminListing(d: Record<string, any>) {
+type AdminListingDoc = LeanListing<Pick<LeanFragrance, '_id' | 'name' | 'slug' | 'tint' | 'brand'>>
+
+/** Subdocuments with their ids as strings, so the admin can send them back to keep held-stock links */
+const withStringIds = <T extends { _id: Types.ObjectId }>(xs: T[] | undefined) =>
+  (xs ?? []).map(({ _id, ...rest }) => ({ _id: String(_id), ...rest }))
+
+// Admin view: everything, including costs. Never reuse for public responses.
+function toAdminListing(d: AdminListingDoc) {
   const f = d.fragrance
   const base = {
     id: String(d._id),
@@ -210,21 +235,25 @@ function toAdminListing(d: Record<string, any>) {
     listingNote: d.listingNote ?? '',
     addedAt: d.addedAt,
     updatedAt: d.updatedAt,
-    photos: (d.photos ?? [])
-      .slice()
-      .sort((a: any, b: any) => a.order - b.order)
-      .map((p: any) => ({ _id: String(p._id), url: p.url, pathname: p.pathname, label: p.label, order: p.order })),
+    photos: [...d.photos]
+      .sort((a, b) => a.order - b.order)
+      .map((p) => ({ _id: String(p._id), url: p.url, pathname: p.pathname, label: p.label, order: p.order })),
     fragrance: f
-      ? { id: String(f._id), name: f.name, slug: f.slug, tint: f.tint, brand: f.brand && { name: f.brand.name, slug: f.brand.slug } }
+      ? {
+          id: String(f._id),
+          name: f.name,
+          slug: f.slug,
+          tint: f.tint,
+          brand: f.brand && { name: f.brand.name, slug: f.brand.slug },
+        }
       : null,
   }
-  const sub = (xs: any[] | undefined) => (xs ?? []).map(({ _id, ...x }: any) => ({ _id: String(_id), ...x }))
   switch (d.kind) {
     case 'decant':
-      return { ...base, bottles: sub(d.bottles), prices: d.prices }
+      return { ...base, bottles: withStringIds(d.bottles), prices: d.prices ?? [] }
     case 'catch-release':
-      return { ...base, vials: sub(d.vials) }
-    default:
+      return { ...base, vials: withStringIds(d.vials) }
+    case 'full-bottle':
       return {
         ...base,
         bottleSizeMl: d.bottleSizeMl,

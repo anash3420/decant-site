@@ -1,8 +1,10 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useToast } from '../../context/ToastContext.tsx'
 import { ApiError, api, type AdminBrand, type AdminFragrance } from '../api.ts'
-import { Button, Card, ErrorBox, Field, Loading, PageHeader, inputClass, joinList, splitList, useLoad } from '../ui.tsx'
+import { Button, Card, ErrorBox, Field, Loading, PageHeader, inputClass } from '../ui.tsx'
+import { joinList, splitList } from '../format.ts'
+import { useLoad } from '../useLoad.ts'
 
 const CONCENTRATIONS = ['Eau de Parfum', 'Eau de Toilette', 'Parfum', 'Extrait de Parfum', 'Eau de Cologne', 'Elixir']
 
@@ -20,53 +22,59 @@ interface Form {
   tint: string
 }
 
-const empty: Form = { name: '', brand: '', concentration: 'Eau de Parfum', year: '', gender: 'Unisex', accords: '', top: '', heart: '', base: '', description: '', tint: '#B8A88A' }
+const empty: Form = {
+  name: '',
+  brand: '',
+  concentration: 'Eau de Parfum',
+  year: '',
+  gender: 'Unisex',
+  accords: '',
+  top: '',
+  heart: '',
+  base: '',
+  description: '',
+  tint: '#B8A88A',
+}
+
+const toForm = (f: AdminFragrance): Form => ({
+  name: f.name,
+  brand: f.brand?.id ?? '',
+  concentration: f.concentration,
+  year: f.year ? String(f.year) : '',
+  gender: f.gender,
+  accords: joinList(f.accords),
+  top: joinList(f.notes.top),
+  heart: joinList(f.notes.heart),
+  base: joinList(f.notes.base),
+  description: f.description,
+  tint: f.tint,
+})
 
 export default function FragranceEdit() {
   const { id } = useParams()
-  const isNew = !id
-  const navigate = useNavigate()
-  const toast = useToast()
-
   const { data, error, loading, reload } = useLoad(
     () =>
       Promise.all([
         api<{ brands: AdminBrand[] }>('/brands'),
-        isNew ? Promise.resolve(null) : api<{ fragrance: AdminFragrance }>(`/fragrances/${id}`),
+        id ? api<{ fragrance: AdminFragrance }>(`/fragrances/${id}`) : Promise.resolve(null),
       ]),
-    [id],
+    id ?? 'new',
   )
-  const [form, setForm] = useState<Form>()
+
+  if (error) return <ErrorBox error={error} onRetry={reload} />
+  if (loading || !data) return <Loading />
+  return <FragranceForm key={id ?? 'new'} id={id} brands={data[0].brands} fragrance={data[1]?.fragrance} />
+}
+
+function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBrand[]; fragrance?: AdminFragrance }) {
+  const isNew = !id
+  const navigate = useNavigate()
+  const toast = useToast()
+  const [form, setForm] = useState<Form>(() => (fragrance ? toForm(fragrance) : empty))
   const [busy, setBusy] = useState<string>()
   const [saveError, setSaveError] = useState<ApiError>()
 
-  useEffect(() => {
-    if (!data) return
-    const f = data[1]?.fragrance
-    setForm(
-      f
-        ? {
-            name: f.name,
-            brand: f.brand?.id ?? '',
-            concentration: f.concentration,
-            year: f.year ? String(f.year) : '',
-            gender: f.gender,
-            accords: joinList(f.accords),
-            top: joinList(f.notes.top),
-            heart: joinList(f.notes.heart),
-            base: joinList(f.notes.base),
-            description: f.description,
-            tint: f.tint,
-          }
-        : empty,
-    )
-  }, [data])
-
-  if (loading && !data) return <Loading />
-  if (error) return <ErrorBox error={error} onRetry={reload} />
-  if (!form) return <Loading />
-
-  const set = (p: Partial<Form>) => setForm({ ...form, ...p })
+  const set = (p: Partial<Form>) => setForm((f) => ({ ...f, ...p }))
   const errors = saveError?.fieldErrors ?? {}
 
   const save = async (e: FormEvent) => {
@@ -112,18 +120,34 @@ export default function FragranceEdit() {
 
   return (
     <form onSubmit={save}>
-      <PageHeader title={isNew ? 'New fragrance' : form.name || 'Fragrance'} back={{ to: '/admin/fragrances', label: 'Fragrances' }} />
+      <PageHeader
+        title={isNew ? 'New fragrance' : form.name || 'Fragrance'}
+        back={{ to: '/admin/fragrances', label: 'Fragrances' }}
+      />
 
       <div className="space-y-6">
         <Card title="About the scent">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Name" error={errors.name}>
-              <input value={form.name} onChange={(e) => set({ name: e.target.value })} required aria-invalid={!!errors.name} className={inputClass} placeholder="e.g. Aventus" />
+              <input
+                value={form.name}
+                onChange={(e) => set({ name: e.target.value })}
+                required
+                aria-invalid={!!errors.name}
+                className={inputClass}
+                placeholder="e.g. Aventus"
+              />
             </Field>
             <Field label="Brand" error={errors.brand}>
-              <select value={form.brand} onChange={(e) => set({ brand: e.target.value })} required aria-invalid={!!errors.brand} className={inputClass}>
+              <select
+                value={form.brand}
+                onChange={(e) => set({ brand: e.target.value })}
+                required
+                aria-invalid={!!errors.brand}
+                className={inputClass}
+              >
                 <option value="">Choose a brand…</option>
-                {data![0].brands.map((b) => (
+                {brands.map((b) => (
                   <option key={b.id} value={b.id}>
                     {b.name}
                   </option>
@@ -134,7 +158,13 @@ export default function FragranceEdit() {
               </Link>
             </Field>
             <Field label="Concentration">
-              <input value={form.concentration} onChange={(e) => set({ concentration: e.target.value })} list="concentrations" required className={inputClass} />
+              <input
+                value={form.concentration}
+                onChange={(e) => set({ concentration: e.target.value })}
+                list="concentrations"
+                required
+                className={inputClass}
+              />
               <datalist id="concentrations">
                 {CONCENTRATIONS.map((c) => (
                   <option key={c} value={c} />
@@ -143,10 +173,22 @@ export default function FragranceEdit() {
             </Field>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Year" error={errors.year}>
-                <input type="number" inputMode="numeric" value={form.year} onChange={(e) => set({ year: e.target.value })} min={1800} max={2100} className={inputClass} />
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  value={form.year}
+                  onChange={(e) => set({ year: e.target.value })}
+                  min={1800}
+                  max={2100}
+                  className={inputClass}
+                />
               </Field>
               <Field label="Gender">
-                <select value={form.gender} onChange={(e) => set({ gender: e.target.value as Form['gender'] })} className={inputClass}>
+                <select
+                  value={form.gender}
+                  onChange={(e) => set({ gender: e.target.value as Form['gender'] })}
+                  className={inputClass}
+                >
                   <option>Unisex</option>
                   <option>Feminine</option>
                   <option>Masculine</option>
@@ -154,7 +196,13 @@ export default function FragranceEdit() {
               </Field>
             </div>
             <Field label="Description" className="sm:col-span-2">
-              <textarea value={form.description} onChange={(e) => set({ description: e.target.value })} rows={4} maxLength={2000} className={inputClass} />
+              <textarea
+                value={form.description}
+                onChange={(e) => set({ description: e.target.value })}
+                rows={4}
+                maxLength={2000}
+                className={inputClass}
+              />
             </Field>
           </div>
         </Card>
@@ -163,7 +211,12 @@ export default function FragranceEdit() {
           <p className="mb-3 text-sm text-muted">Separate with commas.</p>
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label="Accords" hint="The first three show on shop cards." className="sm:col-span-2">
-              <input value={form.accords} onChange={(e) => set({ accords: e.target.value })} placeholder="Woody, Smoky, Fruity" className={inputClass} />
+              <input
+                value={form.accords}
+                onChange={(e) => set({ accords: e.target.value })}
+                placeholder="Woody, Smoky, Fruity"
+                className={inputClass}
+              />
             </Field>
             <Field label="Top notes">
               <input value={form.top} onChange={(e) => set({ top: e.target.value })} className={inputClass} />
@@ -175,7 +228,12 @@ export default function FragranceEdit() {
               <input value={form.base} onChange={(e) => set({ base: e.target.value })} className={inputClass} />
             </Field>
             <Field label="Placeholder colour" hint="Used for the bottle drawing until a listing has photos.">
-              <input type="color" value={form.tint} onChange={(e) => set({ tint: e.target.value })} className="h-11 w-20 cursor-pointer rounded-md border border-border bg-surface" />
+              <input
+                type="color"
+                value={form.tint}
+                onChange={(e) => set({ tint: e.target.value })}
+                className="h-11 w-20 cursor-pointer rounded-md border border-border bg-surface"
+              />
             </Field>
           </div>
         </Card>

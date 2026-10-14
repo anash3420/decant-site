@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import type { LeanListing } from '../../models/lean.ts'
 import { Inquiry, Listing } from '../../models/index.ts'
 
 export const statsRouter = Router()
@@ -6,6 +7,8 @@ export const statsRouter = Router()
 const OPEN = ['new', 'contacted', 'confirmed']
 /** Decants with less than this many ml left (in total) show up as running low */
 const LOW_DECANT_ML = 15
+
+type StockRow = LeanListing<{ name: string }>
 
 /** Dashboard numbers: inquiries by status, what's held, recent fulfilled value, stock needing attention */
 statsRouter.get('/', async (_req, res) => {
@@ -20,25 +23,33 @@ statsRouter.get('/', async (_req, res) => {
       { $match: { status: 'fulfilled', updatedAt: { $gte: since } } },
       { $group: { _id: null, total: { $sum: '$subtotal' }, count: { $sum: 1 } } },
     ]),
-    Listing.find({ kind: 'decant', status: 'published' }, { slug: 1, bottles: 1, prices: 1 }).populate('fragrance', 'name').lean(),
-    Listing.find({ kind: 'catch-release', status: 'published' }, { slug: 1, vials: 1 }).populate('fragrance', 'name').lean(),
+    Listing.find({ kind: 'decant', status: 'published' }, { slug: 1, kind: 1, bottles: 1 })
+      .populate('fragrance', 'name')
+      .lean<StockRow[]>(),
+    Listing.find({ kind: 'catch-release', status: 'published' }, { slug: 1, kind: 1, vials: 1 })
+      .populate('fragrance', 'name')
+      .lean<StockRow[]>(),
   ])
 
-  const name = (l: any) => l.fragrance?.name ?? l.slug
+  const name = (l: StockRow) => l.fragrance?.name ?? l.slug
   const lowStock = [
-    ...decants.flatMap((l: any) => {
-      const left = (l.bottles ?? []).reduce((n: number, b: any) => n + b.remainingMl, 0)
-      return left < LOW_DECANT_ML ? [{ id: String(l._id), name: name(l), kind: 'decant', detail: `${left}ml left` }] : []
+    ...decants.flatMap((l) => {
+      const left = (l.bottles ?? []).reduce((n, b) => n + b.remainingMl, 0)
+      return left < LOW_DECANT_ML ? [{ id: String(l._id), name: name(l), kind: l.kind, detail: `${left}ml left` }] : []
     }),
-    ...vials.flatMap((l: any) => {
-      const left = (l.vials ?? []).reduce((n: number, v: any) => n + v.qty, 0)
-      return left === 0 ? [{ id: String(l._id), name: name(l), kind: 'catch-release', detail: 'All vials gone' }] : []
+    ...vials.flatMap((l) => {
+      const left = (l.vials ?? []).reduce((n, v) => n + v.qty, 0)
+      return left === 0 ? [{ id: String(l._id), name: name(l), kind: l.kind, detail: 'All vials gone' }] : []
     }),
   ]
 
-  res.set('Cache-Control', 'no-store')
   res.json({
-    inquiries: Object.fromEntries(['new', 'contacted', 'confirmed', 'fulfilled', 'cancelled'].map((s) => [s, byStatus.find((b) => b._id === s)?.count ?? 0])),
+    inquiries: Object.fromEntries(
+      ['new', 'contacted', 'confirmed', 'fulfilled', 'cancelled'].map((s) => [
+        s,
+        byStatus.find((b) => b._id === s)?.count ?? 0,
+      ]),
+    ),
     openValue: openValue[0]?.total ?? 0,
     fulfilledLast30Days: { count: fulfilled30[0]?.count ?? 0, total: fulfilled30[0]?.total ?? 0 },
     lowStock,

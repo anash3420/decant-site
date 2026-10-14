@@ -1,10 +1,11 @@
 import { Router } from 'express'
-import mongoose, { isValidObjectId, type Types } from 'mongoose'
+import mongoose, { type Types } from 'mongoose'
 import { z } from 'zod'
 import { HttpError, notFound } from '../../http.ts'
 import { INQUIRY_STATUSES, Inquiry } from '../../models/index.ts'
 import type { InquiryDoc, InquiryStatus } from '../../models/Inquiry.ts'
 import { releaseStock } from '../../services/stock.ts'
+import { objectId, searchRegex } from '../../validation.ts'
 
 export const inquiriesRouter = Router()
 
@@ -12,15 +13,13 @@ export const inquiriesRouter = Router()
  * Where an inquiry can go next. Fulfilled and cancelled are final: a cancellation has already
  * released its stock, and re-holding it later could oversell.
  */
-export const NEXT_STATUSES: Record<InquiryStatus, InquiryStatus[]> = {
+const NEXT_STATUSES: Record<InquiryStatus, InquiryStatus[]> = {
   new: ['contacted', 'confirmed', 'fulfilled', 'cancelled'],
   contacted: ['confirmed', 'fulfilled', 'cancelled'],
   confirmed: ['fulfilled', 'cancelled'],
   fulfilled: [],
   cancelled: [],
 }
-
-const objectId = z.string().refine(isValidObjectId, 'Invalid id')
 
 inquiriesRouter.get('/', async (req, res) => {
   const q = z
@@ -35,7 +34,7 @@ inquiriesRouter.get('/', async (req, res) => {
   const filter: Record<string, unknown> = {}
   if (q.status) filter.status = q.status
   if (q.search) {
-    const rx = new RegExp(q.search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i')
+    const rx = searchRegex(q.search)
     filter.$or = [{ reference: rx }, { 'contact.name': rx }, { 'items.nameSnapshot': rx }]
   }
 
@@ -49,7 +48,6 @@ inquiriesRouter.get('/', async (req, res) => {
     Inquiry.countDocuments(filter),
   ])
 
-  res.set('Cache-Control', 'no-store')
   res.json({
     total,
     page: q.page,
@@ -72,7 +70,6 @@ inquiriesRouter.get('/', async (req, res) => {
 inquiriesRouter.get('/:id', async (req, res) => {
   const doc = await Inquiry.findById(objectId.parse(req.params.id)).lean()
   if (!doc) throw notFound('Inquiry')
-  res.set('Cache-Control', 'no-store')
   res.json({ inquiry: toAdminInquiry(doc) })
 })
 

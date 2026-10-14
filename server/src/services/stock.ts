@@ -8,7 +8,7 @@ import { Listing } from '../models/index.ts'
  * write conflict on the second, the transaction retries, re-reads the bottle and finds it empty.
  */
 
-export interface HeldFrom {
+interface HeldFrom {
   bottle: Types.ObjectId
   ml: number
 }

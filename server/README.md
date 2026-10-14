@@ -18,31 +18,31 @@ The Vite dev server proxies `/api` there.
 
 ## Public API
 
-| Endpoint | Notes |
-|---|---|
-| `GET /api/catalog?kind=&brand=` | Published listings in the client's `Fragrance` shape, newest first |
-| `GET /api/catalog/:slug` | One listing |
-| `GET /api/brands` | Brands with published listings, counts per kind |
-| `GET /api/settings/public` | Enabled shipping options, lettermail limits, Facebook link |
-| `POST /api/inquiries` | Prices, shipping rules and stock checked server-side; stock is held in a transaction. 5 per 10 min per IP |
-| `GET /api/inquiries/:reference/status` | `{ reference, status, updatedAt }` only |
+| Endpoint                               | Notes                                                                                                     |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `GET /api/catalog?kind=&brand=`        | Published listings in the client's `Fragrance` shape, newest first                                        |
+| `GET /api/catalog/:slug`               | One listing                                                                                               |
+| `GET /api/brands`                      | Brands with published listings, counts per kind                                                           |
+| `GET /api/settings/public`             | Enabled shipping options, lettermail limits, Facebook link                                                |
+| `POST /api/inquiries`                  | Prices, shipping rules and stock checked server-side; stock is held in a transaction. 5 per 10 min per IP |
+| `GET /api/inquiries/:reference/status` | `{ reference, status, updatedAt }` only                                                                   |
 
 Errors are always `{ error: { code, message, details? } }`. Codes: `invalid_request` (400), `not_found` (404),
 `unavailable` / `lettermail_unavailable` / `price_changed` (409), `rate_limited` (429).
 
 ## Admin API (`/api/admin`, needs the session cookie from login)
 
-| Endpoint | Notes |
-|---|---|
-| `POST /auth/login` · `POST /auth/logout` · `GET /auth/me` | HttpOnly, SameSite=Strict cookie, 7 days. 10 failed logins / 15 min per IP |
-| `GET /stats` | Inquiry counts, open value, fulfilled last 30 days, low stock |
-| `GET /inquiries?status=&search=&page=` · `GET /inquiries/:id` | |
-| `PATCH /inquiries/:id` | `{ status?, note?, adminNotes? }`. new → contacted → confirmed → fulfilled; cancel from any open status releases held stock. Fulfilled/cancelled are final |
-| `GET/POST /listings` · `GET/PATCH/DELETE /listings/:id` | All three kinds, costs included. PATCH takes the full listing (as GET returns it). Delete only if never inquired; otherwise archive |
-| `POST /uploads` | Raw image body (JPEG/PNG/WebP/AVIF, ≤4MB) → `{ url, pathname }` |
-| `GET/POST /brands` · `PATCH/DELETE /brands/:id` | Renaming a slug updates listings' brand filter |
-| `GET/POST /fragrances` · `GET/PATCH/DELETE /fragrances/:id` | |
-| `GET/PUT /settings` | Shipping options, lettermail limits, Facebook link, tagline |
+| Endpoint                                                      | Notes                                                                                                                                                      |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /auth/login` · `POST /auth/logout` · `GET /auth/me`     | HttpOnly, SameSite=Strict cookie, 7 days. 10 failed logins / 15 min per IP                                                                                 |
+| `GET /stats`                                                  | Inquiry counts, open value, fulfilled last 30 days, low stock                                                                                              |
+| `GET /inquiries?status=&search=&page=` · `GET /inquiries/:id` |                                                                                                                                                            |
+| `PATCH /inquiries/:id`                                        | `{ status?, note?, adminNotes? }`. new → contacted → confirmed → fulfilled; cancel from any open status releases held stock. Fulfilled/cancelled are final |
+| `GET/POST /listings` · `GET/PATCH/DELETE /listings/:id`       | All three kinds, costs included. PATCH takes the full listing (as GET returns it). Delete only if never inquired; otherwise archive                        |
+| `POST /uploads`                                               | Raw image body (JPEG/PNG/WebP/AVIF, ≤4MB) → `{ url, pathname }`                                                                                            |
+| `GET/POST /brands` · `PATCH/DELETE /brands/:id`               | Renaming a slug updates listings' brand filter                                                                                                             |
+| `GET/POST /fragrances` · `GET/PATCH/DELETE /fragrances/:id`   |                                                                                                                                                            |
+| `GET/PUT /settings`                                           | Shipping options, lettermail limits, Facebook link, tagline                                                                                                |
 
 Admin mutations from another site's pages are refused (Origin check) on top of the SameSite cookie.
 
@@ -59,13 +59,13 @@ Browse the data with MongoDB Compass at `mongodb://127.0.0.1:27018/?replicaSet=r
 
 ## Collections
 
-| Collection   | What it holds |
-|--------------|---------------|
-| `brands`     | House names + slugs used by `?brand=` |
+| Collection   | What it holds                                                              |
+| ------------ | -------------------------------------------------------------------------- |
+| `brands`     | House names + slugs used by `?brand=`                                      |
 | `fragrances` | The scent itself (notes, accords, description), shared by all its listings |
-| `listings`   | What's for sale; `kind` is `decant` \| `catch-release` \| `full-bottle` |
-| `inquiries`  | Submitted inquiries with price snapshots; stock is held on creation |
-| `admins`     | The admin login (bcrypt hash) |
-| `settings`   | One document: shipping options, lettermail limits, Facebook link |
+| `listings`   | What's for sale; `kind` is `decant` \| `catch-release` \| `full-bottle`    |
+| `inquiries`  | Submitted inquiries with price snapshots; stock is held on creation        |
+| `admins`     | The admin login (bcrypt hash)                                              |
+| `settings`   | One document: shipping options, lettermail limits, Facebook link           |
 
 Rules shared with the client (option list, stock maths, lettermail limits) live in `../shared/`.

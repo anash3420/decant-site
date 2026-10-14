@@ -26,8 +26,8 @@ export default function Home() {
       <div className="min-w-0">
         <h1 className="text-4xl sm:text-5xl">{brandName && brand ? brandName : 'Fragrances'}</h1>
         <p className="mt-3 max-w-prose text-muted">
-          {settings?.siteTagline ? `${settings.siteTagline}. ` : ''}Add what you like to your inquiry and I'll reach out on
-          Facebook to sort out payment and pickup.
+          {settings?.siteTagline ? `${settings.siteTagline}. ` : ''}Add what you like to your inquiry and I'll reach out
+          on Facebook to sort out payment and pickup.
         </p>
 
         <div className="mt-6 lg:hidden">
@@ -46,10 +46,18 @@ export default function Home() {
           ) : status === 'error' ? (
             <CatalogError />
           ) : rows.length === 0 ? (
-            <p className="text-muted">{brand ? 'Nothing from this brand right now.' : 'New listings are on the way. Check back soon.'}</p>
+            <p className="text-muted">
+              {brand ? 'Nothing from this brand right now.' : 'New listings are on the way. Check back soon.'}
+            </p>
           ) : (
             rows.map((r) => (
-              <CategoryRow key={r.id} title={r.title} blurb={r.blurb} items={r.items} viewAllHref={`${r.path}${query}`} />
+              <CategoryRow
+                key={r.id}
+                title={r.title}
+                blurb={r.blurb}
+                items={r.items}
+                viewAllHref={`${r.path}${query}`}
+              />
             ))
           )}
         </div>

@@ -73,7 +73,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               leaving ? 'animate-toast-out' : 'animate-toast-in'
             }`}
           >
-            <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-instock" aria-hidden="true">
+            <span
+              className="flex size-6 shrink-0 items-center justify-center rounded-full bg-instock"
+              aria-hidden="true"
+            >
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.5" className="size-3.5">
                 <path d="M5 10.5l3.2 3L15 6.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>

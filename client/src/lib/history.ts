@@ -53,4 +53,3 @@ export const saveToHistory = (inquiry: SentInquiry) => write([inquiry, ...loadHi
 export const removeFromHistory = (reference: string) => write(loadHistory().filter((i) => i.reference !== reference))
 
 export const clearHistory = () => write([])
-

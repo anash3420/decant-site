@@ -1,5 +1,6 @@
-import type { Types } from 'mongoose'
+import type { ClientSession } from 'mongoose'
 import type { Fragrance as CatalogListing, ListingKind } from '../../../shared/types.ts'
+import type { LeanListing } from '../models/lean.ts'
 import { Listing } from '../models/index.ts'
 
 /**
@@ -7,39 +8,10 @@ import { Listing } from '../models/index.ts'
  * (shared/types.ts `Fragrance`). Admin-only fields (costPaid, sourcedFrom, batch codes) never leave here.
  */
 
-interface PopulatedListing {
-  _id: Types.ObjectId
-  slug: string
-  kind: ListingKind
-  brandSlug: string
-  addedAt: Date
-  listingNote?: string
-  photos: { _id: Types.ObjectId; url: string; label: string; order: number }[]
-  fragrance: {
-    name: string
-    concentration: string
-    year?: number
-    gender: CatalogListing['gender']
-    accords: string[]
-    notes: CatalogListing['notes']
-    description: string
-    tint: string
-    brand: { name: string; slug: string }
-  }
-  // kind-specific
-  bottles?: { _id: Types.ObjectId; sizeMl: number; remainingMl: number }[]
-  prices?: { sizeMl: number; price: number }[]
-  vials?: { _id: Types.ObjectId; sizeMl: number; format: string; price: number; qty: number; note?: string }[]
-  bottleSizeMl?: number
-  fillPercent?: number
-  hasBox?: boolean
-  condition?: string
-  price?: number
-  soldAt?: Date | null
-}
-
-export function toCatalogListing(l: PopulatedListing): CatalogListing {
+/** Null when the listing's fragrance or brand is missing, so it can't be shown */
+function toCatalogListing(l: LeanListing): CatalogListing | null {
   const f = l.fragrance
+  if (!f?.brand) return null
   const base = {
     slug: l.slug,
     name: f.name,
@@ -83,36 +55,40 @@ export function toCatalogListing(l: PopulatedListing): CatalogListing {
       return {
         ...base,
         kind: 'full-bottle',
-        bottleSizeMl: l.bottleSizeMl!,
-        fillPercent: l.fillPercent!,
-        hasBox: l.hasBox!,
+        bottleSizeMl: l.bottleSizeMl ?? 0,
+        fillPercent: l.fillPercent ?? 0,
+        hasBox: l.hasBox ?? false,
         condition: l.condition ?? '',
-        price: l.price!,
+        price: l.price ?? 0,
         sold: Boolean(l.soldAt),
       }
   }
 }
 
 const populateFragrance = { path: 'fragrance', populate: { path: 'brand', select: 'name slug' } }
+const shown = (l: CatalogListing | null): l is CatalogListing => l !== null
 
 export async function findCatalog(filter: { kind?: ListingKind; brand?: string }) {
   const query: Record<string, unknown> = { status: 'published' }
   if (filter.kind) query.kind = filter.kind
   if (filter.brand) query.brandSlug = filter.brand
-  const docs = await Listing.find(query).sort({ addedAt: -1 }).populate(populateFragrance).lean()
-  return (docs as unknown as PopulatedListing[]).map(toCatalogListing)
+  const docs = await Listing.find(query).sort({ addedAt: -1 }).populate(populateFragrance).lean<LeanListing[]>()
+  return docs.map(toCatalogListing).filter(shown)
 }
 
 export async function findCatalogListing(slug: string) {
-  const doc = await Listing.findOne({ slug, status: 'published' }).populate(populateFragrance).lean()
-  return doc ? toCatalogListing(doc as unknown as PopulatedListing) : null
+  const doc = await Listing.findOne({ slug, status: 'published' }).populate(populateFragrance).lean<LeanListing>()
+  return doc ? toCatalogListing(doc) : null
 }
 
 /** Used by inquiries: the same shape, but read inside a transaction session */
-export async function findCatalogListingsForUpdate(slugs: string[], session: import('mongoose').ClientSession) {
+export async function findCatalogListingsForUpdate(slugs: string[], session: ClientSession) {
   const docs = await Listing.find({ slug: { $in: slugs }, status: 'published' })
     .populate(populateFragrance)
     .session(session)
-    .lean()
-  return (docs as unknown as PopulatedListing[]).map((d) => ({ id: d._id, listing: toCatalogListing(d) }))
+    .lean<LeanListing[]>()
+  return docs.flatMap((d) => {
+    const listing = toCatalogListing(d)
+    return listing ? [{ id: d._id, listing }] : []
+  })
 }

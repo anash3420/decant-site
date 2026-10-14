@@ -40,14 +40,19 @@ export const createInquirySchema = z
     message: 'Add your city and postal code so I can quote shipping.',
   })
 
-export type CreateInquiryInput = z.infer<typeof createInquirySchema>
+type CreateInquiryInput = z.infer<typeof createInquirySchema>
 
 // No 0/O or 1/I/L, so references are easy to read out over Messenger
 const REF_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789'
 const newReference = () => 'D-' + Array.from({ length: 6 }, () => REF_ALPHABET[randomInt(REF_ALPHABET.length)]).join('')
 
-export const hashIp = (ip: string | undefined) =>
-  ip ? createHash('sha256').update(ip + env.JWT_SECRET).digest('hex').slice(0, 32) : undefined
+const hashIp = (ip: string | undefined) =>
+  ip
+    ? createHash('sha256')
+        .update(ip + env.JWT_SECRET)
+        .digest('hex')
+        .slice(0, 32)
+    : undefined
 
 /** Merge duplicate lines (same listing + option) so stock checks see the real total */
 function mergeItems(items: CreateInquiryInput['items']) {
@@ -82,7 +87,8 @@ export async function createInquiry(input: CreateInquiryInput, meta: { ip?: stri
         return []
       }
       const available = maxQty(row.listing, item.optionId, items)
-      if (item.qty > available) problems.push({ slug: item.slug, optionId: item.optionId, reason: 'insufficient', available })
+      if (item.qty > available)
+        problems.push({ slug: item.slug, optionId: item.optionId, reason: 'insufficient', available })
       return [{ item, row, option }]
     })
     if (problems.length) throw new HttpError(409, 'unavailable', 'Some items are no longer available.', problems)
@@ -156,7 +162,7 @@ export async function createInquiry(input: CreateInquiryInput, meta: { ip?: stri
 }
 
 /** What the visitor gets back (and keeps in their History). No internal ids or admin fields. */
-export function toPublicInquiry(i: InstanceType<typeof Inquiry>) {
+function toPublicInquiry(i: InstanceType<typeof Inquiry>) {
   return {
     reference: i.reference,
     createdAt: i.createdAt.toISOString(),

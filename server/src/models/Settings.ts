@@ -1,4 +1,4 @@
-import { Schema, model, type InferSchemaType } from 'mongoose'
+import { Schema, model } from 'mongoose'
 import { DEFAULT_LETTERMAIL_LIMITS } from '../../../shared/shipping.ts'
 
 /** A single document (key: 'site') so shipping rates and limits can change without a deploy */
@@ -30,5 +30,4 @@ const settingsSchema = new Schema(
   { timestamps: true },
 )
 
-export type SettingsDoc = InferSchemaType<typeof settingsSchema>
 export const Settings = model('Settings', settingsSchema)

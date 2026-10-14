@@ -5,10 +5,17 @@ export function CardSkeletons({ count = 3, row = false }: { count?: number; row?
   return (
     <div
       aria-hidden="true"
-      className={row ? 'no-scrollbar -mx-5 flex gap-4 overflow-hidden px-5 sm:mx-0 sm:px-0' : 'grid gap-6 sm:grid-cols-2 xl:grid-cols-3'}
+      className={
+        row
+          ? '-mx-5 no-scrollbar flex gap-4 overflow-hidden px-5 sm:mx-0 sm:px-0'
+          : 'grid gap-6 sm:grid-cols-2 xl:grid-cols-3'
+      }
     >
       {Array.from({ length: count }, (_, i) => (
-        <div key={i} className={`overflow-hidden rounded-xl border border-border bg-surface ${row ? 'w-[78%] shrink-0 sm:w-64' : ''}`}>
+        <div
+          key={i}
+          className={`overflow-hidden rounded-xl border border-border bg-surface ${row ? 'w-[78%] shrink-0 sm:w-64' : ''}`}
+        >
           <div className="aspect-[4/3] animate-pulse bg-accent-soft/60" />
           <div className="space-y-3 p-5">
             <div className="h-3 w-1/3 animate-pulse rounded bg-border" />

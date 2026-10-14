@@ -16,23 +16,22 @@ import NotFound from './NotFound.tsx'
 export default function FragranceDetail() {
   const { slug = '' } = useParams()
   const { getListing, upsertListing, status } = useShop()
-  const [missing, setMissing] = useState(false)
+  // Remember which slug came back 404, so navigating to another listing needs no reset
+  const [missingSlug, setMissingSlug] = useState<string>()
 
   // Show the catalog copy straight away, then refresh this one listing so stock is current
   useEffect(() => {
     let live = true
-    setMissing(false)
     fetchListing(slug)
       .then((l) => live && upsertListing(l))
-      .catch((e) => live && e instanceof ShopApiError && e.status === 404 && setMissing(true))
+      .catch((e) => live && e instanceof ShopApiError && e.status === 404 && setMissingSlug(slug))
     return () => {
       live = false
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slug])
+  }, [slug, upsertListing])
 
   const listing = getListing(slug)
-  if (missing) return <NotFound />
+  if (missingSlug === slug) return <NotFound />
   // key resets option/qty state when navigating between fragrances
   if (listing) return <FragranceView key={slug} fragrance={listing} />
   if (status === 'error') return <CatalogError />
@@ -105,7 +104,12 @@ function FragranceView({ fragrance }: { fragrance: Fragrance }) {
 
       <div className="mt-6 grid grid-cols-[minmax(0,1fr)] gap-10 md:grid-cols-2">
         <div className="min-w-0">
-          <PhotoCarousel photos={f.photos ?? defaultPhotos(f)} tint={f.tint} alt={`${f.house} ${f.name}`} dimmed={soldOut} />
+          <PhotoCarousel
+            photos={f.photos ?? defaultPhotos(f)}
+            tint={f.tint}
+            alt={`${f.house} ${f.name}`}
+            dimmed={soldOut}
+          />
         </div>
 
         <div>
@@ -116,9 +120,7 @@ function FragranceView({ fragrance }: { fragrance: Fragrance }) {
             {f.house}
           </Link>
           <h1 className="mt-1 text-4xl sm:text-5xl">{f.name}</h1>
-          <p className="mt-2 text-sm text-muted">
-            {[f.concentration, f.year, f.gender].filter(Boolean).join(' · ')}
-          </p>
+          <p className="mt-2 text-sm text-muted">{[f.concentration, f.year, f.gender].filter(Boolean).join(' · ')}</p>
 
           <div className="mt-4 flex flex-wrap gap-2">
             <span className="rounded-full border border-accent px-2.5 py-0.5 text-xs text-accent">{meta.short}</span>
@@ -220,14 +222,7 @@ function FragranceView({ fragrance }: { fragrance: Fragrance }) {
               data-sticky-cta
               className="z-20 mt-6 flex items-center gap-3 max-md:sticky max-md:bottom-0 max-md:-mx-5 max-md:border-t max-md:border-border max-md:bg-surface/95 max-md:px-5 max-md:pt-3 max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))] max-md:backdrop-blur sm:gap-4"
             >
-              {!isBottle && (
-                <QtyStepper
-                  label="Quantity"
-                  value={qty}
-                  max={Math.max(1, canAddUpTo)}
-                  onChange={setQty}
-                />
-              )}
+              {!isBottle && <QtyStepper label="Quantity" value={qty} max={Math.max(1, canAddUpTo)} onChange={setQty} />}
               <button
                 type="button"
                 onClick={handleAdd}
@@ -251,7 +246,6 @@ function FragranceView({ fragrance }: { fragrance: Fragrance }) {
             )}
           </div>
 
-
           {f.kind === 'decant' && (
             <section className="mt-8 border-t border-border pt-6">
               <h2 className="text-2xl">From my bottles</h2>
@@ -259,7 +253,10 @@ function FragranceView({ fragrance }: { fragrance: Fragrance }) {
                 {f.bottles.map((b) => (
                   <li key={b.id} className="flex items-center justify-between gap-4">
                     <span>{b.sizeMl}ml bottle</span>
-                    <StockBadge inStock={b.remainingMl > 0} label={b.remainingMl > 0 ? `~${b.remainingMl}ml left` : 'Empty'} />
+                    <StockBadge
+                      inStock={b.remainingMl > 0}
+                      label={b.remainingMl > 0 ? `~${b.remainingMl}ml left` : 'Empty'}
+                    />
                   </li>
                 ))}
               </ul>
@@ -271,7 +268,8 @@ function FragranceView({ fragrance }: { fragrance: Fragrance }) {
 
           {f.kind === 'catch-release' && (
             <p className="mt-8 border-t border-border pt-6 text-sm text-muted">
-              Catch & Release: these came from other members and are passed along as-is. Fill levels are my best estimate.
+              Catch & Release: these came from other members and are passed along as-is. Fill levels are my best
+              estimate.
             </p>
           )}
         </div>

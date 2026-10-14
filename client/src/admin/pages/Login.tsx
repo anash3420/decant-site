@@ -36,7 +36,14 @@ export default function Login() {
         <h1 className="mt-1 text-3xl">Admin login</h1>
         <div className="mt-6 space-y-4">
           <Field label="Email">
-            <input name="email" type="email" autoComplete="username" required autoCapitalize="off" className={inputClass} />
+            <input
+              name="email"
+              type="email"
+              autoComplete="username"
+              required
+              autoCapitalize="off"
+              className={inputClass}
+            />
           </Field>
           <Field label="Password">
             <input name="password" type="password" autoComplete="current-password" required className={inputClass} />

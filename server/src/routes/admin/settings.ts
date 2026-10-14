@@ -29,7 +29,6 @@ const settingsInput = z.object({
 })
 
 settingsRouter.get('/', async (_req, res) => {
-  res.set('Cache-Control', 'no-store')
   res.json({ settings: await getSettings() })
 })
 

@@ -69,8 +69,14 @@ function RequireAdmin() {
     window.scrollTo({ top: 0 })
   }, [location.pathname])
 
-  if (admin === undefined) return <div className="mx-auto max-w-5xl px-4"><Loading label="Checking your session…" /></div>
-  if (admin === null) return <Navigate to={`/admin/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />
+  if (admin === undefined)
+    return (
+      <div className="mx-auto max-w-5xl px-4">
+        <Loading label="Checking your session…" />
+      </div>
+    )
+  if (admin === null)
+    return <Navigate to={`/admin/login?next=${encodeURIComponent(location.pathname + location.search)}`} replace />
 
   return (
     <div className="flex min-h-dvh flex-col">
@@ -81,7 +87,11 @@ function RequireAdmin() {
             <span className="rounded-full bg-accent-soft px-2 py-0.5 font-sans text-xs text-accent">Admin</span>
           </Link>
           <div className="flex items-center gap-1">
-            <Link to="/" target="_blank" className="hidden min-h-11 items-center px-3 text-sm text-muted hover:text-text sm:inline-flex">
+            <Link
+              to="/"
+              target="_blank"
+              className="hidden min-h-11 items-center px-3 text-sm text-muted hover:text-text sm:inline-flex"
+            >
               View shop ↗
             </Link>
             <button type="button" onClick={logout} className="min-h-11 px-3 text-sm text-muted hover:text-text">

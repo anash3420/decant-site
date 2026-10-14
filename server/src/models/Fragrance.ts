@@ -1,4 +1,4 @@
-import { Schema, model, type InferSchemaType } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
 /** The scent itself, written once and shared by every listing of it (decant, vial, full bottle) */
 const fragranceSchema = new Schema(
@@ -22,5 +22,4 @@ const fragranceSchema = new Schema(
   { timestamps: true },
 )
 
-export type FragranceDoc = InferSchemaType<typeof fragranceSchema>
 export const Fragrance = model('Fragrance', fragranceSchema)

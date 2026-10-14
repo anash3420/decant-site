@@ -45,7 +45,10 @@ await check('GET /catalog returns 15 listings in the client shape', async () => 
   const santal = body.listings.find((l: any) => l.slug === 'le-labo-santal-33')
   assert.equal(santal.kind, 'decant')
   assert.equal(santal.house, 'Le Labo')
-  assert.deepEqual(santal.prices.map((p: any) => p.sizeMl), [2, 5, 10, 15, 30])
+  assert.deepEqual(
+    santal.prices.map((p: any) => p.sizeMl),
+    [2, 5, 10, 15, 30],
+  )
 })
 await check('admin-only fields are never exposed', async () => {
   const { body } = await api('/catalog')
@@ -75,7 +78,14 @@ await check('GET /brands lists 13 brands with per-kind counts', async () => {
 })
 await check('GET /settings/public has shipping options and limits', async () => {
   const { body } = await api('/settings/public')
-  assert.deepEqual(body.fulfilment.map((f: any) => [f.id, f.cost]), [['pickup', 0], ['lettermail', 4], ['tracked', 20]])
+  assert.deepEqual(
+    body.fulfilment.map((f: any) => [f.id, f.cost]),
+    [
+      ['pickup', 0],
+      ['lettermail', 4],
+      ['tracked', 20],
+    ],
+  )
   assert.deepEqual(body.lettermail, { maxDecantMl: 10, maxCatchReleaseMl: 20 })
 })
 
@@ -122,7 +132,12 @@ await check('status lookup shows status only', async () => {
 })
 await check('client prices are ignored; a stale total is rejected', async () => {
   const { status, body } = await api('/inquiries', {
-    json: { contact, fulfilment: 'pickup', items: [{ slug: 'diptyque-philosykos', optionId: '2ml', qty: 1 }], expectedTotal: 1 },
+    json: {
+      contact,
+      fulfilment: 'pickup',
+      items: [{ slug: 'diptyque-philosykos', optionId: '2ml', qty: 1 }],
+      expectedTotal: 1,
+    },
   })
   assert.equal(status, 409)
   assert.equal(body.error.code, 'price_changed')
@@ -155,7 +170,12 @@ await check('asking for more than exists is refused with what is available', asy
     json: { contact, fulfilment: 'pickup', items: [{ slug: 'xerjoff-naxos-cr', optionId: sample.id, qty: 2 }] },
   })
   assert.equal(status, 409)
-  assert.deepEqual(body.error.details[0], { slug: 'xerjoff-naxos-cr', optionId: sample.id, reason: 'insufficient', available: 1 })
+  assert.deepEqual(body.error.details[0], {
+    slug: 'xerjoff-naxos-cr',
+    optionId: sample.id,
+    reason: 'insufficient',
+    available: 1,
+  })
 })
 await check('an option id that does not exist is refused as not found', async () => {
   const { status, body } = await api('/inquiries', {

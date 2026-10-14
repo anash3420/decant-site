@@ -42,7 +42,6 @@ function PruneInquiry() {
       const listing = getListing(i.slug)
       return Boolean(listing && getOption(listing, i.optionId))
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, getListing])
+  }, [status, getListing, retain])
   return null
 }

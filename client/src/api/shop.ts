@@ -46,7 +46,12 @@ async function send<T>(path: string, init?: { method?: string; json?: unknown })
   const data = await res.json().catch(() => null)
   if (!res.ok) {
     const err = data?.error ?? {}
-    throw new ShopApiError(res.status, err.code ?? 'error', err.message ?? 'Something went wrong. Please try again.', err.details)
+    throw new ShopApiError(
+      res.status,
+      err.code ?? 'error',
+      err.message ?? 'Something went wrong. Please try again.',
+      err.details,
+    )
   }
   return data as T
 }
@@ -72,7 +77,15 @@ export interface CreatedInquiry {
   contact: { name: string; facebook: string }
   fulfilment: { method: FulfilmentId; label: string; cost: number; location?: string }
   notes?: string
-  items: { slug: string; nameSnapshot: string; kind: ListingKind; optionId: string; optionLabel: string; qty: number; unitPrice: number }[]
+  items: {
+    slug: string
+    nameSnapshot: string
+    kind: ListingKind
+    optionId: string
+    optionLabel: string
+    qty: number
+    unitPrice: number
+  }[]
   subtotal: number
   estimatedTotal: number
 }
@@ -84,7 +97,8 @@ export interface InquiryStatusInfo {
 }
 
 export const fetchCatalog = () => request<{ listings: Fragrance[] }>('/catalog').then((r) => r.listings)
-export const fetchListing = (slug: string) => request<{ listing: Fragrance }>(`/catalog/${encodeURIComponent(slug)}`).then((r) => r.listing)
+export const fetchListing = (slug: string) =>
+  request<{ listing: Fragrance }>(`/catalog/${encodeURIComponent(slug)}`).then((r) => r.listing)
 export const fetchSettings = () => request<ShopSettings>('/settings/public')
 
 export const createInquiry = (body: {
