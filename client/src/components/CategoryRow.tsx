@@ -60,10 +60,22 @@ export default function CategoryRow({ title, blurb, items, viewAllHref }: Props)
           </Link>
           {/* Arrows only where there's a pointer; touch users swipe */}
           <div className="hidden gap-2 sm:flex">
-            <button type="button" className={arrow} onClick={() => page(-1)} disabled={atStart} aria-label={`Scroll ${title} left`}>
+            <button
+              type="button"
+              className={arrow}
+              onClick={() => page(-1)}
+              disabled={atStart}
+              aria-label={`Scroll ${title} left`}
+            >
               ‹
             </button>
-            <button type="button" className={arrow} onClick={() => page(1)} disabled={atEnd} aria-label={`Scroll ${title} right`}>
+            <button
+              type="button"
+              className={arrow}
+              onClick={() => page(1)}
+              disabled={atEnd}
+              aria-label={`Scroll ${title} right`}
+            >
               ›
             </button>
           </div>
@@ -72,7 +84,7 @@ export default function CategoryRow({ title, blurb, items, viewAllHref }: Props)
 
       <div
         ref={track}
-        className="no-scrollbar -mx-5 mt-5 flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain scroll-px-5 px-5 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0"
+        className="-mx-5 mt-5 no-scrollbar flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto overscroll-x-contain px-5 pb-2 sm:mx-0 sm:scroll-px-0 sm:px-0"
       >
         {items.map((f) => (
           <div key={f.slug} className="w-[78%] shrink-0 snap-start sm:w-64">

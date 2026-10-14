@@ -20,7 +20,11 @@ function cdnCache(res: Response, seconds: number) {
 }
 
 const KIND = z.enum(['decant', 'catch-release', 'full-bottle'])
-const SLUG = z.string().trim().toLowerCase().regex(/^[a-z0-9-]{1,120}$/)
+const SLUG = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .regex(/^[a-z0-9-]{1,120}$/)
 
 // Note: in-memory counters are per server instance. Fine locally and as a first line on Vercel;
 // a shared store (e.g. Upstash) can replace it in epic 3 if spam shows up.
@@ -29,7 +33,9 @@ const inquiryLimiter = rateLimit({
   limit: 5,
   standardHeaders: 'draft-8',
   legacyHeaders: false,
-  message: { error: { code: 'rate_limited', message: 'Too many inquiries in a short time. Please try again in a few minutes.' } },
+  message: {
+    error: { code: 'rate_limited', message: 'Too many inquiries in a short time. Please try again in a few minutes.' },
+  },
 })
 const lookupLimiter = rateLimit({
   windowMs: 60_000,

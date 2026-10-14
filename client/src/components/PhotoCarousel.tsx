@@ -104,7 +104,13 @@ export default function PhotoCarousel({ photos, tint, alt, dimmed }: Props) {
 
       {many && (
         <>
-          <button type="button" className={`${arrow} left-3`} onClick={() => goTo(current() - 1)} disabled={index === 0} aria-label="Previous photo">
+          <button
+            type="button"
+            className={`${arrow} left-3`}
+            onClick={() => goTo(current() - 1)}
+            disabled={index === 0}
+            aria-label="Previous photo"
+          >
             ‹
           </button>
           <button

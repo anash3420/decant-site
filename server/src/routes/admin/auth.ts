@@ -22,7 +22,9 @@ const loginLimiter = rateLimit({
 const DUMMY_HASH = bcrypt.hashSync('not-a-real-password', 12)
 
 authRouter.post('/login', loginLimiter, async (req, res) => {
-  const { email, password } = z.object({ email: z.email().toLowerCase(), password: z.string().min(1).max(200) }).parse(req.body)
+  const { email, password } = z
+    .object({ email: z.email().toLowerCase(), password: z.string().min(1).max(200) })
+    .parse(req.body)
   const admin = await Admin.findOne({ email }).select('+passwordHash')
   const ok = await bcrypt.compare(password, admin?.passwordHash ?? DUMMY_HASH)
   if (!admin || !ok) throw new HttpError(401, 'invalid_credentials', 'Email or password is incorrect.')
@@ -39,6 +41,5 @@ authRouter.post('/logout', (_req, res) => {
 })
 
 authRouter.get('/me', requireAdmin, (_req, res) => {
-  res.set('Cache-Control', 'no-store')
   res.json({ admin: { email: res.locals.admin.email } })
 })

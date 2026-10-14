@@ -4,7 +4,7 @@ import { env } from '../env.ts'
 import { HttpError } from '../http.ts'
 import { Admin } from '../models/index.ts'
 
-export const SESSION_COOKIE = 'decants_admin'
+const SESSION_COOKIE = 'decants_admin'
 const SESSION_DAYS = 7
 
 const cookieOptions: CookieOptions = {

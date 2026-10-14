@@ -165,7 +165,6 @@ const decants: Fragrance[] = [
   },
 ]
 
-
 const catchRelease: Fragrance[] = [
   {
     slug: 'xerjoff-naxos-cr',
@@ -392,19 +391,31 @@ const fullBottles: Fragrance[] = [
 // The original epic 1 sample catalog, loaded by `npm run seed`.
 export const fragrances: Fragrance[] = [...decants, ...catchRelease, ...fullBottles]
 
-
 export const defaultSettings = {
   ownerFacebookUrl: 'https://www.facebook.com/profile.php?id=61584200071946',
   siteTagline: 'Fragrance decants for the CFE community',
   fulfilment: [
-    { id: 'pickup', label: 'Pickup in Calgary', cost: 0, detail: 'Free. Time and place arranged over Messenger.', enabled: true },
+    {
+      id: 'pickup',
+      label: 'Pickup in Calgary',
+      cost: 0,
+      detail: 'Free. Time and place arranged over Messenger.',
+      enabled: true,
+    },
     {
       id: 'lettermail',
       label: 'Lettermail (Canada)',
       cost: 4,
-      detail: 'Untracked, about 3–7 business days. Decants up to 10ml and up to 20ml of Catch & Release; no full bottles.',
+      detail:
+        'Untracked, about 3–7 business days. Decants up to 10ml and up to 20ml of Catch & Release; no full bottles.',
       enabled: true,
     },
-    { id: 'tracked', label: 'Tracked shipping (Canada)', cost: 20, detail: 'Canada Post with tracking, about 2–5 business days.', enabled: true },
+    {
+      id: 'tracked',
+      label: 'Tracked shipping (Canada)',
+      cost: 20,
+      detail: 'Canada Post with tracking, about 2–5 business days.',
+      enabled: true,
+    },
   ],
 }

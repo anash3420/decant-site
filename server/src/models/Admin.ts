@@ -1,4 +1,4 @@
-import { Schema, model, type InferSchemaType } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
 const adminSchema = new Schema(
   {
@@ -10,5 +10,4 @@ const adminSchema = new Schema(
   { timestamps: true },
 )
 
-export type AdminDoc = InferSchemaType<typeof adminSchema>
 export const Admin = model('Admin', adminSchema)

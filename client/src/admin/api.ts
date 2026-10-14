@@ -91,7 +91,16 @@ export interface AdminListing {
   bottles?: { _id?: string; sizeMl: number; remainingMl: number; batchCode?: string; costPaid?: number }[]
   prices?: { sizeMl: number; price: number }[]
   // catch & release
-  vials?: { _id?: string; sizeMl: number; format: string; price: number; qty: number; note?: string; sourcedFrom?: string; costPaid?: number }[]
+  vials?: {
+    _id?: string
+    sizeMl: number
+    format: string
+    price: number
+    qty: number
+    note?: string
+    sourcedFrom?: string
+    costPaid?: number
+  }[]
   // full bottle
   bottleSizeMl?: number
   fillPercent?: number
@@ -147,7 +156,15 @@ export interface AdminInquiry {
   contact: { name: string; facebook: string }
   fulfilment: { method: string; label: string; cost: number; location?: string }
   notes?: string
-  items: { listingId: string; kind: Kind; slug: string; nameSnapshot: string; optionLabel: string; qty: number; unitPrice: number }[]
+  items: {
+    listingId: string
+    kind: Kind
+    slug: string
+    nameSnapshot: string
+    optionLabel: string
+    qty: number
+    unitPrice: number
+  }[]
   subtotal: number
   estimatedTotal: number
   statusHistory: { status: InquiryStatus; at: string; note?: string }[]
@@ -158,7 +175,13 @@ export interface AdminInquiry {
 export interface AdminSettings {
   ownerFacebookUrl: string
   siteTagline: string
-  fulfilment: { id: 'pickup' | 'lettermail' | 'tracked'; label: string; cost: number; detail: string; enabled: boolean }[]
+  fulfilment: {
+    id: 'pickup' | 'lettermail' | 'tracked'
+    label: string
+    cost: number
+    detail: string
+    enabled: boolean
+  }[]
   lettermail: { maxDecantMl: number; maxCatchReleaseMl: number }
 }
 

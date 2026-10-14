@@ -1,4 +1,4 @@
-import { Schema, model, type InferSchemaType } from 'mongoose'
+import { Schema, model } from 'mongoose'
 
 /**
  * What's for sale. One collection, three kinds (Mongoose discriminators on `kind`),
@@ -51,7 +51,12 @@ const decantSchema = new Schema({
     default: [],
   },
   prices: {
-    type: [new Schema({ sizeMl: { type: Number, required: true, min: 1 }, price: { type: Number, required: true, min: 0 } }, { _id: false })],
+    type: [
+      new Schema(
+        { sizeMl: { type: Number, required: true, min: 1 }, price: { type: Number, required: true, min: 0 } },
+        { _id: false },
+      ),
+    ],
     validate: (v: unknown[]) => v.length > 0,
   },
 })
@@ -91,9 +96,3 @@ const fullBottleSchema = new Schema({
 export const DecantListing = Listing.discriminator('decant', decantSchema)
 export const CatchReleaseListing = Listing.discriminator('catch-release', catchReleaseSchema)
 export const FullBottleListing = Listing.discriminator('full-bottle', fullBottleSchema)
-
-export type ListingBaseDoc = InferSchemaType<typeof listingSchema>
-export type DecantDoc = ListingBaseDoc & InferSchemaType<typeof decantSchema> & { kind: 'decant' }
-export type CatchReleaseDoc = ListingBaseDoc & InferSchemaType<typeof catchReleaseSchema> & { kind: 'catch-release' }
-export type FullBottleDoc = ListingBaseDoc & InferSchemaType<typeof fullBottleSchema> & { kind: 'full-bottle' }
-export type AnyListingDoc = DecantDoc | CatchReleaseDoc | FullBottleDoc

@@ -29,7 +29,16 @@ async function check(name: string, fn: () => Promise<void>) {
 
 let cookie = ''
 let visitor = 0
-async function api(path: string, init: { method?: string; json?: unknown; body?: string | Buffer; headers?: Record<string, string>; auth?: boolean } = {}) {
+async function api(
+  path: string,
+  init: {
+    method?: string
+    json?: unknown
+    body?: string | Buffer
+    headers?: Record<string, string>
+    auth?: boolean
+  } = {},
+) {
   const headers: Record<string, string> = { 'x-forwarded-for': `10.1.0.${++visitor % 250}`, ...init.headers }
   if (init.json !== undefined) headers['content-type'] = 'application/json'
   if (init.auth !== false && cookie) headers.cookie = cookie
@@ -87,7 +96,10 @@ await check('decant: ml goes back to the bottle it came from', async () => {
   const before = totalMl(await catalog('le-labo-santal-33'))
   const id = await inquire([{ slug: 'le-labo-santal-33', optionId: '10ml', qty: 2 }])
   assert.equal(totalMl(await catalog('le-labo-santal-33')), before - 20)
-  const { status, body } = await api(`/admin/inquiries/${id}`, { method: 'PATCH', json: { status: 'cancelled', note: 'Buyer changed mind' } })
+  const { status, body } = await api(`/admin/inquiries/${id}`, {
+    method: 'PATCH',
+    json: { status: 'cancelled', note: 'Buyer changed mind' },
+  })
   assert.equal(status, 200, JSON.stringify(body))
   assert.equal(body.inquiry.stockHeld, false)
   assert.deepEqual(body.inquiry.nextStatuses, [])
@@ -117,7 +129,10 @@ await check('status flow is enforced; fulfilled and cancelled are final', async 
   assert.equal(back.status, 409)
   assert.equal(back.body.error.code, 'invalid_transition')
   const detail = (await api(`/admin/inquiries/${id}`)).body.inquiry
-  assert.deepEqual(detail.statusHistory.map((h: any) => h.status), ['new', 'contacted', 'confirmed', 'fulfilled'])
+  assert.deepEqual(
+    detail.statusHistory.map((h: any) => h.status),
+    ['new', 'contacted', 'confirmed', 'fulfilled'],
+  )
   assert.equal(detail.stockHeld, true, 'fulfilled keeps the stock deducted')
 })
 await check('admin notes save; list filters by status and search', async () => {
@@ -164,14 +179,21 @@ await check('create a draft decant listing with a cost; drafts stay off the publ
       kind: 'decant',
       fragrance: fragranceId,
       bottles: [{ sizeMl: 50, remainingMl: 40, costPaid: 120 }],
-      prices: [{ sizeMl: 5, price: 15 }, { sizeMl: 2, price: 7 }],
+      prices: [
+        { sizeMl: 5, price: 15 },
+        { sizeMl: 2, price: 7 },
+      ],
     },
   })
   assert.equal(r.status, 201, JSON.stringify(r.body))
   listingId = r.body.listing.id
   assert.equal(r.body.listing.slug, 'smoke-test-house-test-accord')
   assert.equal(r.body.listing.status, 'draft')
-  assert.deepEqual(r.body.listing.prices.map((p: any) => p.sizeMl), [2, 5], 'prices sorted by size')
+  assert.deepEqual(
+    r.body.listing.prices.map((p: any) => p.sizeMl),
+    [2, 5],
+    'prices sorted by size',
+  )
   assert.equal(r.body.listing.bottles[0].costPaid, 120)
   assert.equal((await api('/catalog/smoke-test-house-test-accord', { auth: false })).status, 404)
 })
@@ -197,7 +219,10 @@ await check('publish + log stock; public catalog hides the cost', async () => {
   assert.ok(brands.some((b: any) => b.slug === 'smoke-test-house'))
 })
 await check('renaming a brand updates its listings’ brand filter', async () => {
-  const r = await api(`/admin/brands/${brandId}`, { method: 'PATCH', json: { name: 'Smoke House', slug: 'smoke-house' } })
+  const r = await api(`/admin/brands/${brandId}`, {
+    method: 'PATCH',
+    json: { name: 'Smoke House', slug: 'smoke-house' },
+  })
   assert.equal(r.status, 200, JSON.stringify(r.body))
   const pub = (await api('/catalog?brand=smoke-house', { auth: false })).body.listings
   assert.equal(pub.length, 1)
@@ -206,7 +231,10 @@ await check('renaming a brand updates its listings’ brand filter', async () =>
 
 console.log('\nPhotos')
 // 1×1 transparent PNG
-const PNG = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64')
+const PNG = Buffer.from(
+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+  'base64',
+)
 let photoUrl = ''
 await check('upload an image and attach it to the listing', async () => {
   const up = await api('/admin/uploads', { body: PNG, headers: { 'content-type': 'image/png' } })
@@ -258,8 +286,14 @@ await check('dashboard stats', async () => {
   const { body } = await api('/admin/stats')
   assert.equal(body.inquiries.cancelled, 3)
   assert.equal(body.inquiries.fulfilled, 1)
-  assert.ok(body.lowStock.some((l: any) => l.name === 'Baccarat Rouge 540'), 'BR540 (6ml) is low')
-  assert.ok(body.lowStock.some((l: any) => l.name === 'Interlude Man'), 'Interlude vials are gone')
+  assert.ok(
+    body.lowStock.some((l: any) => l.name === 'Baccarat Rouge 540'),
+    'BR540 (6ml) is low',
+  )
+  assert.ok(
+    body.lowStock.some((l: any) => l.name === 'Interlude Man'),
+    'Interlude vials are gone',
+  )
 })
 
 console.log('\nLogout')

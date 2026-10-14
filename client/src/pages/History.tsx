@@ -22,9 +22,14 @@ const STATUS_PILL: Record<InquiryStatusInfo['status'] | 'unknown', { label: stri
 }
 
 function StatusPill({ status }: { status: StatusState }) {
-  if (!status) return <span className="h-5 w-28 shrink-0 animate-pulse rounded-full bg-border" aria-label="Checking status" />
+  if (!status)
+    return <span className="h-5 w-28 shrink-0 animate-pulse rounded-full bg-border" aria-label="Checking status" />
   const pill = STATUS_PILL[status]
-  return <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap ${pill.className}`}>{pill.label}</span>
+  return (
+    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap ${pill.className}`}>
+      {pill.label}
+    </span>
+  )
 }
 
 // The status endpoint is rate limited, so only the most recent inquiries are checked
@@ -35,7 +40,10 @@ export default function History() {
   const [confirmClear, setConfirmClear] = useState(false)
   const [statuses, setStatuses] = useState<Record<string, StatusState>>({})
 
-  const references = history.slice(0, STATUS_LOOKUPS).map((h) => h.reference).join(',')
+  const references = history
+    .slice(0, STATUS_LOOKUPS)
+    .map((h) => h.reference)
+    .join(',')
   useEffect(() => {
     let live = true
     for (const reference of references.split(',').filter(Boolean)) {
@@ -93,10 +101,18 @@ export default function History() {
         {confirmClear ? (
           <div className="flex items-center gap-3 text-sm">
             <span className="text-muted">Remove all {history.length}?</span>
-            <button type="button" onClick={clearAll} className="min-h-11 px-1 font-medium text-error underline-offset-4 hover:underline">
+            <button
+              type="button"
+              onClick={clearAll}
+              className="min-h-11 px-1 font-medium text-error underline-offset-4 hover:underline"
+            >
               Yes, clear
             </button>
-            <button type="button" onClick={() => setConfirmClear(false)} className="min-h-11 px-1 text-muted hover:text-text">
+            <button
+              type="button"
+              onClick={() => setConfirmClear(false)}
+              className="min-h-11 px-1 text-muted hover:text-text"
+            >
               Cancel
             </button>
           </div>
@@ -122,7 +138,15 @@ export default function History() {
   )
 }
 
-function InquiryCard({ inquiry: inq, status, onRemove }: { inquiry: SentInquiry; status: StatusState; onRemove: () => void }) {
+function InquiryCard({
+  inquiry: inq,
+  status,
+  onRemove,
+}: {
+  inquiry: SentInquiry
+  status: StatusState
+  onRemove: () => void
+}) {
   const { getListing, settings } = useShop()
   const { items: current, add } = useInquiry()
   const navigate = useNavigate()
@@ -219,12 +243,18 @@ function InquiryCard({ inquiry: inq, status, onRemove }: { inquiry: SentInquiry;
         >
           Ask about this on Facebook ↗
         </a>
-        <button type="button" onClick={onRemove} className="ml-auto min-h-11 px-1 text-muted underline-offset-4 hover:text-text hover:underline">
+        <button
+          type="button"
+          onClick={onRemove}
+          className="ml-auto min-h-11 px-1 text-muted underline-offset-4 hover:text-text hover:underline"
+        >
           Remove
         </button>
       </footer>
       {reorderable.length > 0 && reorderable.length < inq.items.length && (
-        <p className="-mt-2 px-5 pb-4 text-xs text-muted">Some of these are sold out; only what's available will be added.</p>
+        <p className="-mt-2 px-5 pb-4 text-xs text-muted">
+          Some of these are sold out; only what's available will be added.
+        </p>
       )}
     </article>
   )

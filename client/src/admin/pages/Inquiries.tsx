@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { formatPrice } from '@shared/stock.ts'
 import { api, type AdminStats, type InquiryStatus, type InquirySummary } from '../api.ts'
-import { Button, Empty, ErrorBox, FilterChips, Loading, PageHeader, STATUS_LABEL, StatusBadge, dateTime, inputClass, useLoad } from '../ui.tsx'
+import { Button, Empty, ErrorBox, FilterChips, Loading, PageHeader, StatusBadge, inputClass } from '../ui.tsx'
+import { STATUS_LABEL, dateTime } from '../format.ts'
+import { useLoad } from '../useLoad.ts'
 
 const STATUSES: InquiryStatus[] = ['new', 'contacted', 'confirmed', 'fulfilled', 'cancelled']
 
@@ -21,12 +23,15 @@ export default function Inquiries() {
         ),
         api<AdminStats>('/stats'),
       ]),
-    [status, search, page],
+    `${status}|${search}|${page}`,
   )
 
   const update = (changes: Record<string, string>) => {
     const next = new URLSearchParams(params)
-    for (const [k, v] of Object.entries(changes)) v ? next.set(k, v) : next.delete(k)
+    for (const [k, v] of Object.entries(changes)) {
+      if (v) next.set(k, v)
+      else next.delete(k)
+    }
     if (!('page' in changes)) next.delete('page')
     setParams(next)
   }
@@ -81,7 +86,10 @@ export default function Inquiries() {
             <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border bg-surface">
               {data![0].inquiries.map((i) => (
                 <li key={i.id}>
-                  <Link to={`/admin/inquiries/${i.id}`} className="block px-4 py-3 transition-colors hover:bg-bg sm:px-5">
+                  <Link
+                    to={`/admin/inquiries/${i.id}`}
+                    className="block px-4 py-3 transition-colors hover:bg-bg sm:px-5"
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <p className="font-medium">
@@ -109,7 +117,11 @@ export default function Inquiries() {
                 <span className="text-sm text-muted">
                   Page {page} of {data![0].pages}
                 </span>
-                <Button variant="secondary" disabled={page >= data![0].pages} onClick={() => update({ page: String(page + 1) })}>
+                <Button
+                  variant="secondary"
+                  disabled={page >= data![0].pages}
+                  onClick={() => update({ page: String(page + 1) })}
+                >
                   Older →
                 </Button>
               </div>

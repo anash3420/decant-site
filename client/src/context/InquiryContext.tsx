@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import type { InquiryItem } from '@shared/types.ts'
 
 const STORAGE_KEY = 'decants:inquiry'
@@ -40,25 +40,33 @@ export function InquiryProvider({ children }: { children: ReactNode }) {
     }
   }, [items])
 
-  const value: InquiryContextValue = {
-    items,
-    count: items.reduce((n, i) => n + i.qty, 0),
-    add: (slug, optionId, qty) =>
-      setItems((prev) =>
-        prev.some((i) => same(i, slug, optionId))
-          ? prev.map((i) => (same(i, slug, optionId) ? { ...i, qty: i.qty + qty } : i))
-          : [...prev, { slug, optionId, qty }],
-      ),
-    setQty: (slug, optionId, qty) =>
-      setItems((prev) =>
-        qty <= 0
-          ? prev.filter((i) => !same(i, slug, optionId))
-          : prev.map((i) => (same(i, slug, optionId) ? { ...i, qty } : i)),
-      ),
-    remove: (slug, optionId) => setItems((prev) => prev.filter((i) => !same(i, slug, optionId))),
-    clear: () => setItems([]),
-    retain: (keep) => setItems((prev) => (prev.every(keep) ? prev : prev.filter(keep))),
-  }
+  // Actions only use the setter, so they're created once and stay stable for effects that depend on them
+  const actions = useMemo(
+    () => ({
+      add: (slug: string, optionId: string, qty: number) =>
+        setItems((prev) =>
+          prev.some((i) => same(i, slug, optionId))
+            ? prev.map((i) => (same(i, slug, optionId) ? { ...i, qty: i.qty + qty } : i))
+            : [...prev, { slug, optionId, qty }],
+        ),
+      setQty: (slug: string, optionId: string, qty: number) =>
+        setItems((prev) =>
+          qty <= 0
+            ? prev.filter((i) => !same(i, slug, optionId))
+            : prev.map((i) => (same(i, slug, optionId) ? { ...i, qty } : i)),
+        ),
+      remove: (slug: string, optionId: string) => setItems((prev) => prev.filter((i) => !same(i, slug, optionId))),
+      clear: () => setItems([]),
+      retain: (keep: (item: InquiryItem) => boolean) =>
+        setItems((prev) => (prev.every(keep) ? prev : prev.filter(keep))),
+    }),
+    [],
+  )
+
+  const value = useMemo<InquiryContextValue>(
+    () => ({ items, count: items.reduce((n, i) => n + i.qty, 0), ...actions }),
+    [items, actions],
+  )
 
   return <InquiryContext.Provider value={value}>{children}</InquiryContext.Provider>
 }

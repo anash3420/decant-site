@@ -39,7 +39,12 @@ export default function FragranceCard({ fragrance: f }: { fragrance: Fragrance }
       className="group flex h-full flex-col overflow-hidden rounded-xl border border-border bg-surface transition-shadow hover:shadow-md"
     >
       {cover?.src ? (
-        <img src={cover.src} alt="" loading="lazy" className={`aspect-[4/3] w-full object-cover ${soldOut ? 'opacity-60 grayscale' : ''}`} />
+        <img
+          src={cover.src}
+          alt=""
+          loading="lazy"
+          className={`aspect-[4/3] w-full object-cover ${soldOut ? 'opacity-60 grayscale' : ''}`}
+        />
       ) : (
         <BottleArt
           tint={f.tint}
@@ -55,8 +60,12 @@ export default function FragranceCard({ fragrance: f }: { fragrance: Fragrance }
         <div className="mt-3 flex flex-wrap gap-2">
           {f.kind === 'full-bottle' ? (
             <>
-              <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-accent">~{f.fillPercent}% full</span>
-              <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-accent">{f.hasBox ? 'With box' : 'No box'}</span>
+              <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-accent">
+                ~{f.fillPercent}% full
+              </span>
+              <span className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-accent">
+                {f.hasBox ? 'With box' : 'No box'}
+              </span>
             </>
           ) : (
             f.accords.slice(0, 3).map((a) => (
@@ -69,7 +78,10 @@ export default function FragranceCard({ fragrance: f }: { fragrance: Fragrance }
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-5">
           <p className="text-sm text-muted">{priceLine(f)}</p>
-          <StockBadge inStock={!soldOut} label={f.kind === 'full-bottle' ? (soldOut ? 'Sold' : 'Available') : undefined} />
+          <StockBadge
+            inStock={!soldOut}
+            label={f.kind === 'full-bottle' ? (soldOut ? 'Sold' : 'Available') : undefined}
+          />
         </div>
       </div>
     </Link>

@@ -25,7 +25,8 @@ src/
   pages/             Home, CategoryPage, FragranceDetail, Inquiry, History, NotFound
   components/        cards, rows, carousel, brand sidebar, skeletons
   lib/               catalog helpers, History storage, reduced-motion helper
-  admin/             /admin panel (lazy-loaded; never in the shop bundle)
+  admin/             /admin panel (lazy-loaded; never in the shop bundle): ui.tsx components,
+                     format.ts labels and helpers, useLoad.ts data hook, pages/
 ../shared/           types, stock maths, lettermail rule, validation; shared with the server
 ```
 

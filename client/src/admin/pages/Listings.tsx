@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import BottleArt from '../../components/BottleArt.tsx'
 import { api, type AdminListing, type Kind, type ListingStatus } from '../api.ts'
-import { Button, Empty, ErrorBox, FilterChips, KIND_LABEL, ListingStatusBadge, Loading, PageHeader, inputClass, useLoad } from '../ui.tsx'
+import { Button, Empty, ErrorBox, FilterChips, ListingStatusBadge, Loading, PageHeader, inputClass } from '../ui.tsx'
+import { KIND_LABEL } from '../format.ts'
+import { useLoad } from '../useLoad.ts'
 
 function stockSummary(l: AdminListing) {
   if (l.kind === 'decant') {
@@ -28,12 +30,13 @@ export default function Listings() {
       api<{ listings: AdminListing[] }>(
         `/listings?${new URLSearchParams({ ...(kind && { kind }), ...(status && { status }), ...(search && { search }) })}`,
       ),
-    [kind, status, search],
+    `${kind}|${status}|${search}`,
   )
 
   const update = (k: string, v: string) => {
     const next = new URLSearchParams(params)
-    v ? next.set(k, v) : next.delete(k)
+    if (v) next.set(k, v)
+    else next.delete(k)
     setParams(next)
   }
 
@@ -78,7 +81,10 @@ export default function Listings() {
           label="Type"
           value={kind}
           onChange={(v) => update('kind', v)}
-          options={[{ value: '', label: 'All types' }, ...(Object.keys(KIND_LABEL) as Kind[]).map((k) => ({ value: k, label: KIND_LABEL[k] }))]}
+          options={[
+            { value: '', label: 'All types' },
+            ...(Object.keys(KIND_LABEL) as Kind[]).map((k) => ({ value: k, label: KIND_LABEL[k] })),
+          ]}
         />
         <FilterChips
           label="Status"
@@ -106,9 +112,17 @@ export default function Listings() {
               const stock = stockSummary(l)
               return (
                 <li key={l.id}>
-                  <Link to={`/admin/listings/${l.id}`} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-bg sm:px-5">
+                  <Link
+                    to={`/admin/listings/${l.id}`}
+                    className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-bg sm:px-5"
+                  >
                     {l.photos[0] ? (
-                      <img src={l.photos[0].url} alt="" className="size-14 shrink-0 rounded-lg object-cover" loading="lazy" />
+                      <img
+                        src={l.photos[0].url}
+                        alt=""
+                        className="size-14 shrink-0 rounded-lg object-cover"
+                        loading="lazy"
+                      />
                     ) : (
                       <BottleArt
                         tint={l.fragrance?.tint ?? '#B8A88A'}
@@ -121,7 +135,8 @@ export default function Listings() {
                       <p className="truncate text-xs text-muted">{l.fragrance?.brand.name}</p>
                       <p className="truncate font-medium">{l.fragrance?.name ?? l.slug}</p>
                       <p className="text-sm text-muted">
-                        {KIND_LABEL[l.kind]} · <span className={stock.low ? 'font-medium text-error' : ''}>{stock.text}</span>
+                        {KIND_LABEL[l.kind]} ·{' '}
+                        <span className={stock.low ? 'font-medium text-error' : ''}>{stock.text}</span>
                       </p>
                     </div>
                     <ListingStatusBadge status={l.status} />

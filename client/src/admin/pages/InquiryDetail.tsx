@@ -3,7 +3,9 @@ import { Link, useParams } from 'react-router-dom'
 import { formatPrice } from '@shared/stock.ts'
 import { useToast } from '../../context/ToastContext.tsx'
 import { ApiError, api, type AdminInquiry, type InquiryStatus } from '../api.ts'
-import { Button, Card, ErrorBox, Field, KIND_LABEL, Loading, PageHeader, STATUS_LABEL, StatusBadge, dateTime, inputClass, useLoad } from '../ui.tsx'
+import { Button, Card, ErrorBox, Field, Loading, PageHeader, StatusBadge, inputClass } from '../ui.tsx'
+import { KIND_LABEL, STATUS_LABEL, dateTime } from '../format.ts'
+import { useLoad } from '../useLoad.ts'
 
 const ACTION_LABEL: Record<InquiryStatus, string> = {
   new: 'New',
@@ -16,7 +18,10 @@ const ACTION_LABEL: Record<InquiryStatus, string> = {
 /** A ready-to-paste Messenger reply summarising the inquiry */
 function replyText(i: AdminInquiry) {
   const first = i.contact.name.split(' ')[0]
-  const lines = i.items.map((it) => `• ${it.qty > 1 ? `${it.qty} × ` : ''}${it.nameSnapshot} (${it.optionLabel}) — ${formatPrice(it.unitPrice * it.qty)}`)
+  const lines = i.items.map(
+    (it) =>
+      `• ${it.qty > 1 ? `${it.qty} × ` : ''}${it.nameSnapshot} (${it.optionLabel}) — ${formatPrice(it.unitPrice * it.qty)}`,
+  )
   return [
     `Hi ${first}! Thanks for your inquiry ${i.reference} 🙂`,
     '',
@@ -31,7 +36,10 @@ function replyText(i: AdminInquiry) {
 export default function InquiryDetail() {
   const { id = '' } = useParams()
   const toast = useToast()
-  const { data, setData, error, loading, reload } = useLoad(() => api<{ inquiry: AdminInquiry }>(`/inquiries/${id}`), [id])
+  const { data, setData, error, loading, reload } = useLoad(
+    () => api<{ inquiry: AdminInquiry }>(`/inquiries/${id}`),
+    id,
+  )
   const [note, setNote] = useState('')
   const [adminNotes, setAdminNotes] = useState<string>()
   const [busy, setBusy] = useState<string>()
@@ -84,10 +92,7 @@ export default function InquiryDetail() {
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="space-y-6">
-          <Card
-            title={i.contact.name}
-            actions={<StatusBadge status={i.status} />}
-          >
+          <Card title={i.contact.name} actions={<StatusBadge status={i.status} />}>
             <p className="text-sm text-muted">Sent {dateTime.format(new Date(i.createdAt))}</p>
             <div className="mt-4 flex flex-wrap gap-2">
               <a
@@ -112,7 +117,9 @@ export default function InquiryDetail() {
               </div>
               <div>
                 <dt className="text-xs tracking-wide text-muted uppercase">Stock</dt>
-                <dd className="mt-0.5">{i.stockHeld ? (i.status === 'fulfilled' ? 'Deducted' : 'Held for this inquiry') : 'Released'}</dd>
+                <dd className="mt-0.5">
+                  {i.stockHeld ? (i.status === 'fulfilled' ? 'Deducted' : 'Held for this inquiry') : 'Released'}
+                </dd>
               </div>
               {i.notes && (
                 <div className="sm:col-span-2">
@@ -126,9 +133,15 @@ export default function InquiryDetail() {
           <Card title="Items">
             <ul className="-my-2 divide-y divide-border">
               {i.items.map((it) => (
-                <li key={`${it.listingId}-${it.optionLabel}`} className="flex items-baseline justify-between gap-3 py-3 text-sm">
+                <li
+                  key={`${it.listingId}-${it.optionLabel}`}
+                  className="flex items-baseline justify-between gap-3 py-3 text-sm"
+                >
                   <div className="min-w-0">
-                    <Link to={`/admin/listings/${it.listingId}`} className="inline-block py-0.5 font-medium hover:text-accent">
+                    <Link
+                      to={`/admin/listings/${it.listingId}`}
+                      className="inline-block py-0.5 font-medium hover:text-accent"
+                    >
                       {it.nameSnapshot}
                     </Link>
                     <p className="text-muted">
@@ -159,11 +172,18 @@ export default function InquiryDetail() {
         <div className="space-y-6">
           <Card title="Update status">
             {i.nextStatuses.length === 0 ? (
-              <p className="text-sm text-muted">This inquiry is {STATUS_LABEL[i.status].toLowerCase()}. No further changes.</p>
+              <p className="text-sm text-muted">
+                This inquiry is {STATUS_LABEL[i.status].toLowerCase()}. No further changes.
+              </p>
             ) : (
               <>
                 <Field label="Note (optional)" hint="Saved with the status change, e.g. “paid by e-transfer”.">
-                  <input value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} className={inputClass} />
+                  <input
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    maxLength={500}
+                    className={inputClass}
+                  />
                 </Field>
                 <div className="mt-4 flex flex-col gap-2">
                   {i.nextStatuses
@@ -179,7 +199,11 @@ export default function InquiryDetail() {
                         <p className="font-medium text-error">Cancel {i.reference}?</p>
                         <p className="mt-1 text-text">Held stock goes back on sale. This can’t be undone.</p>
                         <div className="mt-3 flex gap-2">
-                          <Button variant="danger" busy={busy === 'cancelled'} onClick={() => changeStatus('cancelled')}>
+                          <Button
+                            variant="danger"
+                            busy={busy === 'cancelled'}
+                            onClick={() => changeStatus('cancelled')}
+                          >
                             Yes, cancel
                           </Button>
                           <Button variant="secondary" onClick={() => setConfirmCancel(false)}>

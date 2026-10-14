@@ -1,31 +1,10 @@
-import { useCallback, useEffect, useState, type ButtonHTMLAttributes, type ReactNode } from 'react'
+import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import Spinner from '../components/Spinner.tsx'
 import { Link } from 'react-router-dom'
-import { ApiError, type InquiryStatus, type Kind, type ListingStatus } from './api.ts'
+import type { ApiError, InquiryStatus, ListingStatus } from './api.ts'
+import { STATUS_LABEL } from './format.ts'
 
 // Admin UI kit: same tokens as the shop, 44px targets, 16px inputs on phones.
-
-export function useLoad<T>(load: () => Promise<T>, deps: unknown[]) {
-  const [data, setData] = useState<T>()
-  const [error, setError] = useState<ApiError>()
-  const [loading, setLoading] = useState(true)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const run = useCallback(load, deps)
-  const reload = useCallback(async () => {
-    setLoading(true)
-    setError(undefined)
-    try {
-      setData(await run())
-    } catch (e) {
-      setError(e instanceof ApiError ? e : new ApiError(0, 'error', String(e)))
-    } finally {
-      setLoading(false)
-    }
-  }, [run])
-  useEffect(() => {
-    void reload()
-  }, [reload])
-  return { data, setData, error, loading, reload }
-}
 
 type Variant = 'primary' | 'secondary' | 'danger' | 'ghost'
 const variants: Record<Variant, string> = {
@@ -49,7 +28,7 @@ export function Button({
       disabled={props.disabled || busy}
       className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-md px-4 text-sm font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${variants[variant]} ${className}`}
     >
-      {busy && <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />}
+      {busy && <Spinner />}
       {children}
     </button>
   )
@@ -81,7 +60,17 @@ export function Field({
   )
 }
 
-export function Card({ title, actions, children, className = '' }: { title?: string; actions?: ReactNode; children: ReactNode; className?: string }) {
+export function Card({
+  title,
+  actions,
+  children,
+  className = '',
+}: {
+  title?: string
+  actions?: ReactNode
+  children: ReactNode
+  className?: string
+}) {
   return (
     <section className={`rounded-xl border border-border bg-surface ${className}`}>
       {(title || actions) && (
@@ -95,7 +84,15 @@ export function Card({ title, actions, children, className = '' }: { title?: str
   )
 }
 
-export function PageHeader({ title, back, actions }: { title: string; back?: { to: string; label: string }; actions?: ReactNode }) {
+export function PageHeader({
+  title,
+  back,
+  actions,
+}: {
+  title: string
+  back?: { to: string; label: string }
+  actions?: ReactNode
+}) {
   return (
     <div className="mb-6">
       {back && (
@@ -111,24 +108,18 @@ export function PageHeader({ title, back, actions }: { title: string; back?: { t
   )
 }
 
-export const STATUS_STYLE: Record<InquiryStatus, string> = {
+const STATUS_STYLE: Record<InquiryStatus, string> = {
   new: 'bg-accent text-on-accent',
   contacted: 'bg-accent-soft text-accent',
   confirmed: 'bg-instock-soft text-instock',
   fulfilled: 'bg-soldout-soft text-text',
   cancelled: 'bg-soldout-soft text-soldout line-through',
 }
-export const STATUS_LABEL: Record<InquiryStatus, string> = {
-  new: 'New',
-  contacted: 'Contacted',
-  confirmed: 'Confirmed',
-  fulfilled: 'Fulfilled',
-  cancelled: 'Cancelled',
-}
-
 export function StatusBadge({ status }: { status: InquiryStatus }) {
   return (
-    <span className={`inline-block shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${STATUS_STYLE[status]}`}>
+    <span
+      className={`inline-block shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap ${STATUS_STYLE[status]}`}
+    >
       {STATUS_LABEL[status]}
     </span>
   )
@@ -141,16 +132,12 @@ const LISTING_STATUS_STYLE: Record<ListingStatus, string> = {
 }
 export function ListingStatusBadge({ status }: { status: ListingStatus }) {
   return (
-    <span className={`inline-block shrink-0 rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap capitalize ${LISTING_STATUS_STYLE[status]}`}>
+    <span
+      className={`inline-block shrink-0 rounded-full px-2.5 py-0.5 text-xs whitespace-nowrap capitalize ${LISTING_STATUS_STYLE[status]}`}
+    >
       {status}
     </span>
   )
-}
-
-export const KIND_LABEL: Record<Kind, string> = {
-  decant: 'Decant',
-  'catch-release': 'Catch & Release',
-  'full-bottle': 'Full bottle',
 }
 
 /** Chips for filters; swipeable on phones */
@@ -166,7 +153,11 @@ export function FilterChips<T extends string>({
   label: string
 }) {
   return (
-    <div role="group" aria-label={label} className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0">
+    <div
+      role="group"
+      aria-label={label}
+      className="-mx-4 no-scrollbar flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0"
+    >
       {options.map((o) => (
         <button
           key={o.value || 'all'}
@@ -174,7 +165,9 @@ export function FilterChips<T extends string>({
           aria-pressed={value === o.value}
           onClick={() => onChange(o.value)}
           className={`inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm whitespace-nowrap transition-colors ${
-            value === o.value ? 'border-accent bg-accent text-on-accent' : 'border-border bg-surface text-muted hover:text-text'
+            value === o.value
+              ? 'border-accent bg-accent text-on-accent'
+              : 'border-border bg-surface text-muted hover:text-text'
           }`}
         >
           {o.label}
@@ -188,7 +181,7 @@ export function FilterChips<T extends string>({
 export function Loading({ label = 'Loading…' }: { label?: string }) {
   return (
     <p className="flex items-center gap-2 py-10 text-sm text-muted" role="status">
-      <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />
+      <Spinner />
       {label}
     </p>
   )
@@ -196,7 +189,10 @@ export function Loading({ label = 'Loading…' }: { label?: string }) {
 
 export function ErrorBox({ error, onRetry }: { error: ApiError; onRetry?: () => void }) {
   return (
-    <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-error/30 bg-error-soft p-4 text-sm text-error">
+    <div
+      role="alert"
+      className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-error/30 bg-error-soft p-4 text-sm text-error"
+    >
       <span className="font-medium">{error.message}</span>
       {onRetry && (
         <Button variant="secondary" onClick={onRetry}>
@@ -215,16 +211,3 @@ export function Empty({ title, children }: { title: string; children?: ReactNode
     </div>
   )
 }
-
-/** Comma-separated text ⇄ string array, for notes and accords */
-export const splitList = (s: string) =>
-  s
-    .split(',')
-    .map((x) => x.trim())
-    .filter(Boolean)
-export const joinList = (xs: string[] | undefined) => (xs ?? []).join(', ')
-
-/** Parses a numeric text field; empty → undefined */
-export const num = (s: string) => (s.trim() === '' ? undefined : Number(s))
-
-export const dateTime = new Intl.DateTimeFormat('en-CA', { dateStyle: 'medium', timeStyle: 'short' })

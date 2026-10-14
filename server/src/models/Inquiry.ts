@@ -18,7 +18,12 @@ const itemSchema = new Schema(
     unitPrice: { type: Number, required: true, min: 0 },
     /** Decants: which bottles the held ml came from, so a cancellation puts it back in the right one */
     heldFrom: {
-      type: [new Schema({ bottle: { type: Schema.Types.ObjectId, required: true }, ml: { type: Number, required: true } }, { _id: false })],
+      type: [
+        new Schema(
+          { bottle: { type: Schema.Types.ObjectId, required: true }, ml: { type: Number, required: true } },
+          { _id: false },
+        ),
+      ],
       default: undefined,
     },
   },

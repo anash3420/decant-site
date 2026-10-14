@@ -1,16 +1,15 @@
 import { Link } from 'react-router-dom'
 import { formatPrice } from '@shared/stock.ts'
 import { api, type AdminStats, type InquirySummary } from '../api.ts'
-import { Card, Empty, ErrorBox, KIND_LABEL, Loading, PageHeader, dateTime, useLoad } from '../ui.tsx'
+import { Card, Empty, ErrorBox, Loading, PageHeader } from '../ui.tsx'
+import { KIND_LABEL, dateTime } from '../format.ts'
+import { useLoad } from '../useLoad.ts'
 
 export default function Dashboard() {
   const { data, error, loading, reload } = useLoad(
     () =>
-      Promise.all([
-        api<AdminStats>('/stats'),
-        api<{ inquiries: InquirySummary[] }>('/inquiries?status=new&limit=5'),
-      ]),
-    [],
+      Promise.all([api<AdminStats>('/stats'), api<{ inquiries: InquirySummary[] }>('/inquiries?status=new&limit=5')]),
+    'dashboard',
   )
 
   if (loading && !data) return <Loading />
@@ -41,7 +40,8 @@ export default function Dashboard() {
         ))}
       </div>
       <p className="mt-3 text-sm text-muted">
-        Fulfilled in the last 30 days: {stats.fulfilledLast30Days.count} ({formatPrice(stats.fulfilledLast30Days.total)} in items)
+        Fulfilled in the last 30 days: {stats.fulfilledLast30Days.count} ({formatPrice(stats.fulfilledLast30Days.total)}{' '}
+        in items)
       </p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">

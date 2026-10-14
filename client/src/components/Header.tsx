@@ -19,7 +19,10 @@ export default function Header() {
   return (
     <header className="border-b border-border bg-surface pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-2 sm:px-8 md:py-3">
-        <Link to="/" className="inline-flex min-h-11 items-center font-display text-xl whitespace-nowrap text-text sm:text-2xl">
+        <Link
+          to="/"
+          className="inline-flex min-h-11 items-center font-display text-xl whitespace-nowrap text-text sm:text-2xl"
+        >
           {SITE_NAME}
         </Link>
         <nav aria-label="Main" className="flex items-center gap-6 whitespace-nowrap">
@@ -34,7 +37,7 @@ export default function Header() {
           >
             My inquiry
             {count > 0 && (
-              <span className="ml-2 rounded-full bg-on-accent px-1.5 py-0.5 text-xs tabular-nums text-accent">
+              <span className="ml-2 rounded-full bg-on-accent px-1.5 py-0.5 text-xs text-accent tabular-nums">
                 <span className="sr-only">, </span>
                 {count}
                 <span className="sr-only"> items</span>

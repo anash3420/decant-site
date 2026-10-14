@@ -5,20 +5,21 @@ build an inquiry, and get contacted on Facebook to arrange payment. No checkout 
 
 **Stack:** MongoDB · Express 5 · React 19 (Vite, Tailwind v4) · Node · TypeScript throughout
 
-| Folder | What's in it |
-|---|---|
-| [`client/`](client/README.md) | The shop and the `/admin` panel (React + Vite) |
-| [`server/`](server/README.md) | REST API, MongoDB models, seed + smoke-test scripts |
-| `shared/` | Types, stock maths, lettermail rule and validation used by both |
+| Folder                        | What's in it                                                    |
+| ----------------------------- | --------------------------------------------------------------- |
+| [`client/`](client/README.md) | The shop and the `/admin` panel (React + Vite)                  |
+| [`server/`](server/README.md) | REST API, MongoDB models, seed + smoke-test scripts             |
+| `shared/`                     | Types, stock maths, lettermail rule and validation used by both |
 
 ## Run locally
 
-Needs Node 20.19+ and MongoDB 7+.
+Needs Node 20.19+ (see `.nvmrc`) and MongoDB 7+ (`mongod` and `mongosh` on your PATH).
 
 ```bash
+npm run setup                   # installs root tooling, client and server
+
 # API + database
 cd server
-npm install
 cp .env.example .env            # then set JWT_SECRET
 npm run db                      # leave running (local MongoDB replica set on :27018)
 npm run db:init                 # once
@@ -28,9 +29,33 @@ npm run dev                     # API on http://localhost:5050
 
 # Shop (new terminal)
 cd client
-npm install
 npm run dev                     # http://localhost:5173, admin at /admin
 ```
+
+## Development
+
+Run these from the repo root:
+
+| Command                           | What it does                                                |
+| --------------------------------- | ----------------------------------------------------------- |
+| `npm run check`                   | Everything CI-worthy: type-check, lint, format check, build |
+| `npm run typecheck`               | TypeScript for client and server                            |
+| `npm run lint` / `lint:fix`       | ESLint (TypeScript rules, React hooks rules)                |
+| `npm run format` / `format:check` | Prettier, including Tailwind class ordering                 |
+
+API behaviour is covered by end-to-end smoke tests that run against a live server (see `server/README.md`):
+
+```bash
+cd server && npm run seed && npm run smoke && npm run seed
+```
+
+Conventions:
+
+- **One source of truth for rules.** Anything both sides need (types, stock maths, the lettermail rule, validation
+  patterns) lives in `shared/`; the server enforces it, the client uses it for instant feedback.
+- **The server prices everything.** The browser sends only what was picked; totals and stock checks happen server-side.
+- **Mobile first.** Check new UI at 375px and 320px: no sideways scroll, 44px tap targets, 16px form inputs.
+- Style is enforced by the tools above (no semicolons, single quotes, 120 columns), so there's nothing to remember.
 
 ## How it works
 
