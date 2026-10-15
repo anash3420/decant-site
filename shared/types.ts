@@ -40,6 +40,9 @@ export interface Bottle {
 export interface Photo {
   label: string
   src?: string
+  /** Pixel size of the uploaded photo; tells portrait (taller than wide) from landscape. Absent on older photos. */
+  width?: number
+  height?: number
   variant?: 'vial' | 'bottle' | 'box'
   /** 0–1 liquid level for the placeholder */
   fill?: number
