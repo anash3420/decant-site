@@ -11,10 +11,12 @@ import NotFound from './pages/NotFound.tsx'
 // The admin is only for me; keep it out of the bundle shop visitors download
 const AdminApp = lazy(() => import('./admin/AdminApp.tsx'))
 import { ToastProvider } from './context/ToastContext.tsx'
+import ShopAnalytics from './components/ShopAnalytics.tsx'
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ShopAnalytics />
       <ToastProvider>
         <Routes>
           <Route element={<SiteLayout />}>

@@ -49,6 +49,11 @@ createServer((req, res) => {
     const cache = path.startsWith('/assets/') ? { 'cache-control': 'public, max-age=31536000, immutable' } : {}
     return sendFile(res, file, cache)
   }
+  // On Vercel the platform answers /_vercel/* (Web Analytics); locally there's nothing there
+  if (path.startsWith('/_vercel/')) {
+    res.writeHead(404).end()
+    return
+  }
   sendFile(res, join(STATIC, 'index.html'))
 }).listen(PORT, () =>
   console.log(`Vercel build preview on http://localhost:${PORT} (API env: ${process.env.NODE_ENV ?? 'development'})`),

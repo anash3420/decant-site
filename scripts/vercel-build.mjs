@@ -89,8 +89,9 @@ writeFileSync(
         { src: '^/api(?:/.*)?$', dest: '/api' },
         // Real files (index.html, assets, favicon) as they are
         { handle: 'filesystem' },
-        // Everything else is a page of the single-page app (/niche, /fragrance/x, /admin/...)
-        { src: '^/(.*)$', dest: '/index.html' },
+        // Everything else is a page of the single-page app (/niche, /fragrance/x, /admin/...),
+        // except /_vercel/*, which the platform serves (e.g. the Web Analytics script)
+        { src: '^/(?!_vercel/)(.*)$', dest: '/index.html' },
       ],
     },
     null,
