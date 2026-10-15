@@ -3,17 +3,18 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useToast } from '../../context/ToastContext.tsx'
 import { ApiError, api, type AdminBrand, type AdminFragrance } from '../api.ts'
 import { Button, Card, ErrorBox, Field, Loading, PageHeader, inputClass } from '../ui.tsx'
+import { CONCENTRATIONS, type Concentration, type FragranceCategory } from '@shared/types.ts'
+import { CATEGORIES } from '../../lib/catalog.ts'
 import { joinList, splitList } from '../format.ts'
 import { useLoad } from '../useLoad.ts'
-
-const CONCENTRATIONS = ['Eau de Parfum', 'Eau de Toilette', 'Parfum', 'Extrait de Parfum', 'Eau de Cologne', 'Elixir']
 
 interface Form {
   name: string
   brand: string
-  concentration: string
+  concentration: Concentration
   year: string
   gender: AdminFragrance['gender']
+  category: FragranceCategory
   accords: string
   top: string
   heart: string
@@ -28,6 +29,7 @@ const empty: Form = {
   concentration: 'Eau de Parfum',
   year: '',
   gender: 'Unisex',
+  category: 'designer',
   accords: '',
   top: '',
   heart: '',
@@ -42,6 +44,7 @@ const toForm = (f: AdminFragrance): Form => ({
   concentration: f.concentration,
   year: f.year ? String(f.year) : '',
   gender: f.gender,
+  category: f.category,
   accords: joinList(f.accords),
   top: joinList(f.notes.top),
   heart: joinList(f.notes.heart),
@@ -87,6 +90,7 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
       concentration: form.concentration,
       year: form.year ? Number(form.year) : null,
       gender: form.gender,
+      category: form.category,
       accords: splitList(form.accords),
       notes: { top: splitList(form.top), heart: splitList(form.heart), base: splitList(form.base) },
       description: form.description,
@@ -157,20 +161,41 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
                 + Add a brand
               </Link>
             </Field>
-            <Field label="Concentration">
-              <input
+            <Field label="Concentration" error={errors.concentration}>
+              <select
                 value={form.concentration}
-                onChange={(e) => set({ concentration: e.target.value })}
-                list="concentrations"
-                required
+                onChange={(e) => set({ concentration: e.target.value as Concentration })}
+                aria-invalid={!!errors.concentration}
                 className={inputClass}
-              />
-              <datalist id="concentrations">
+              >
                 {CONCENTRATIONS.map((c) => (
-                  <option key={c} value={c} />
+                  <option key={c}>{c}</option>
                 ))}
-              </datalist>
+              </select>
             </Field>
+            <fieldset className="sm:col-span-2">
+              <legend className="text-sm font-medium">Category</legend>
+              <span className="mt-0.5 block text-xs text-muted">
+                Shown as a label in the shop and used for the Niche / Designer / Private line / Dupe pages.
+              </span>
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {CATEGORIES.map((c) => (
+                  <label
+                    key={c.id}
+                    className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 text-sm ${form.category === c.id ? 'border-accent bg-accent-soft' : 'border-border'}`}
+                  >
+                    <input
+                      type="radio"
+                      name="category"
+                      checked={form.category === c.id}
+                      onChange={() => set({ category: c.id })}
+                      className="size-5 accent-accent"
+                    />
+                    {c.label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Year" error={errors.year}>
                 <input

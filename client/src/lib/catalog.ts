@@ -1,4 +1,4 @@
-import type { Fragrance, ListingKind } from '@shared/types.ts'
+import type { Fragrance, FragranceCategory, ListingKind } from '@shared/types.ts'
 import { isSoldOut } from '@shared/stock.ts'
 import { slugify } from '@shared/slug.ts'
 
@@ -29,6 +29,54 @@ export const KINDS: { id: ListingKind; path: string; title: string; short: strin
 ]
 
 export const kindMeta = (kind: ListingKind) => KINDS.find((k) => k.id === kind)!
+
+/** Fragrance categories: their shop pages, labels and badge colours */
+export const CATEGORIES: {
+  id: FragranceCategory
+  path: string
+  title: string
+  label: string
+  blurb: string
+  badge: string
+}[] = [
+  {
+    id: 'niche',
+    path: '/niche',
+    title: 'Niche',
+    label: 'Niche',
+    blurb: 'Independent and artisan houses: Diptyque, Le Labo, Xerjoff, Creed and friends.',
+    badge: 'bg-[#E8EEF6] text-[#2F4B73]',
+  },
+  {
+    id: 'designer',
+    path: '/designer',
+    title: 'Designer',
+    label: 'Designer',
+    blurb: 'The big fashion houses’ mainline releases: Dior, Chanel, Guerlain and more.',
+    badge: 'bg-[#EFEAE2] text-[#6B5432]',
+  },
+  {
+    id: 'designer-private',
+    path: '/designer-private',
+    title: 'Designer private lines',
+    label: 'Private line',
+    blurb: 'The exclusive collections designer houses sell separately, like Tom Ford Private Blend and Dior Privée.',
+    badge: 'bg-[#F1E6EC] text-[#6E2E4F]',
+  },
+  {
+    id: 'dupe',
+    path: '/dupes',
+    title: 'Dupes',
+    label: 'Dupe',
+    blurb: 'Inspired-by alternatives to famous scents, for a fraction of the price.',
+    badge: 'bg-[#E7F0EA] text-[#2F5E43]',
+  },
+]
+
+export const categoryMeta = (category: FragranceCategory) => CATEGORIES.find((c) => c.id === category)!
+
+export const byCategory = (list: Fragrance[], category: FragranceCategory | null | undefined) =>
+  category ? list.filter((f) => f.category === category) : list
 
 /** Houses in a list with counts, alphabetical */
 export function brandsOf(list: Fragrance[]) {

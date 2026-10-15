@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api, type AdminFragrance } from '../api.ts'
 import { Empty, ErrorBox, Loading, PageHeader, inputClass } from '../ui.tsx'
 import { useLoad } from '../useLoad.ts'
+import CategoryBadge from '../../components/CategoryBadge.tsx'
 
 export default function Fragrances() {
   const { data, error, loading, reload } = useLoad(
@@ -64,7 +65,8 @@ export default function Fragrances() {
                   <span className="block truncate text-xs text-muted">{f.brand?.name}</span>
                   <span className="block truncate font-medium">{f.name}</span>
                 </span>
-                <span className="shrink-0 text-sm text-muted">
+                <span className="flex shrink-0 flex-col items-end gap-1 text-sm text-muted">
+                  <CategoryBadge category={f.category} />
                   {f.listingCount} listing{f.listingCount === 1 ? '' : 's'}
                 </span>
               </Link>
