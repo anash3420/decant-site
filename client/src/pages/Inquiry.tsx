@@ -258,12 +258,22 @@ export default function Inquiry() {
                   key={`${item.slug}-${item.optionId}`}
                   className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-3 p-4 sm:gap-x-4"
                 >
-                  <BottleArt
-                    tint={f.tint}
-                    variant={f.kind === 'full-bottle' ? 'bottle' : 'vial'}
-                    fill={f.kind === 'full-bottle' ? f.fillPercent / 100 : undefined}
-                    className="size-16 rounded-lg sm:row-span-2 sm:size-20"
-                  />
+                  {f.photos?.[0]?.src ? (
+                    // Same cover photo as the shop card, filling the square thumbnail (trim aimed to keep caps)
+                    <img
+                      src={f.photos[0].src}
+                      alt=""
+                      loading="lazy"
+                      className="size-16 rounded-lg object-cover object-[center_20%] sm:row-span-2 sm:size-20"
+                    />
+                  ) : (
+                    <BottleArt
+                      tint={f.tint}
+                      variant={f.kind === 'full-bottle' ? 'bottle' : 'vial'}
+                      fill={f.kind === 'full-bottle' ? f.fillPercent / 100 : undefined}
+                      className="size-16 rounded-lg sm:row-span-2 sm:size-20"
+                    />
+                  )}
                   <div className="min-w-0">
                     <p className="text-xs text-muted">{f.house}</p>
                     <Link
