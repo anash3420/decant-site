@@ -75,6 +75,8 @@ export interface Photo {
   _id?: string
   url: string
   pathname?: string
+  width?: number
+  height?: number
   label: string
   order: number
 }

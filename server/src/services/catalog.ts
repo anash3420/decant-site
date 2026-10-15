@@ -26,7 +26,9 @@ function toCatalogListing(l: LeanListing): CatalogListing | null {
     description: [f.description, l.listingNote].filter(Boolean).join(' '),
     tint: f.tint,
     photos: l.photos.length
-      ? [...l.photos].sort((a, b) => a.order - b.order).map((p) => ({ label: p.label, src: p.url }))
+      ? [...l.photos]
+          .sort((a, b) => a.order - b.order)
+          .map((p) => ({ label: p.label, src: p.url, width: p.width, height: p.height }))
       : undefined,
     addedAt: l.addedAt.toISOString().slice(0, 10),
   }
