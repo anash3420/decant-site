@@ -44,8 +44,10 @@ export default function FragranceCard({ fragrance: f }: { fragrance: Fragrance }
           src={cover.src}
           alt=""
           loading="lazy"
-          // Cards share one 4:3 grid; portrait covers sit whole inside it instead of being cropped
-          className={`aspect-[4/3] w-full bg-accent-soft/60 object-contain ${soldOut ? 'opacity-60 grayscale' : ''}`}
+          // Cards share one 4:3 grid; the cover fills it edge to edge (same proportions, overflow trimmed).
+          // A portrait photo loses some height: aim the trim lower so a bottle keeps its cap (20% from the top).
+          // Detail pages still show every photo whole.
+          className={`aspect-[4/3] w-full object-cover object-[center_20%] ${soldOut ? 'opacity-60 grayscale' : ''}`}
         />
       ) : (
         <BottleArt
