@@ -5,7 +5,7 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
-  { ignores: ['**/dist', '**/node_modules', 'server/.mongo', 'server/.uploads'] },
+  { ignores: ['**/dist', '**/node_modules', '.vercel', 'server/.mongo', 'server/.uploads'] },
 
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -39,7 +39,7 @@ export default tseslint.config(
 
   // API, scripts, shared code and config files (Node)
   {
-    files: ['server/**/*.ts', 'shared/**/*.ts', '*.js', 'client/*.ts'],
+    files: ['server/**/*.ts', 'shared/**/*.ts', '*.js', 'scripts/*.mjs', 'client/*.ts'],
     languageOptions: { globals: globals.node },
   },
 

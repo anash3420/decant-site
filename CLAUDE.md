@@ -16,6 +16,11 @@ Run setup and checks from the repo root:
 - `npm run setup` installs root tooling, client and server
 - `npm run check` runs typecheck + lint + format:check + client build (use this as the "done" check)
 - `npm run typecheck`, `npm run lint` / `lint:fix`, `npm run format` / `format:check`
+- `npm run build:vercel` writes `.vercel/output` (Build Output API: static shop + one esbuild-bundled API function
+  from `server/src/vercel.ts`). `npm run preview:vercel` serves it on :3000 so the smoke tests can target it with
+  `API_URL=http://localhost:3000/api`.
+- Production DB: `server/.env.production` (git-ignored). `npm run db:setup:prod` creates indexes and default
+  settings without deleting anything. `npm run create-admin:prod`. `seed` refuses `NODE_ENV=production`.
 
 Local dev needs Node 20.19+ (`.nvmrc`) and MongoDB 7+ with `mongod` and `mongosh` on PATH. Run these in `server/`:
 

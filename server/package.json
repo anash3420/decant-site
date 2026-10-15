@@ -6,9 +6,12 @@
   "scripts": {
     "db": "mkdir -p .mongo && mongod --replSet rs0 --dbpath .mongo --port 27018 --bind_ip 127.0.0.1",
     "db:init": "mongosh --quiet --port 27018 --eval \"try { rs.status().ok } catch { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: '127.0.0.1:27018' }] }).ok }\"",
+    "db:setup": "tsx --env-file=.env src/scripts/db-setup.ts",
+    "db:setup:prod": "tsx --env-file=.env.production src/scripts/db-setup.ts",
     "dev": "tsx watch --env-file=.env src/index.ts",
     "seed": "tsx --env-file=.env src/scripts/seed.ts",
     "create-admin": "tsx --env-file=.env src/scripts/create-admin.ts",
+    "create-admin:prod": "tsx --env-file=.env.production src/scripts/create-admin.ts",
     "smoke": "tsx --env-file=.env src/scripts/smoke.ts",
     "smoke:admin": "tsx --env-file=.env src/scripts/smoke-admin.ts",
     "blob:check": "tsx --env-file=.env src/scripts/blob-check.ts",
