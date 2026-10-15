@@ -11,7 +11,9 @@ import {
   type ListingStatus,
   type Photo,
 } from '../api.ts'
-import { resizeImage } from '../resizeImage.ts'
+import { cropAndResize, type CropArea } from '../processImage.ts'
+import CropDialog from '../CropDialog.tsx'
+import { FRAME_CLASS, orientationOf, type Orientation } from '../../lib/photos.ts'
 import { Button, Card, ErrorBox, Field, Loading, PageHeader, inputClass } from '../ui.tsx'
 import { KIND_LABEL, num } from '../format.ts'
 import { useLoad } from '../useLoad.ts'
@@ -742,25 +744,41 @@ function PhotoFields({
   const input = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(0)
   const [error, setError] = useState('')
+  /** Photos picked but not cropped yet; the first one is in the crop dialog */
+  const [queue, setQueue] = useState<File[]>([])
+  const [batchSize, setBatchSize] = useState(0)
 
-  const upload = async (files: FileList) => {
+  const pick = (files: FileList) => {
     setError('')
     const list = [...files].slice(0, 12 - photos.length)
-    setUploading(list.length)
-    for (const file of list) {
-      try {
-        const blob = await resizeImage(file)
-        const r = await api<{ url: string; pathname: string }>('/uploads', { body: blob, contentType: blob.type })
-        // Updater form: uploads finish one by one and each must build on the list as it is by then
-        onChange((prev) => [
-          ...prev,
-          { url: r.url, pathname: r.pathname, label: prev.length === 0 ? 'Front' : '', order: prev.length },
-        ])
-      } catch (e) {
-        setError(e instanceof ApiError ? e.message : `Couldn’t upload ${file.name}.`)
-      } finally {
-        setUploading((n) => n - 1)
-      }
+    setQueue(list)
+    setBatchSize(list.length)
+  }
+
+  const next = () => setQueue((q) => q.slice(1))
+
+  // Uploads run in the background so the next photo can be framed straight away
+  const upload = async (file: File, area: CropArea, orientation: Orientation) => {
+    setUploading((n) => n + 1)
+    try {
+      const { blob, width, height } = await cropAndResize(file, area, orientation)
+      const r = await api<{ url: string; pathname: string }>('/uploads', { body: blob, contentType: blob.type })
+      // Updater form: uploads finish one by one and each must build on the list as it is by then
+      onChange((prev) => [
+        ...prev,
+        {
+          url: r.url,
+          pathname: r.pathname,
+          width,
+          height,
+          label: prev.length === 0 ? 'Front' : '',
+          order: prev.length,
+        },
+      ])
+    } catch (e) {
+      setError(e instanceof ApiError ? e.message : `Couldn’t upload ${file.name}.`)
+    } finally {
+      setUploading((n) => n - 1)
     }
   }
 
@@ -775,7 +793,7 @@ function PhotoFields({
   return (
     <Card title="Photos" actions={<span className="text-sm text-muted">{photos.length}/12</span>}>
       <p className="mb-3 text-sm text-muted">
-        The first photo is the cover. Photos are resized on your phone before uploading.
+        The first photo is the cover. You frame each photo after picking it; shoppers see exactly that frame.
       </p>
       {photos.length > 0 && (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -784,8 +802,12 @@ function PhotoFields({
               <img
                 src={p.url}
                 alt={p.label || `Photo ${i + 1}`}
-                className="aspect-square w-full rounded-md object-cover"
+                // Uniform tiles; each photo shown whole, whatever its shape
+                className={`${FRAME_CLASS.landscape} w-full rounded-md bg-accent-soft/60 object-contain`}
               />
+              <p className="mt-1 text-xs text-muted">
+                {orientationOf(p) === 'portrait' ? 'Portrait 3:4' : 'Landscape 4:3'}
+              </p>
               <input
                 value={p.label}
                 onChange={(e) =>
@@ -836,7 +858,7 @@ function PhotoFields({
         multiple
         className="hidden"
         onChange={(e) => {
-          if (e.target.files?.length) void upload(e.target.files)
+          if (e.target.files?.length) pick(e.target.files)
           e.target.value = ''
         }}
       />
@@ -850,6 +872,20 @@ function PhotoFields({
         {uploading > 0 ? `Uploading ${uploading}…` : '+ Add photos'}
       </Button>
       {error && <p className="mt-2 text-sm font-medium text-error">{error}</p>}
+      {queue[0] && (
+        <CropDialog
+          // Remount per file so zoom and position start fresh
+          key={`${queue[0].name}-${queue[0].lastModified}-${queue.length}`}
+          file={queue[0]}
+          progress={batchSize > 1 ? `Photo ${batchSize - queue.length + 1} of ${batchSize}` : undefined}
+          onConfirm={(area, orientation) => {
+            void upload(queue[0]!, area, orientation)
+            next()
+          }}
+          onSkip={next}
+          onCancelAll={() => setQueue([])}
+        />
+      )}
     </Card>
   )
 }

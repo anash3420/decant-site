@@ -23,6 +23,8 @@ const photo = z.object({
   _id: objectId.optional(),
   url: z.string().min(1).max(1000),
   pathname: z.string().max(500).optional(),
+  width: z.number().int().positive().max(20_000).optional(),
+  height: z.number().int().positive().max(20_000).optional(),
   label: z.string().trim().max(60).default(''),
   order: z.number().int().default(0),
 })
@@ -246,7 +248,15 @@ function toAdminListing(d: AdminListingDoc) {
     updatedAt: d.updatedAt,
     photos: [...d.photos]
       .sort((a, b) => a.order - b.order)
-      .map((p) => ({ _id: String(p._id), url: p.url, pathname: p.pathname, label: p.label, order: p.order })),
+      .map((p) => ({
+        _id: String(p._id),
+        url: p.url,
+        pathname: p.pathname,
+        width: p.width,
+        height: p.height,
+        label: p.label,
+        order: p.order,
+      })),
     fragrance: f
       ? {
           id: String(f._id),

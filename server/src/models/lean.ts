@@ -31,6 +31,8 @@ export interface LeanPhoto {
   _id: Types.ObjectId
   url: string
   pathname?: string
+  width?: number
+  height?: number
   label: string
   order: number
 }

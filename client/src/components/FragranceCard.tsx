@@ -44,7 +44,8 @@ export default function FragranceCard({ fragrance: f }: { fragrance: Fragrance }
           src={cover.src}
           alt=""
           loading="lazy"
-          className={`aspect-[4/3] w-full object-cover ${soldOut ? 'opacity-60 grayscale' : ''}`}
+          // Cards share one 4:3 grid; portrait covers sit whole inside it instead of being cropped
+          className={`aspect-[4/3] w-full bg-accent-soft/60 object-contain ${soldOut ? 'opacity-60 grayscale' : ''}`}
         />
       ) : (
         <BottleArt
