@@ -2,7 +2,8 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
 import SiteLayout from './layouts/SiteLayout.tsx'
 import Home from './pages/Home.tsx'
-import CategoryPage from './pages/CategoryPage.tsx'
+import { CATEGORIES } from './lib/catalog.ts'
+import KindPage from './pages/KindPage.tsx'
 import FragranceDetail from './pages/FragranceDetail.tsx'
 import Inquiry from './pages/Inquiry.tsx'
 import History from './pages/History.tsx'
@@ -18,9 +19,12 @@ export default function App() {
         <Routes>
           <Route element={<SiteLayout />}>
             <Route index element={<Home />} />
-            <Route path="decants" element={<CategoryPage key="decant" kind="decant" />} />
-            <Route path="catch-release" element={<CategoryPage key="catch-release" kind="catch-release" />} />
-            <Route path="full-bottles" element={<CategoryPage key="full-bottle" kind="full-bottle" />} />
+            <Route path="decants" element={<KindPage key="decant" kind="decant" />} />
+            <Route path="catch-release" element={<KindPage key="catch-release" kind="catch-release" />} />
+            <Route path="full-bottles" element={<KindPage key="full-bottle" kind="full-bottle" />} />
+            {CATEGORIES.map((c) => (
+              <Route key={c.id} path={c.path.slice(1)} element={<Home key={c.id} category={c.id} />} />
+            ))}
             <Route path="fragrance/:slug" element={<FragranceDetail />} />
             <Route path="inquiry" element={<Inquiry />} />
             <Route path="history" element={<History />} />

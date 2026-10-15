@@ -1,6 +1,7 @@
 import { Router, type Response } from 'express'
 import { rateLimit } from 'express-rate-limit'
 import { z } from 'zod'
+import { FRAGRANCE_CATEGORIES } from '../../../shared/types.ts'
 import { INQUIRY_REFERENCE } from '../../../shared/validation.ts'
 import { notFound } from '../http.ts'
 import { Brand, Listing } from '../models/index.ts'
@@ -49,9 +50,11 @@ publicRouter.get('/health', (_req, res) => {
   res.json({ ok: true })
 })
 
-/** All published listings, newest first. ?kind=decant|catch-release|full-bottle  ?brand=<slug> */
+/** All published listings, newest first. ?kind=decant|catch-release|full-bottle  ?brand=<slug>  ?category=niche|designer|designer-private|dupe */
 publicRouter.get('/catalog', async (req, res) => {
-  const query = z.object({ kind: KIND.optional(), brand: SLUG.optional() }).parse(req.query)
+  const query = z
+    .object({ kind: KIND.optional(), brand: SLUG.optional(), category: z.enum(FRAGRANCE_CATEGORIES).optional() })
+    .parse(req.query)
   cdnCache(res, 30)
   res.json({ listings: await findCatalog(query) })
 })

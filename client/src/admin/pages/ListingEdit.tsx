@@ -293,28 +293,54 @@ function ListingForm({
           )}
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Fragrance" error={fieldErrors.fragrance}>
-              <select
-                value={form.fragrance}
-                onChange={(e) => set({ fragrance: e.target.value })}
-                aria-invalid={!!fieldErrors.fragrance}
-                className={inputClass}
+            {isNew ? (
+              <Field
+                label="Fragrance"
+                hint="Can’t be changed after the listing is created."
+                error={fieldErrors.fragrance}
               >
-                <option value="">Choose a fragrance…</option>
-                {fragrancesByBrand.map(([brand, frs]) => (
-                  <optgroup key={brand} label={brand}>
-                    {frs.map((fr) => (
-                      <option key={fr.id} value={fr.id}>
-                        {fr.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
-              <Link to="/admin/fragrances/new" className="mt-1 inline-flex min-h-11 items-center text-sm text-accent">
-                + Add a fragrance that isn’t listed
-              </Link>
-            </Field>
+                <select
+                  value={form.fragrance}
+                  onChange={(e) => set({ fragrance: e.target.value })}
+                  aria-invalid={!!fieldErrors.fragrance}
+                  className={inputClass}
+                >
+                  <option value="">Choose a fragrance…</option>
+                  {fragrancesByBrand.map(([brand, frs]) => (
+                    <optgroup key={brand} label={brand}>
+                      {frs.map((fr) => (
+                        <option key={fr.id} value={fr.id}>
+                          {fr.name}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+                <Link to="/admin/fragrances/new" className="mt-1 inline-flex min-h-11 items-center text-sm text-accent">
+                  + Add a fragrance that isn’t listed
+                </Link>
+              </Field>
+            ) : (
+              // Fixed after creation: inquiries point at this listing. Notes etc. live on the fragrance itself.
+              <div className="text-sm">
+                <p className="font-medium">Fragrance</p>
+                <p className="mt-1.5 flex min-h-11 items-center gap-2 rounded-md border border-border bg-bg px-3">
+                  <span className="text-muted">{listing?.fragrance?.brand.name}</span>
+                  <span className="font-medium">{listing?.fragrance?.name}</span>
+                </p>
+                <p className="mt-1 text-xs text-muted">
+                  Fixed once a listing exists. For a different fragrance, create a new listing.
+                </p>
+                {listing?.fragrance && (
+                  <Link
+                    to={`/admin/fragrances/${listing.fragrance.id}`}
+                    className="inline-flex min-h-11 items-center text-sm text-accent"
+                  >
+                    Edit this fragrance’s notes and details →
+                  </Link>
+                )}
+              </div>
+            )}
             <Field label="Status" hint="Only published listings appear in the shop.">
               <select
                 value={form.status}
@@ -422,7 +448,7 @@ type FieldsProps = { form: Form; set: (p: Partial<Form>) => void; errors: Record
 function Row({ children, onRemove, removeLabel }: { children: ReactNode; onRemove?: () => void; removeLabel: string }) {
   return (
     <div className="rounded-lg border border-border p-3">
-      <div className="grid grid-cols-2 items-end gap-3 sm:grid-cols-4">{children}</div>
+      <div className="grid grid-cols-2 items-start gap-3 sm:grid-cols-4">{children}</div>
       {onRemove && (
         <button type="button" onClick={onRemove} className="mt-2 min-h-11 text-sm text-muted hover:text-error">
           {removeLabel}
@@ -644,7 +670,7 @@ function BottleFields({ form, set, errors }: FieldsProps) {
       : undefined
   return (
     <Card title="Bottle details">
-      <div className="grid grid-cols-2 items-end gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 items-start gap-4 sm:grid-cols-4">
         <Field label="Bottle size (ml)" error={errors.bottleSizeMl}>
           <NumberInput label="Bottle size" value={form.bottleSizeMl} onChange={(v) => set({ bottleSizeMl: v })} />
         </Field>

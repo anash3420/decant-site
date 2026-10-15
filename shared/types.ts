@@ -1,8 +1,29 @@
-// Shapes mirror the planned API so epic 3 only swaps the data source.
+// The catalog shape shared by the API (server/src/services/catalog.ts) and the shop.
 
 export type Gender = 'Feminine' | 'Masculine' | 'Unisex'
 
 export type ListingKind = 'decant' | 'catch-release' | 'full-bottle'
+
+/** What kind of fragrance it is. Set on each fragrance. */
+export type FragranceCategory = 'niche' | 'designer' | 'designer-private' | 'dupe'
+
+export const FRAGRANCE_CATEGORIES: readonly FragranceCategory[] = ['niche', 'designer', 'designer-private', 'dupe']
+
+/** Concentrations, strongest to lightest. The admin offers exactly these; the server rejects anything else. */
+export const CONCENTRATIONS = [
+  'Extrait de Parfum',
+  'Parfum',
+  'Elixir',
+  'Eau de Parfum Intense',
+  'Eau de Parfum',
+  'Eau de Toilette',
+  'Eau de Cologne',
+  'Cologne',
+  'Eau Fraîche',
+  'Perfume Oil',
+] as const
+
+export type Concentration = (typeof CONCENTRATIONS)[number]
 
 export interface PriceTier {
   sizeMl: number
@@ -29,7 +50,9 @@ interface ListingBase {
   kind: ListingKind
   name: string
   house: string
-  concentration: string
+  /** niche · designer · designer-private · dupe (from the fragrance) */
+  category: FragranceCategory
+  concentration: Concentration
   year?: number
   gender: Gender
   accords: string[]

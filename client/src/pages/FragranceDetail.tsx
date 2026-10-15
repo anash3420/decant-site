@@ -11,6 +11,7 @@ import { useToast } from '../context/ToastContext.tsx'
 import PhotoCarousel from '../components/PhotoCarousel.tsx'
 import QtyStepper from '../components/QtyStepper.tsx'
 import StockBadge from '../components/StockBadge.tsx'
+import CategoryBadge from '../components/CategoryBadge.tsx'
 import NotFound from './NotFound.tsx'
 
 export default function FragranceDetail() {
@@ -123,6 +124,7 @@ function FragranceView({ fragrance }: { fragrance: Fragrance }) {
           <p className="mt-2 text-sm text-muted">{[f.concentration, f.year, f.gender].filter(Boolean).join(' · ')}</p>
 
           <div className="mt-4 flex flex-wrap gap-2">
+            <CategoryBadge category={f.category} link />
             <span className="rounded-full border border-accent px-2.5 py-0.5 text-xs text-accent">{meta.short}</span>
             {f.accords.map((a) => (
               <span key={a} className="rounded-full bg-accent-soft px-2.5 py-0.5 text-xs text-accent">

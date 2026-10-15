@@ -1,7 +1,7 @@
 import type { ClientSession } from 'mongoose'
-import type { Fragrance as CatalogListing, ListingKind } from '../../../shared/types.ts'
+import type { Fragrance as CatalogListing, FragranceCategory, ListingKind } from '../../../shared/types.ts'
 import type { LeanListing } from '../models/lean.ts'
-import { Listing } from '../models/index.ts'
+import { Fragrance, Listing } from '../models/index.ts'
 
 /**
  * Turns listing + fragrance + brand documents into the flat shape the client was built against
@@ -16,6 +16,7 @@ function toCatalogListing(l: LeanListing): CatalogListing | null {
     slug: l.slug,
     name: f.name,
     house: f.brand.name,
+    category: f.category ?? 'designer',
     concentration: f.concentration,
     year: f.year ?? undefined,
     gender: f.gender,
@@ -68,10 +69,11 @@ function toCatalogListing(l: LeanListing): CatalogListing | null {
 const populateFragrance = { path: 'fragrance', populate: { path: 'brand', select: 'name slug' } }
 const shown = (l: CatalogListing | null): l is CatalogListing => l !== null
 
-export async function findCatalog(filter: { kind?: ListingKind; brand?: string }) {
+export async function findCatalog(filter: { kind?: ListingKind; brand?: string; category?: FragranceCategory }) {
   const query: Record<string, unknown> = { status: 'published' }
   if (filter.kind) query.kind = filter.kind
   if (filter.brand) query.brandSlug = filter.brand
+  if (filter.category) query.fragrance = { $in: await Fragrance.find({ category: filter.category }).distinct('_id') }
   const docs = await Listing.find(query).sort({ addedAt: -1 }).populate(populateFragrance).lean<LeanListing[]>()
   return docs.map(toCatalogListing).filter(shown)
 }
