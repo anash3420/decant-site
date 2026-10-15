@@ -3,3 +3,4 @@
 **/package-lock.json
 server/.mongo
 server/.uploads
+.vercel

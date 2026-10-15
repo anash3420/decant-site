@@ -57,6 +57,38 @@ Conventions:
 - **Mobile first.** Check new UI at 375px and 320px: no sideways scroll, 44px tap targets, 16px form inputs.
 - Style is enforced by the tools above (no semicolons, single quotes, 120 columns), so there's nothing to remember.
 
+## Deploying (Vercel + MongoDB Atlas + Vercel Blob)
+
+The whole site deploys as one Vercel project. `scripts/vercel-build.mjs` writes Vercel's
+[Build Output API](https://vercel.com/docs/build-output-api) format: the shop as static files, and the Express API
+bundled with esbuild into a single function. `/api/*` goes to the function, real files are served as they are, and
+every other path gets `index.html`. `vercel.json` only names the install and build commands.
+
+```bash
+npm run build:vercel                 # build .vercel/output exactly as Vercel will
+npm run preview:vercel               # serve it on http://localhost:3000 (API uses server/.env)
+API_URL=http://localhost:3000/api npm --prefix server run smoke    # test the built output
+```
+
+**Production database (Atlas).** Put the connection string, with `/decants` before the `?`, plus
+`NODE_ENV=production` in `server/.env.production` (git-ignored). Then run:
+
+```bash
+cd server
+npm run db:setup:prod                          # indexes + default settings; never deletes anything
+npm run create-admin:prod -- you@example.com   # your live admin login
+```
+
+`npm run seed` refuses to run with `NODE_ENV=production`, so sample data can't overwrite the live database.
+
+**Vercel project settings:**
+
+- Import the GitHub repo; leave Root Directory as the repo root. `vercel.json` handles the build.
+- Storage: connect the Blob store. This adds `BLOB_READ_WRITE_TOKEN`.
+- Environment variables: `MONGODB_URI`, `JWT_SECRET` (a long random string) and `NODE_ENV=production`.
+- Atlas: under Network Access, allow `0.0.0.0/0`, because Vercel functions have no fixed IP. Put the cluster in
+  AWS us-east-1, next to Vercel's default `iad1` function region.
+
 ## How it works
 
 - Stock is held the moment an inquiry is sent (buy-it-now style) inside a MongoDB transaction, so two buyers

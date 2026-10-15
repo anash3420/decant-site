@@ -16,3 +16,6 @@ server/.uploads
 *.log
 .vscode
 .idea
+
+# Vercel build output and local project link
+.vercel
