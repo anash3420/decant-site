@@ -10,6 +10,9 @@ const photoSchema = new Schema(
     url: { type: String, required: true },
     /** Vercel Blob pathname, needed to delete the file later */
     pathname: { type: String },
+    /** Pixel size, so the shop can tell portrait from landscape without loading the image */
+    width: { type: Number, min: 1 },
+    height: { type: Number, min: 1 },
     label: { type: String, default: '' },
     order: { type: Number, default: 0 },
   },

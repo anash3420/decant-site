@@ -46,6 +46,20 @@ Errors are always `{ error: { code, message, details? } }`. Codes: `invalid_requ
 
 Admin mutations from another site's pages are refused (Origin check) on top of the SameSite cookie.
 
+## Photo storage (Vercel Blob)
+
+Admin photo uploads go to **Vercel Blob** when `BLOB_READ_WRITE_TOKEN` is set, and to `./.uploads` when it isn't
+(local dev only). On Vercel the server refuses to start without the token, because the disk is read-only.
+
+1. In Vercel: **Storage → Create → Blob**, with **Public** access (shoppers load the photos directly).
+2. Locally: copy the store's `BLOB_READ_WRITE_TOKEN` into `server/.env`. On Vercel: connect the store to the
+   project and the variable is added for you.
+3. `npm run blob:check` uploads a test image, downloads it as a shopper would, checks the one-year cache header,
+   and deletes it.
+
+Photos get random names and are never edited in place, so they're cached for a year (`cacheControlMaxAge`).
+Removing a photo in the admin deletes the file from Blob.
+
 ## Checks
 
 Both smoke tests change data, so re-seed after:

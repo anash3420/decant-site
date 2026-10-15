@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Photo } from '@shared/types.ts'
 import BottleArt from './BottleArt.tsx'
 import { scrollBehavior } from '../lib/motion.ts'
+import { FRAME_CLASS, orientationOf } from '../lib/photos.ts'
 
 interface Props {
   photos: Photo[]
@@ -53,6 +54,8 @@ export default function PhotoCarousel({ photos, tint, alt, dimmed }: Props) {
   }
 
   const many = photos.length > 1
+  // The cover photo sets the frame (a bottle shot upright gets a tall one). Other photos fit inside it whole.
+  const frame = FRAME_CLASS[orientationOf(photos[0])]
 
   return (
     <div
@@ -83,7 +86,8 @@ export default function PhotoCarousel({ photos, tint, alt, dimmed }: Props) {
                 src={p.src}
                 alt={`${alt}: ${p.label}`}
                 loading={i === 0 ? 'eager' : 'lazy'}
-                className="aspect-[4/3] w-full object-cover md:aspect-square"
+                // object-contain: a photo is never cropped, even when its shape differs from the frame's
+                className={`${frame} w-full bg-accent-soft/60 object-contain ${dimmed ? 'opacity-60 grayscale' : ''}`}
               />
             ) : (
               <BottleArt

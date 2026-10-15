@@ -286,11 +286,19 @@ await check('upload an image and attach it to the listing', async () => {
   const current = (await api(`/admin/listings/${listingId}`)).body.listing
   const r = await api(`/admin/listings/${listingId}`, {
     method: 'PATCH',
-    json: { ...current, photos: [{ url: up.body.url, pathname: up.body.pathname, label: 'Front', order: 0 }] },
+    json: {
+      ...current,
+      photos: [
+        // A portrait (3:4) photo: its size travels with it so the shop can frame it tall
+        { url: up.body.url, pathname: up.body.pathname, width: 1200, height: 1600, label: 'Front', order: 0 },
+      ],
+    },
   })
   assert.equal(r.status, 200, JSON.stringify(r.body))
   const pub = await catalog('smoke-test-house-test-accord')
-  assert.deepEqual(pub.photos, [{ label: 'Front', src: photoUrl }])
+  assert.deepEqual(pub.photos, [{ label: 'Front', src: photoUrl, width: 1200, height: 1600 }])
+  const admin = (await api(`/admin/listings/${listingId}`)).body.listing
+  assert.equal(admin.photos[0].height, 1600, 'admin view keeps the size too')
 })
 await check('non-images are refused', async () => {
   const r = await api('/admin/uploads', { body: 'hello', headers: { 'content-type': 'text/plain' } })
