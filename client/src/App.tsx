@@ -1,5 +1,6 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Navigate, Routes, Route } from 'react-router-dom'
+import { Analytics } from '@vercel/analytics/react'
 import SiteLayout from './layouts/SiteLayout.tsx'
 import Home from './pages/Home.tsx'
 import { CATEGORIES } from './lib/catalog.ts'
@@ -41,6 +42,7 @@ export default function App() {
           />
         </Routes>
       </ToastProvider>
+      <Analytics />
     </BrowserRouter>
   )
 }
