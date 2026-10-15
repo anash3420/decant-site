@@ -3,6 +3,7 @@ import type { Fragrance } from '@shared/types.ts'
 import { formatPrice, fromOption, isSoldOut } from '@shared/stock.ts'
 import BottleArt from './BottleArt.tsx'
 import StockBadge from './StockBadge.tsx'
+import CategoryBadge from './CategoryBadge.tsx'
 
 function priceLine(f: Fragrance) {
   const from = fromOption(f)
@@ -54,7 +55,10 @@ export default function FragranceCard({ fragrance: f }: { fragrance: Fragrance }
         />
       )}
       <div className="flex flex-1 flex-col p-5">
-        <p className="text-sm text-muted">{f.house}</p>
+        <div className="flex items-start justify-between gap-2">
+          <p className="min-w-0 text-sm text-muted">{f.house}</p>
+          <CategoryBadge category={f.category} />
+        </div>
         <h3 className="mt-1 text-2xl group-hover:text-accent">{f.name}</h3>
 
         <div className="mt-3 flex flex-wrap gap-2">

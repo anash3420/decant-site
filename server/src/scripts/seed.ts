@@ -47,6 +47,7 @@ for (const m of mock) {
   const fragrance = await Fragrance.create({
     slug: key,
     name: m.name,
+    category: m.category,
     brand: brandIds.get(m.house),
     concentration: m.concentration,
     year: m.year,

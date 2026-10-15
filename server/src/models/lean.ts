@@ -1,5 +1,5 @@
 import type { Types } from 'mongoose'
-import type { Gender, ListingKind } from '../../../shared/types.ts'
+import type { Concentration, FragranceCategory, Gender, ListingKind } from '../../../shared/types.ts'
 
 /**
  * Plain-object shapes of documents as `.lean()` returns them, after populate().
@@ -17,7 +17,8 @@ export interface LeanFragrance {
   slug: string
   name: string
   brand: LeanBrand | null
-  concentration: string
+  category: FragranceCategory
+  concentration: Concentration
   year?: number
   gender: Gender
   accords: string[]
