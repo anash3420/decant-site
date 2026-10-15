@@ -11,6 +11,7 @@
     "create-admin": "tsx --env-file=.env src/scripts/create-admin.ts",
     "smoke": "tsx --env-file=.env src/scripts/smoke.ts",
     "smoke:admin": "tsx --env-file=.env src/scripts/smoke-admin.ts",
+    "blob:check": "tsx --env-file=.env src/scripts/blob-check.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
