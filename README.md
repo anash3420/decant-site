@@ -62,7 +62,9 @@ Conventions:
 The whole site deploys as one Vercel project. `scripts/vercel-build.mjs` writes Vercel's
 [Build Output API](https://vercel.com/docs/build-output-api) format: the shop as static files, and the Express API
 bundled with esbuild into a single function. `/api/*` goes to the function, real files are served as they are, and
-every other path gets `index.html`. `vercel.json` only names the install and build commands.
+every other path gets `index.html`. `vercel.json` only names the install and build commands. They install with
+`--include=dev` because `NODE_ENV=production` (needed at runtime) also applies to the build, and npm would otherwise
+skip the build tools (Vite, TypeScript, esbuild).
 
 ```bash
 npm run build:vercel                 # build .vercel/output exactly as Vercel will
