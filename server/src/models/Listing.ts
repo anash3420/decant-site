@@ -19,7 +19,8 @@ const photoSchema = new Schema(
 const listingSchema = new Schema(
   {
     slug: { type: String, required: true, unique: true, lowercase: true, trim: true },
-    fragrance: { type: Schema.Types.ObjectId, ref: 'Fragrance', required: true, index: true },
+    /** Set once at creation: inquiries and price history point at this listing, so its fragrance can't change */
+    fragrance: { type: Schema.Types.ObjectId, ref: 'Fragrance', required: true, index: true, immutable: true },
     /** Copied from the brand so ?brand= filtering needs no $lookup */
     brandSlug: { type: String, required: true, lowercase: true },
     status: { type: String, enum: ['draft', 'published', 'archived'], default: 'draft' },

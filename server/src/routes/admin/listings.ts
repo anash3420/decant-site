@@ -184,8 +184,17 @@ listingsRouter.patch('/:id', async (req, res) => {
   const existing = await Listing.findById(id)
   if (!existing) throw notFound('Listing')
 
-  const input = listingInput.parse({ ...req.body, kind: existing.get('kind') })
+  // The fragrance is fixed once a listing exists; it may be omitted, but not changed
+  const fragranceId = String(existing.fragrance)
+  const input = listingInput.parse({ fragrance: fragranceId, ...req.body, kind: existing.get('kind') })
+  if (input.fragrance !== fragranceId)
+    throw new HttpError(
+      409,
+      'fragrance_locked',
+      'A listing’s fragrance can’t be changed. Create a new listing for a different fragrance.',
+    )
   const { fields } = await toFields(input, existing.get('soldAt'))
+  delete fields.fragrance
   if (input.slug && input.slug !== existing.slug) {
     if (await Listing.exists({ slug: input.slug, _id: { $ne: id } }))
       throw new HttpError(409, 'slug_taken', 'Another listing already uses that link.')

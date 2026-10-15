@@ -1,17 +1,25 @@
 import { useSearchParams } from 'react-router-dom'
+import type { FragranceCategory } from '@shared/types.ts'
 import { useShop } from '../context/ShopContext.tsx'
-import { KINDS, byBrand, sortForDisplay } from '../lib/catalog.ts'
+import { CATEGORIES, KINDS, byBrand, byCategory, categoryMeta, sortForDisplay } from '../lib/catalog.ts'
 import BrandSidebar from '../components/BrandSidebar.tsx'
+import CategoryChips from '../components/CategoryChips.tsx'
 import CategoryRow from '../components/CategoryRow.tsx'
 import { CardSkeletons, CatalogError } from '../components/CatalogState.tsx'
 
-export default function Home() {
+/** The homepage, and with `category` set, that category's page (/niche, /designer, …) */
+export default function Home({ category }: { category?: FragranceCategory }) {
   const { listings, settings, status } = useShop()
   const [params] = useSearchParams()
   const brand = params.get('brand')
-  const filtered = byBrand(listings, brand)
+  const meta = category ? categoryMeta(category) : null
+
+  const inCategory = byCategory(listings, category)
+  const filtered = byBrand(inCategory, brand)
   const brandName = filtered[0]?.house
-  const query = brand ? `?brand=${brand}` : ''
+  // "View all" keeps both filters, e.g. /decants?category=niche&brand=creed
+  const keep = new URLSearchParams({ ...(category && { category }), ...(brand && { brand }) }).toString()
+  const counts = Object.fromEntries(CATEGORIES.map((c) => [c.id, byCategory(listings, c.id).length]))
 
   const rows = KINDS.map((k) => ({ ...k, items: sortForDisplay(filtered.filter((f) => f.kind === k.id)) })).filter(
     (r) => r.items.length > 0,
@@ -20,18 +28,27 @@ export default function Home() {
   return (
     <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-12">
       <aside className="hidden lg:block lg:pt-2">
-        <BrandSidebar list={listings} />
+        <BrandSidebar list={inCategory} />
       </aside>
 
       <div className="min-w-0">
-        <h1 className="text-4xl sm:text-5xl">{brandName && brand ? brandName : 'Fragrances'}</h1>
+        <h1 className="text-4xl sm:text-5xl">{brandName && brand ? brandName : (meta?.title ?? 'Fragrances')}</h1>
         <p className="mt-3 max-w-prose text-muted">
-          {settings?.siteTagline ? `${settings.siteTagline}. ` : ''}Add what you like to your inquiry and I'll reach out
-          on Facebook to sort out payment and pickup.
+          {meta
+            ? meta.blurb
+            : `${settings?.siteTagline ? `${settings.siteTagline}. ` : ''}Add what you like to your inquiry and I'll reach out on Facebook to sort out payment and pickup.`}
         </p>
 
-        <div className="mt-6 lg:hidden">
-          <BrandSidebar list={listings} />
+        <div className="mt-6">
+          <CategoryChips
+            active={category ?? null}
+            hrefFor={(c) => (c ? categoryMeta(c).path : '/')}
+            counts={status === 'ready' ? counts : undefined}
+          />
+        </div>
+
+        <div className="mt-4 lg:hidden">
+          <BrandSidebar list={inCategory} />
         </div>
 
         <div className="mt-10 space-y-14">
@@ -47,7 +64,11 @@ export default function Home() {
             <CatalogError />
           ) : rows.length === 0 ? (
             <p className="text-muted">
-              {brand ? 'Nothing from this brand right now.' : 'New listings are on the way. Check back soon.'}
+              {brand
+                ? 'Nothing from this brand right now.'
+                : meta
+                  ? `No ${meta.title.toLowerCase()} listed right now. Check back soon.`
+                  : 'New listings are on the way. Check back soon.'}
             </p>
           ) : (
             rows.map((r) => (
@@ -56,7 +77,7 @@ export default function Home() {
                 title={r.title}
                 blurb={r.blurb}
                 items={r.items}
-                viewAllHref={`${r.path}${query}`}
+                viewAllHref={keep ? `${r.path}?${keep}` : r.path}
               />
             ))
           )}

@@ -38,10 +38,10 @@ const contact = { name: 'Smoke Test', facebook: 'https://www.facebook.com/profil
 console.log(`Smoke testing ${API}\n`)
 
 console.log('Catalog')
-await check('GET /catalog returns 15 listings in the client shape', async () => {
+await check('GET /catalog returns 16 listings in the client shape', async () => {
   const { status, body } = await api('/catalog')
   assert.equal(status, 200)
-  assert.equal(body.listings.length, 15)
+  assert.equal(body.listings.length, 16)
   const santal = body.listings.find((l: any) => l.slug === 'le-labo-santal-33')
   assert.equal(santal.kind, 'decant')
   assert.equal(santal.house, 'Le Labo')
@@ -70,11 +70,28 @@ await check('GET /catalog/:slug returns one listing', async () => {
   assert.equal(body.listing.kind, 'full-bottle')
   assert.equal(body.listing.sold, false)
 })
-await check('GET /brands lists 13 brands with per-kind counts', async () => {
+await check('GET /brands lists 14 brands with per-kind counts', async () => {
   const { body } = await api('/brands')
-  assert.equal(body.brands.length, 13)
+  assert.equal(body.brands.length, 14)
   const creed = body.brands.find((b: any) => b.slug === 'creed')
   assert.deepEqual(creed.byKind, { 'catch-release': 1, 'full-bottle': 1 })
+})
+await check('every listing has a category from its fragrance; ?category filters', async () => {
+  const { body } = await api('/catalog')
+  assert.ok(body.listings.every((l: any) => ['niche', 'designer', 'designer-private', 'dupe'].includes(l.category)))
+  const counts = Object.fromEntries(
+    await Promise.all(
+      ['niche', 'designer', 'designer-private', 'dupe'].map(async (c) => [
+        c,
+        (await api(`/catalog?category=${c}`)).body.listings.length,
+      ]),
+    ),
+  )
+  assert.deepEqual(counts, { niche: 10, designer: 4, 'designer-private': 1, dupe: 1 })
+  // Same brand, different categories: Tom Ford's Tobacco Vanille is a private line
+  const tv = (await api('/catalog/tom-ford-tobacco-vanille')).body.listing
+  assert.equal(tv.category, 'designer-private')
+  assert.equal((await api('/catalog?category=luxury')).status, 400)
 })
 await check('GET /settings/public has shipping options and limits', async () => {
   const { body } = await api('/settings/public')

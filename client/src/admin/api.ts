@@ -1,3 +1,5 @@
+import type { Concentration, FragranceCategory } from '@shared/types.ts'
+
 // Admin API client. Session lives in an HttpOnly cookie the browser sends automatically.
 
 export class ApiError extends Error {
@@ -116,9 +118,10 @@ export interface AdminFragrance {
   slug: string
   name: string
   brand: { id: string; name: string; slug: string } | null
-  concentration: string
+  concentration: Concentration
   year: number | null
   gender: 'Feminine' | 'Masculine' | 'Unisex'
+  category: FragranceCategory
   accords: string[]
   notes: { top: string[]; heart: string[]; base: string[] }
   description: string

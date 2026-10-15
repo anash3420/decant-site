@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import { z } from 'zod'
 import { slugify } from '../../../../shared/slug.ts'
+import { CONCENTRATIONS, FRAGRANCE_CATEGORIES } from '../../../../shared/types.ts'
 import { HttpError, notFound } from '../../http.ts'
 import { Brand, Fragrance, Listing } from '../../models/index.ts'
 import type { LeanFragrance } from '../../models/lean.ts'
@@ -74,7 +75,7 @@ const fragranceInput = z.object({
   name: z.string().trim().min(1).max(120),
   brand: objectId,
   slug: slugField.optional(),
-  concentration: z.string().trim().min(1).max(40),
+  concentration: z.enum(CONCENTRATIONS, 'Pick a concentration'),
   year: z
     .number()
     .int()
@@ -83,6 +84,7 @@ const fragranceInput = z.object({
     .nullish()
     .transform((v) => v ?? undefined),
   gender: z.enum(['Feminine', 'Masculine', 'Unisex']),
+  category: z.enum(FRAGRANCE_CATEGORIES),
   accords: notesList,
   notes: z.object({ top: notesList, heart: notesList, base: notesList }).default({ top: [], heart: [], base: [] }),
   description: z.string().trim().max(2000).default(''),
@@ -162,6 +164,7 @@ function toAdminFragrance(f: LeanFragrance) {
     concentration: f.concentration,
     year: f.year ?? null,
     gender: f.gender,
+    category: f.category ?? 'designer',
     accords: f.accords,
     notes: f.notes,
     description: f.description,

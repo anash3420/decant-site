@@ -164,6 +164,7 @@ await check('create brand and fragrance', async () => {
       brand: brandId,
       concentration: 'Eau de Parfum',
       gender: 'Unisex',
+      category: 'dupe',
       accords: ['Woody'],
       notes: { top: ['Bergamot'], heart: ['Rose'], base: ['Musk'] },
       tint: '#336699',
@@ -172,6 +173,16 @@ await check('create brand and fragrance', async () => {
   assert.equal(f.status, 201, JSON.stringify(f.body))
   fragranceId = f.body.fragrance.id
   assert.equal(f.body.fragrance.slug, 'smoke-test-house-test-accord')
+  assert.equal(f.body.fragrance.category, 'dupe')
+  const noCategory = await api('/admin/fragrances', {
+    json: { name: 'No Category', brand: brandId, concentration: 'Eau de Parfum', gender: 'Unisex' },
+  })
+  assert.equal(noCategory.status, 400, 'category is required')
+  const freeText = await api('/admin/fragrances', {
+    json: { name: 'Free Text', brand: brandId, concentration: 'EDP', gender: 'Unisex', category: 'niche' },
+  })
+  assert.equal(freeText.status, 400, 'only listed concentrations are accepted')
+  assert.ok(freeText.body.error.details.fieldErrors.concentration, 'error points at the concentration field')
 })
 await check('create a draft decant listing with a cost; drafts stay off the public catalog', async () => {
   const r = await api('/admin/listings', {
@@ -204,6 +215,21 @@ await check('validation catches impossible stock', async () => {
   })
   assert.equal(r.status, 400)
 })
+await check('a listing’s fragrance is fixed after creation', async () => {
+  const current = (await api(`/admin/listings/${listingId}`)).body.listing
+  const other = (await api('/admin/fragrances')).body.fragrances.find((f: any) => f.id !== fragranceId)
+  const swap = await api(`/admin/listings/${listingId}`, {
+    method: 'PATCH',
+    json: { ...current, fragrance: other.id },
+  })
+  assert.equal(swap.status, 409)
+  assert.equal(swap.body.error.code, 'fragrance_locked')
+  // Leaving it out is fine: the existing fragrance is kept
+  const { fragrance: _omit, ...withoutFragrance } = current
+  const ok = await api(`/admin/listings/${listingId}`, { method: 'PATCH', json: withoutFragrance })
+  assert.equal(ok.status, 200, JSON.stringify(ok.body))
+  assert.equal(ok.body.listing.fragrance.id, fragranceId)
+})
 await check('publish + log stock; public catalog hides the cost', async () => {
   const current = (await api(`/admin/listings/${listingId}`)).body.listing
   const r = await api(`/admin/listings/${listingId}`, {
@@ -217,6 +243,21 @@ await check('publish + log stock; public catalog hides the cost', async () => {
   assert.ok(!JSON.stringify(pub).includes('costPaid'))
   const brands = (await api('/brands', { auth: false })).body.brands
   assert.ok(brands.some((b: any) => b.slug === 'smoke-test-house'))
+})
+await check('changing a fragrance’s category moves its listings between category pages', async () => {
+  const inDupes = async () =>
+    (await api('/catalog?category=dupe', { auth: false })).body.listings.some(
+      (l: any) => l.slug === 'smoke-test-house-test-accord',
+    )
+  assert.equal(await inDupes(), true)
+  const current = (await api(`/admin/fragrances/${fragranceId}`)).body.fragrance
+  const r = await api(`/admin/fragrances/${fragranceId}`, {
+    method: 'PATCH',
+    json: { ...current, brand: current.brand.id, category: 'niche' },
+  })
+  assert.equal(r.status, 200, JSON.stringify(r.body))
+  assert.equal(await inDupes(), false)
+  assert.equal((await catalog('smoke-test-house-test-accord')).category, 'niche')
 })
 await check('renaming a brand updates its listings’ brand filter', async () => {
   const r = await api(`/admin/brands/${brandId}`, {
