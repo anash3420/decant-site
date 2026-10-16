@@ -150,6 +150,47 @@ function SettingsForm({ initial }: { initial: AdminSettings }) {
           </div>
         </Card>
 
+        <Card title="Inventory">
+          <fieldset>
+            <legend className="mb-3 text-sm text-muted">
+              What happens to stock when a buyer sends an inquiry. Turn deduction off to try the shop without using up
+              real stock. Inquiries are still checked against what's in stock either way.
+            </legend>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {(
+                [
+                  [true, 'Deduct stock', 'Live: stock is held the moment an inquiry is sent.'],
+                  [false, "Don't deduct (test mode)", 'Inquiries leave stock untouched.'],
+                ] as const
+              ).map(([value, label, detail]) => (
+                <label
+                  key={label}
+                  className={`flex min-h-11 cursor-pointer gap-3 rounded-lg border p-3 text-sm ${
+                    form.deductStock === value ? 'border-accent bg-accent-soft' : 'border-border'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="deductStock"
+                    checked={form.deductStock === value}
+                    onChange={() => setForm({ ...form, deductStock: value })}
+                    className="mt-0.5 size-5 shrink-0 accent-accent"
+                  />
+                  <span>
+                    <span className="block font-medium">{label}</span>
+                    <span className="text-muted">{detail}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+            {!form.deductStock && (
+              <p className="mt-3 rounded-md bg-error-soft px-4 py-3 text-sm font-medium text-error">
+                Test mode is on: inquiries won't take anything out of stock. Switch back before real buyers order.
+              </p>
+            )}
+          </fieldset>
+        </Card>
+
         {saveError && (
           <p role="alert" className="rounded-md bg-error-soft px-4 py-3 text-sm font-medium text-error">
             {saveError.message}

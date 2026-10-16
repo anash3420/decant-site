@@ -58,6 +58,8 @@ const inquirySchema = new Schema(
      * Cancelling releases it and flips this to false so it can't be released twice.
      */
     stockHeld: { type: Boolean, default: true },
+    /** Created while stock deduction was switched off in Settings (test mode): nothing was held */
+    stockSkipped: { type: Boolean, default: false },
     meta: {
       ipHash: { type: String },
       userAgent: { type: String, maxlength: 300 },
