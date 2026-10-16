@@ -1,9 +1,22 @@
 import { Link } from 'react-router-dom'
 import type { Fragrance } from '@shared/types.ts'
-import { formatPrice, fromOption, isSoldOut } from '@shared/stock.ts'
+import { formatPrice, fromOption, isSoldOut, remainingMl } from '@shared/stock.ts'
 import BottleArt from './BottleArt.tsx'
 import StockBadge from './StockBadge.tsx'
 import CategoryBadge from './CategoryBadge.tsx'
+
+/** Below this many ml left, a decant's badge turns red so buyers know it's running out */
+const LOW_ML = 30
+
+function stockBadge(f: Fragrance, soldOut: boolean) {
+  if (soldOut) return <StockBadge inStock={false} label={f.kind === 'full-bottle' ? 'Sold' : undefined} />
+  if (f.kind === 'full-bottle') return <StockBadge inStock label="Available" />
+  if (f.kind === 'decant') {
+    const ml = remainingMl(f)
+    return <StockBadge inStock low={ml < LOW_ML} label={`${ml}ml left`} />
+  }
+  return <StockBadge inStock />
+}
 
 function priceLine(f: Fragrance) {
   const from = fromOption(f)
@@ -85,10 +98,7 @@ export default function FragranceCard({ fragrance: f }: { fragrance: Fragrance }
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-5">
           <p className="text-sm text-muted">{priceLine(f)}</p>
-          <StockBadge
-            inStock={!soldOut}
-            label={f.kind === 'full-bottle' ? (soldOut ? 'Sold' : 'Available') : undefined}
-          />
+          {stockBadge(f, soldOut)}
         </div>
       </div>
     </Link>
