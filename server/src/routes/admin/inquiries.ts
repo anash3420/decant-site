@@ -151,5 +151,6 @@ function toAdminInquiry(d: InquiryObject) {
     statusHistory: d.statusHistory,
     adminNotes: d.adminNotes,
     stockHeld: d.stockHeld,
+    stockSkipped: d.stockSkipped ?? false,
   }
 }
