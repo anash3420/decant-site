@@ -218,5 +218,29 @@ await check('exactly one wins, the rest get 409, no overselling', async () => {
   assert.equal(left, 1)
 })
 
+console.log('\nSearch and optional contact details')
+await check('search matches house or name, accent- and case-insensitive, best first', async () => {
+  const { status, body } = await api('/search?q=LE%20LABO')
+  assert.equal(status, 200)
+  assert.ok(body.total >= 2, `expected Le Labo listings, got ${body.total}`)
+  assert.ok(body.results.every((f: any) => f.house === 'Le Labo'))
+  const limited = (await api('/search?q=e&limit=2')).body
+  assert.equal(limited.results.length, 2)
+  assert.ok(limited.total > 2, 'total counts every match, not just the returned ones')
+  assert.equal((await api('/search?q=nothing-sells-this')).body.total, 0)
+  assert.equal((await api('/search?q=')).status, 400)
+})
+await check('an inquiry can be sent without a Facebook link', async () => {
+  const { status, body } = await api('/inquiries', {
+    json: {
+      contact: { name: 'No Facebook', facebook: '' },
+      fulfilment: 'pickup',
+      items: [{ slug: 'diptyque-philosykos', optionId: '2ml', qty: 1 }],
+    },
+  })
+  assert.equal(status, 201, JSON.stringify(body))
+  assert.equal(body.inquiry.contact.facebook, undefined)
+})
+
 console.log(`\n${passed} passed, ${failed} failed`)
 process.exit(failed ? 1 : 0)

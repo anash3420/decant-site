@@ -17,7 +17,7 @@ export interface SentInquiryItem {
 export interface SentInquiry {
   reference: string
   createdAt: string
-  contact: { name: string; facebook: string }
+  contact: { name: string; facebook?: string }
   fulfilment: FulfilmentId
   fulfilmentLabel: string
   shippingCost: number
