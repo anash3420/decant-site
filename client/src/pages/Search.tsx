@@ -38,15 +38,7 @@ export default function Search() {
         ← All fragrances
       </Link>
 
-      <header className="mt-4 flex items-center gap-4 sm:gap-5">
-        {house && (
-          <span
-            aria-hidden="true"
-            className="grid size-14 shrink-0 place-items-center rounded-full bg-accent-soft font-display text-3xl text-accent sm:size-16 sm:text-4xl"
-          >
-            {house.charAt(0)}
-          </span>
-        )}
+      <header className="mt-4">
         <div className="min-w-0">
           <p className="text-xs font-medium tracking-[0.14em] text-muted uppercase">
             {house ? 'House' : 'Search results'}
