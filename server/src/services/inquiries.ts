@@ -15,7 +15,14 @@ export const createInquirySchema = z
   .object({
     contact: z.object({
       name: z.string().trim().min(1, 'Please add your name.').max(100),
-      facebook: z.string().trim().max(300).regex(FACEBOOK_URL, 'Paste your Facebook profile link.'),
+      // Optional: without it, the buyer messages the owner (the thank-you screen links to the owner's profile)
+      facebook: z
+        .string()
+        .trim()
+        .max(300)
+        .refine((v) => v === '' || FACEBOOK_URL.test(v), 'Paste your Facebook profile link, or leave it empty.')
+        .optional()
+        .transform((v) => v || undefined),
     }),
     fulfilment: z.enum(['pickup', 'lettermail', 'tracked']),
     location: z.string().trim().max(200).optional(),
@@ -170,7 +177,7 @@ function toPublicInquiry(i: InstanceType<typeof Inquiry>) {
     reference: i.reference,
     createdAt: i.createdAt.toISOString(),
     status: i.status,
-    contact: { name: i.contact!.name, facebook: i.contact!.facebook },
+    contact: { name: i.contact!.name, facebook: i.contact!.facebook ?? undefined },
     fulfilment: {
       method: i.fulfilment!.method,
       label: i.fulfilment!.label,

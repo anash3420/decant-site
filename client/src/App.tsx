@@ -8,6 +8,7 @@ import KindPage from './pages/KindPage.tsx'
 import FragranceDetail from './pages/FragranceDetail.tsx'
 import Inquiry from './pages/Inquiry.tsx'
 import History from './pages/History.tsx'
+import Search from './pages/Search.tsx'
 import NotFound from './pages/NotFound.tsx'
 // The admin is only for me; keep it out of the bundle shop visitors download
 const AdminApp = lazy(() => import('./admin/AdminApp.tsx'))
@@ -29,6 +30,7 @@ export default function App() {
             <Route path="fragrance/:slug" element={<FragranceDetail />} />
             <Route path="inquiry" element={<Inquiry />} />
             <Route path="history" element={<History />} />
+            <Route path="search" element={<Search />} />
             <Route path="info" element={<Navigate to="/history" replace />} />
             <Route path="*" element={<NotFound />} />
           </Route>

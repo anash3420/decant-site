@@ -144,7 +144,7 @@ export interface InquirySummary {
   createdAt: string
   status: InquiryStatus
   name: string
-  facebook: string
+  facebook?: string
   fulfilment: string
   itemCount: number
   itemNames: string[]
@@ -158,7 +158,7 @@ export interface AdminInquiry {
   updatedAt: string
   status: InquiryStatus
   nextStatuses: InquiryStatus[]
-  contact: { name: string; facebook: string }
+  contact: { name: string; facebook?: string }
   fulfilment: { method: string; label: string; cost: number; location?: string }
   notes?: string
   items: {

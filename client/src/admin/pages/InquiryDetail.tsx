@@ -95,14 +95,20 @@ export default function InquiryDetail() {
           <Card title={i.contact.name} actions={<StatusBadge status={i.status} />}>
             <p className="text-sm text-muted">Sent {dateTime.format(new Date(i.createdAt))}</p>
             <div className="mt-4 flex flex-wrap gap-2">
-              <a
-                href={i.contact.facebook.startsWith('http') ? i.contact.facebook : `https://${i.contact.facebook}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex min-h-11 items-center rounded-md bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-hover"
-              >
-                Open their Facebook ↗
-              </a>
+              {i.contact.facebook ? (
+                <a
+                  href={i.contact.facebook.startsWith('http') ? i.contact.facebook : `https://${i.contact.facebook}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-11 items-center rounded-md bg-accent px-4 text-sm font-medium text-on-accent hover:bg-accent-hover"
+                >
+                  Open their Facebook ↗
+                </a>
+              ) : (
+                <p className="inline-flex min-h-11 items-center rounded-md bg-bg px-4 text-sm text-muted">
+                  No Facebook link: they'll message you with ref {i.reference}
+                </p>
+              )}
               <Button variant="secondary" onClick={copyReply}>
                 Copy reply message
               </Button>

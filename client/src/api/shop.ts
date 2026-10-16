@@ -74,7 +74,7 @@ export interface CreatedInquiry {
   reference: string
   createdAt: string
   status: string
-  contact: { name: string; facebook: string }
+  contact: { name: string; facebook?: string }
   fulfilment: { method: FulfilmentId; label: string; cost: number; location?: string }
   notes?: string
   items: {
@@ -102,7 +102,7 @@ export const fetchListing = (slug: string) =>
 export const fetchSettings = () => request<ShopSettings>('/settings/public')
 
 export const createInquiry = (body: {
-  contact: { name: string; facebook: string }
+  contact: { name: string; facebook?: string }
   fulfilment: FulfilmentId
   location?: string
   notes?: string
@@ -113,3 +113,9 @@ export const createInquiry = (body: {
 
 export const fetchInquiryStatus = (reference: string) =>
   request<InquiryStatusInfo>(`/inquiries/${encodeURIComponent(reference)}/status`)
+
+/** Listings matching every word of `q` in their house or name, best first. `total` counts all matches. */
+export const searchCatalog = (q: string, limit?: number) =>
+  request<{ results: Fragrance[]; total: number }>(
+    `/search?q=${encodeURIComponent(q)}${limit ? `&limit=${limit}` : ''}`,
+  )
