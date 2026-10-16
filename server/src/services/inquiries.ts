@@ -109,7 +109,9 @@ export async function createInquiry(input: CreateInquiryInput, meta: { ip?: stri
       })
     }
 
-    // Hold stock (buy-it-now): fails the whole inquiry if any line lost the race
+    // Hold stock (buy-it-now): fails the whole inquiry if any line lost the race.
+    // With deduction switched off in Settings (test mode), stock is checked above but left untouched.
+    const deduct = settings.deductStock
     const stored = []
     for (const l of lines) {
       const line = {
@@ -120,7 +122,7 @@ export async function createInquiry(input: CreateInquiryInput, meta: { ip?: stri
         sizeMl: l.option.sizeMl,
         qty: l.item.qty,
       }
-      const heldFrom = await holdStock(line, session)
+      const heldFrom = deduct ? await holdStock(line, session) : []
       stored.push({
         ...line,
         nameSnapshot: `${l.row.listing.house} ${l.row.listing.name}`,
@@ -150,7 +152,8 @@ export async function createInquiry(input: CreateInquiryInput, meta: { ip?: stri
           estimatedTotal,
           status: 'new',
           statusHistory: [{ status: 'new', at: new Date() }],
-          stockHeld: true,
+          stockHeld: deduct,
+          stockSkipped: !deduct,
           meta: { ipHash: hashIp(meta.ip), userAgent: meta.userAgent?.slice(0, 300) },
         },
       ],

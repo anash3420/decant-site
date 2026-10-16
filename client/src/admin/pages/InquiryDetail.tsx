@@ -118,7 +118,13 @@ export default function InquiryDetail() {
               <div>
                 <dt className="text-xs tracking-wide text-muted uppercase">Stock</dt>
                 <dd className="mt-0.5">
-                  {i.stockHeld ? (i.status === 'fulfilled' ? 'Deducted' : 'Held for this inquiry') : 'Released'}
+                  {i.stockSkipped
+                    ? 'Not deducted (sent in test mode)'
+                    : i.stockHeld
+                      ? i.status === 'fulfilled'
+                        ? 'Deducted'
+                        : 'Held for this inquiry'
+                      : 'Released'}
                 </dd>
               </div>
               {i.notes && (

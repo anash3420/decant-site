@@ -26,6 +26,7 @@ const settingsInput = z.object({
     maxDecantMl: z.number().int().min(1).max(100),
     maxCatchReleaseMl: z.number().int().min(1).max(500),
   }),
+  deductStock: z.boolean().default(true),
 })
 
 settingsRouter.get('/', async (_req, res) => {
