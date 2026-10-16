@@ -345,6 +345,29 @@ await check('dashboard stats', async () => {
   )
 })
 
+await check('with stock deduction off, inquiries leave stock untouched', async () => {
+  const { settings } = (await api('/admin/settings')).body
+  assert.equal(settings.deductStock, true, 'deduction is on by default')
+  assert.equal((await api('/settings/public', { auth: false })).body.deductStock, undefined, 'admin-only')
+  assert.equal((await api('/admin/settings', { method: 'PUT', json: { ...settings, deductStock: false } })).status, 200)
+  try {
+    const before = totalMl(await catalog('le-labo-santal-33'))
+    const id = await inquire([{ slug: 'le-labo-santal-33', optionId: '10ml', qty: 1 }])
+    assert.equal(totalMl(await catalog('le-labo-santal-33')), before)
+    const detail = (await api(`/admin/inquiries/${id}`)).body.inquiry
+    assert.equal(detail.stockHeld, false)
+    assert.equal(detail.stockSkipped, true)
+    // Cancelling must not "give back" stock that was never taken
+    await api(`/admin/inquiries/${id}`, { method: 'PATCH', json: { status: 'cancelled' } })
+    assert.equal(totalMl(await catalog('le-labo-santal-33')), before)
+  } finally {
+    await api('/admin/settings', { method: 'PUT', json: settings })
+  }
+  const before = totalMl(await catalog('le-labo-santal-33'))
+  await inquire([{ slug: 'le-labo-santal-33', optionId: '10ml', qty: 1 }])
+  assert.equal(totalMl(await catalog('le-labo-santal-33')), before - 10, 'back on: deducts again')
+})
+
 console.log('\nLogout')
 await check('logout ends the session', async () => {
   await api('/admin/auth/logout', { json: {} })

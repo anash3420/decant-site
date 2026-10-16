@@ -175,6 +175,8 @@ export interface AdminInquiry {
   statusHistory: { status: InquiryStatus; at: string; note?: string }[]
   adminNotes: string
   stockHeld: boolean
+  /** Sent while stock deduction was off (test mode), so no stock was ever held */
+  stockSkipped: boolean
 }
 
 export interface AdminSettings {
@@ -188,6 +190,8 @@ export interface AdminSettings {
     enabled: boolean
   }[]
   lettermail: { maxDecantMl: number; maxCatchReleaseMl: number }
+  /** Off = test mode: inquiries don't deduct stock */
+  deductStock: boolean
 }
 
 export interface AdminStats {

@@ -26,6 +26,8 @@ const settingsSchema = new Schema(
       maxDecantMl: { type: Number, default: DEFAULT_LETTERMAIL_LIMITS.maxDecantMl },
       maxCatchReleaseMl: { type: Number, default: DEFAULT_LETTERMAIL_LIMITS.maxCatchReleaseMl },
     },
+    /** Off = test mode: inquiries are still checked against stock but don't hold (deduct) it */
+    deductStock: { type: Boolean, default: true },
   },
   { timestamps: true },
 )

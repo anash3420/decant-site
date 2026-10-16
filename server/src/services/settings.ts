@@ -18,11 +18,12 @@ export async function getSettings() {
       maxDecantMl: doc.lettermail?.maxDecantMl ?? DEFAULT_LETTERMAIL_LIMITS.maxDecantMl,
       maxCatchReleaseMl: doc.lettermail?.maxCatchReleaseMl ?? DEFAULT_LETTERMAIL_LIMITS.maxCatchReleaseMl,
     },
+    deductStock: doc.deductStock ?? true,
   }
 }
 
-/** What visitors may see: no disabled options */
+/** What visitors may see: no disabled options, no admin-only switches */
 export async function getPublicSettings() {
-  const s = await getSettings()
+  const { deductStock: _, ...s } = await getSettings()
   return { ...s, fulfilment: s.fulfilment.filter((f) => f.enabled).map(({ enabled: _, ...f }) => f) }
 }
