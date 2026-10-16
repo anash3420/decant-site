@@ -22,6 +22,7 @@ The Vite dev server proxies `/api` there.
 | -------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `GET /api/catalog?kind=&brand=`        | Published listings in the client's `Fragrance` shape, newest first                                        |
 | `GET /api/catalog/:slug`               | One listing                                                                                               |
+| `GET /api/search?q=&limit=`            | Listings whose house or name contain every word of `q`, best first; `{ results, total }`                  |
 | `GET /api/brands`                      | Brands with published listings, counts per kind                                                           |
 | `GET /api/settings/public`             | Enabled shipping options, lettermail limits, Facebook link                                                |
 | `POST /api/inquiries`                  | Prices, shipping rules and stock checked server-side; stock is held in a transaction. 5 per 10 min per IP |

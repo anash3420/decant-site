@@ -1,7 +1,9 @@
+import { useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
 import { SITE_NAME } from '../config.ts'
 import { useInquiry } from '../context/InquiryContext.tsx'
 import { KINDS } from '../lib/catalog.ts'
+import SearchBox, { SearchIcon } from './SearchBox.tsx'
 
 const LINKS = [...KINDS.map((k) => ({ to: k.path, label: k.title })), { to: '/history', label: 'History' }]
 
@@ -16,6 +18,8 @@ const mobileTab = ({ isActive }: { isActive: boolean }) =>
 
 export default function Header() {
   const { count } = useInquiry()
+  // Phones and tablets: the search box opens in its own row under the logo
+  const [searching, setSearching] = useState(false)
   return (
     <header className="border-b border-border bg-surface pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-2 sm:px-8 md:py-3">
@@ -25,7 +29,19 @@ export default function Header() {
         >
           {SITE_NAME}
         </Link>
-        <nav aria-label="Main" className="flex items-center gap-6 whitespace-nowrap">
+        <div className="hidden max-w-xs flex-1 lg:block">
+          <SearchBox />
+        </div>
+        <nav aria-label="Main" className="flex items-center gap-3 whitespace-nowrap md:gap-6">
+          <button
+            type="button"
+            onClick={() => setSearching((v) => !v)}
+            aria-expanded={searching}
+            aria-label={searching ? 'Close search' : 'Search fragrances'}
+            className="inline-flex size-11 items-center justify-center rounded-md text-muted hover:text-text lg:hidden"
+          >
+            <SearchIcon className="size-5" />
+          </button>
           {LINKS.map((l) => (
             <NavLink key={l.to} to={l.to} className={desktopLink}>
               {l.label}
@@ -46,6 +62,12 @@ export default function Header() {
           </Link>
         </nav>
       </div>
+
+      {searching && (
+        <div className="mx-auto max-w-6xl px-5 pb-3 sm:px-8 lg:hidden">
+          <SearchBox autoFocus onDone={() => setSearching(false)} />
+        </div>
+      )}
 
       {/* Phones and small tablets: section tabs on their own swipeable row */}
       <nav aria-label="Sections" className="md:hidden">

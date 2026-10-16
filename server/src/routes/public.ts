@@ -1,6 +1,8 @@
 import { Router, type Response } from 'express'
 import { rateLimit } from 'express-rate-limit'
 import { z } from 'zod'
+import { searchListings } from '../../../shared/search.ts'
+import { isSoldOut } from '../../../shared/stock.ts'
 import { FRAGRANCE_CATEGORIES } from '../../../shared/types.ts'
 import { INQUIRY_REFERENCE } from '../../../shared/validation.ts'
 import { notFound } from '../http.ts'
@@ -57,6 +59,20 @@ publicRouter.get('/catalog', async (req, res) => {
     .parse(req.query)
   cdnCache(res, 30)
   res.json({ listings: await findCatalog(query) })
+})
+
+/**
+ * Published listings whose house or name contain every word of ?q=, best matches first.
+ * ?limit= caps the results (the header's suggestions ask for 5); `total` is the full count.
+ */
+publicRouter.get('/search', async (req, res) => {
+  const { q, limit } = z
+    .object({ q: z.string().trim().min(1).max(100), limit: z.coerce.number().int().min(1).max(100).optional() })
+    .parse(req.query)
+  // The catalog is small (one shop's shelf), so matching in memory is simpler than a text index
+  const results = searchListings(await findCatalog({}), q, isSoldOut)
+  cdnCache(res, 30)
+  res.json({ results: limit ? results.slice(0, limit) : results, total: results.length })
 })
 
 publicRouter.get('/catalog/:slug', async (req, res) => {
