@@ -23,6 +23,8 @@ interface Submitted {
   reference: string
   name: string
   saved: boolean
+  /** Without a link, the buyer has to message first */
+  gaveFacebook: boolean
 }
 
 /** The server's reply → the copy kept in this browser's History */
@@ -105,8 +107,9 @@ export default function Inquiry() {
 
     const next: Record<string, string> = {}
     if (!data.name?.trim()) next.name = 'Please add your name.'
-    if (!FACEBOOK_URL.test(data.facebook?.trim() ?? ''))
-      next.facebook = 'Paste your Facebook profile link, e.g. facebook.com/your.name'
+    const facebook = data.facebook?.trim() ?? ''
+    if (facebook && !FACEBOOK_URL.test(facebook))
+      next.facebook = 'Paste your Facebook profile link, e.g. facebook.com/your.name, or leave it empty'
     if (ships && !data.location?.trim()) next.location = 'Add your city and postal code so I can quote shipping.'
     if (!data.confirm) next.confirm = 'Please confirm before sending.'
     setErrors(next)
@@ -123,7 +126,7 @@ export default function Inquiry() {
     try {
       // The server re-prices everything; expectedTotal lets it tell us if what the visitor saw is out of date
       const inquiry = await createInquiry({
-        contact: { name: data.name.trim(), facebook: data.facebook.trim() },
+        contact: { name: data.name.trim(), facebook: facebook || undefined },
         fulfilment,
         location: ships ? data.location.trim() : undefined,
         notes: data.notes?.trim() || undefined,
@@ -132,7 +135,7 @@ export default function Inquiry() {
         website: data.website || undefined,
       })
       const saved = saveToHistory(toHistory(inquiry))
-      setSubmitted({ reference: inquiry.reference, name: inquiry.contact.name, saved })
+      setSubmitted({ reference: inquiry.reference, name: inquiry.contact.name, saved, gaveFacebook: !!facebook })
       clear()
       window.scrollTo({ top: 0 })
       void refresh() // stock just changed
@@ -175,8 +178,10 @@ export default function Inquiry() {
         <p className="text-sm text-instock">Inquiry sent · Ref {submitted.reference}</p>
         <h1 className="mt-2 text-4xl">Thanks, {submitted.name.split(' ')[0]}!</h1>
         <p className="mt-4 text-muted">
-          I'll message you on Facebook within a day or two to confirm availability, the total and payment. Nothing is
-          charged until we've talked.
+          {submitted.gaveFacebook
+            ? "I'll message you on Facebook within a day or two to confirm availability, the total and payment."
+            : `Message me on Facebook with your reference (${submitted.reference}) so we can confirm availability, the total and payment.`}{' '}
+          Nothing is charged until we've talked.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <a
@@ -388,8 +393,8 @@ export default function Inquiry() {
               </Field>
 
               <Field
-                label="Facebook profile link"
-                hint="So I can message you. On Facebook: your profile → ⋯ → Copy link."
+                label="Facebook profile link (optional)"
+                hint="So I can message you first. On Facebook: your profile → ⋯ → Copy link. Leave it empty to message me yourself."
                 error={errors.facebook}
               >
                 <input
@@ -440,7 +445,7 @@ export default function Inquiry() {
                     aria-invalid={!!errors.confirm}
                     className={`mt-0.5 size-5 shrink-0 accent-accent ${errors.confirm ? 'outline-2 outline-offset-2 outline-error' : ''}`}
                   />
-                  <span>I understand this is a request and I'll be contacted on Facebook to confirm and pay.</span>
+                  <span>I understand this is a request, and we'll confirm and arrange payment on Facebook.</span>
                 </label>
                 {errors.confirm && (
                   <p className="mt-1.5 flex items-center gap-1.5 text-sm font-medium text-error">

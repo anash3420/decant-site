@@ -35,7 +35,7 @@ const inquirySchema = new Schema(
     reference: { type: String, required: true, unique: true },
     contact: {
       name: { type: String, required: true, trim: true, maxlength: 100 },
-      facebook: { type: String, required: true, trim: true, maxlength: 300 },
+      facebook: { type: String, trim: true, maxlength: 300 },
     },
     fulfilment: {
       method: { type: String, enum: ['pickup', 'lettermail', 'tracked'], required: true },
