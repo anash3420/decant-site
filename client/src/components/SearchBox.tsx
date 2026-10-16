@@ -51,11 +51,16 @@ export default function SearchBox({ autoFocus, onDone }: { autoFocus?: boolean; 
     onDone?.()
   }
 
+  const showAll = () => {
+    const q = query.trim()
+    if (q) finish(`/search?q=${encodeURIComponent(q)}`)
+  }
+
+  // Enter opens the highlighted suggestion (picked with the arrow keys), otherwise every result
   const submit = (e: FormEvent) => {
     e.preventDefault()
-    const q = query.trim()
     if (showList && active >= 0) return finish(`/fragrance/${ordered[active]!.slug}`)
-    if (q) finish(`/search?q=${encodeURIComponent(q)}`)
+    showAll()
   }
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -140,6 +145,7 @@ export default function SearchBox({ autoFocus, onDone }: { autoFocus?: boolean; 
                     onMouseDown={(e) => e.preventDefault()}
                     onClick={() => finish(`/fragrance/${f.slug}`)}
                     onMouseEnter={() => setActive(i)}
+                    onMouseLeave={() => setActive(-1)}
                     className={`flex min-h-11 cursor-pointer items-center gap-3 px-3 py-1.5 ${i === active ? 'bg-accent-soft' : ''}`}
                   >
                     {f.photos?.[0]?.src ? (
@@ -162,8 +168,10 @@ export default function SearchBox({ autoFocus, onDone }: { autoFocus?: boolean; 
             </div>
           ))}
           <button
-            type="submit"
+            type="button"
             onMouseDown={(e) => e.preventDefault()}
+            // Always every result, even if a suggestion is highlighted
+            onClick={showAll}
             className="mt-1 flex min-h-11 w-full items-center border-t border-border px-3 text-left text-sm text-accent hover:bg-accent-soft"
           >
             See all results for “{query.trim()}” →
