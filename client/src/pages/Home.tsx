@@ -33,7 +33,15 @@ export default function Home({ category }: { category?: FragranceCategory }) {
       </aside>
 
       <div className="min-w-0">
-        <h1 className="text-4xl sm:text-5xl">{brandName && brand ? brandName : (meta?.title ?? 'Fragrances')}</h1>
+        {brand || meta ? (
+          <h1 className="text-4xl sm:text-5xl">{brandName && brand ? brandName : (meta?.title ?? 'Fragrances')}</h1>
+        ) : (
+          // The front page: the seal beside the shop's name
+          <h1 className="flex items-center gap-3 text-4xl sm:gap-4 sm:text-5xl">
+            <img src="/logo-mark.svg" alt="" width="64" height="64" className="size-12 shrink-0 sm:size-16" />
+            Anash Decants
+          </h1>
+        )}
         {brand ? (
           // Browsing one brand: its logo and story instead of the shop's tagline
           <BrandBanner slug={brand} className="mt-6" />
