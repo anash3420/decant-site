@@ -2,6 +2,7 @@ import { useSearchParams } from 'react-router-dom'
 import type { FragranceCategory } from '@shared/types.ts'
 import { useShop } from '../context/ShopContext.tsx'
 import { CATEGORIES, KINDS, byBrand, byCategory, categoryMeta, sortForDisplay } from '../lib/catalog.ts'
+import BrandBanner from '../components/BrandBanner.tsx'
 import BrandSidebar from '../components/BrandSidebar.tsx'
 import CategoryChips from '../components/CategoryChips.tsx'
 import CategoryRow from '../components/CategoryRow.tsx'
@@ -33,11 +34,16 @@ export default function Home({ category }: { category?: FragranceCategory }) {
 
       <div className="min-w-0">
         <h1 className="text-4xl sm:text-5xl">{brandName && brand ? brandName : (meta?.title ?? 'Fragrances')}</h1>
-        <p className="mt-3 max-w-prose text-muted">
-          {meta
-            ? meta.blurb
-            : `${settings?.siteTagline ? `${settings.siteTagline}. ` : ''}Add what you like to your inquiry and I'll reach out on Facebook to sort out payment and pickup.`}
-        </p>
+        {brand ? (
+          // Browsing one brand: its logo and story instead of the shop's tagline
+          <BrandBanner slug={brand} className="mt-6" />
+        ) : (
+          <p className="mt-3 max-w-prose text-muted">
+            {meta
+              ? meta.blurb
+              : `${settings?.siteTagline ? `${settings.siteTagline}. ` : ''}Add what you like to your inquiry and I'll reach out on Facebook to sort out payment and pickup.`}
+          </p>
+        )}
 
         <div className="mt-6">
           <CategoryChips

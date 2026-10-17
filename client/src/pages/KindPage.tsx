@@ -3,6 +3,7 @@ import { FRAGRANCE_CATEGORIES, type FragranceCategory, type ListingKind } from '
 import { useShop } from '../context/ShopContext.tsx'
 import { CardSkeletons, CatalogError } from '../components/CatalogState.tsx'
 import { byBrand, byCategory, kindMeta, sortForDisplay } from '../lib/catalog.ts'
+import BrandBanner from '../components/BrandBanner.tsx'
 import BrandSidebar from '../components/BrandSidebar.tsx'
 import CategoryChips from '../components/CategoryChips.tsx'
 import FragranceCard from '../components/FragranceCard.tsx'
@@ -42,6 +43,7 @@ export default function KindPage({ kind }: { kind: ListingKind }) {
         </Link>
         <h1 className="mt-3 text-4xl sm:text-5xl">{meta.title}</h1>
         <p className="mt-3 max-w-prose text-muted">{meta.blurb}</p>
+        {params.get('brand') && <BrandBanner slug={params.get('brand')} className="mt-6" />}
 
         <div className="mt-6">
           <CategoryChips

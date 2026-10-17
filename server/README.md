@@ -33,26 +33,29 @@ Errors are always `{ error: { code, message, details? } }`. Codes: `invalid_requ
 
 ## Admin API (`/api/admin`, needs the session cookie from login)
 
-| Endpoint                                                      | Notes                                                                                                                                                      |
-| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST /auth/login` · `POST /auth/logout` · `GET /auth/me`     | HttpOnly, SameSite=Strict cookie, 7 days. 10 failed logins / 15 min per IP                                                                                 |
-| `GET /stats`                                                  | Inquiry counts, open value, fulfilled last 30 days, low stock                                                                                              |
-| `GET /inquiries?status=&search=&page=` · `GET /inquiries/:id` |                                                                                                                                                            |
-| `PATCH /inquiries/:id`                                        | `{ status?, note?, adminNotes? }`. new → contacted → confirmed → fulfilled; cancel from any open status releases held stock. Fulfilled/cancelled are final |
-| `GET/POST /listings` · `GET/PATCH/DELETE /listings/:id`       | All three kinds, costs included. PATCH takes the full listing (as GET returns it). Delete only if never inquired; otherwise archive                        |
-| `POST /uploads`                                               | Raw image body (JPEG/PNG/WebP/AVIF, ≤4MB) → `{ url, pathname }`                                                                                            |
-| `GET/POST /brands` · `PATCH/DELETE /brands/:id`               | Renaming a slug updates listings' brand filter                                                                                                             |
-| `GET/POST /fragrances` · `GET/PATCH/DELETE /fragrances/:id`   | `photo` is the bottle photo listings without their own photos show; replacing or removing it deletes the old file                                          |
-| `GET /fragplace?brand=&name=`                                 | Up to 5 Fragplace matches (year, notes, accords, preview image). Needs `RAPIDAPI_KEY`                                                                      |
-| `POST /fragplace/photo`                                       | `{ thumb }` from a match → copies it into storage as a 900×1200 WebP → `{ url, pathname, width, height }`                                                  |
-| `GET/PUT /settings`                                           | Shipping options, lettermail limits, Facebook link, tagline                                                                                                |
+| Endpoint                                                      | Notes                                                                                                                                                                                                            |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /auth/login` · `POST /auth/logout` · `GET /auth/me`     | HttpOnly, SameSite=Strict cookie, 7 days. 10 failed logins / 15 min per IP                                                                                                                                       |
+| `GET /stats`                                                  | Inquiry counts, open value, fulfilled last 30 days, low stock                                                                                                                                                    |
+| `GET /inquiries?status=&search=&page=` · `GET /inquiries/:id` |                                                                                                                                                                                                                  |
+| `PATCH /inquiries/:id`                                        | `{ status?, note?, adminNotes? }`. new → contacted → confirmed → fulfilled; cancel from any open status releases held stock. Fulfilled/cancelled are final                                                       |
+| `GET/POST /listings` · `GET/PATCH/DELETE /listings/:id`       | All three kinds, costs included. PATCH takes the full listing (as GET returns it). Delete only if never inquired; otherwise archive                                                                              |
+| `POST /uploads`                                               | Raw image body (JPEG/PNG/WebP/AVIF, ≤4MB) → `{ url, pathname }`                                                                                                                                                  |
+| `GET/POST /brands` · `GET/PATCH/DELETE /brands/:id`           | `description`, `logo`, `logoMobile` (banner shown when shoppers browse the brand). PATCH leaves them alone when omitted; `null` removes one and deletes its file. Renaming a slug updates listings' brand filter |
+| `GET/POST /fragrances` · `GET/PATCH/DELETE /fragrances/:id`   | `photo` is the bottle photo listings without their own photos show; replacing or removing it deletes the old file                                                                                                |
+| `GET /fragplace?brand=&name=`                                 | Up to 5 Fragplace matches (year, notes, accords, preview image). Needs `RAPIDAPI_KEY`                                                                                                                            |
+| `POST /fragplace/photo`                                       | `{ thumb }` from a match → copies it into storage as a 900×1200 WebP → `{ url, pathname, width, height }`                                                                                                        |
+| `GET /fragplace/brands?name=`                                 | Up to 5 brand matches with description and logo preview                                                                                                                                                          |
+| `POST /fragplace/logo`                                        | `{ thumb }` → trims the white margin and stores `{ desktop, mobile }` WebP logos                                                                                                                                 |
+| `GET/PUT /settings`                                           | Shipping options, lettermail limits, Facebook link, tagline                                                                                                                                                      |
 
 Admin mutations from another site's pages are refused (Origin check) on top of the SameSite cookie.
 
 ## Fragrance lookup (Fragplace)
 
 The admin fragrance form looks fragrances up in the [Fragplace Fragrance API](https://rapidapi.com/freeyourmusic-fragplace/api/fragrance-api)
-(RapidAPI, free plan: 1,000 requests a month) once a name and brand are filled in. Picking a match fills in the
+(RapidAPI, free plan: 1,000 requests a month) once a name and brand are filled in, and the brand form looks
+brands up by name for their description and logos. Picking a match fills in the
 empty year, notes and accords and copies the bottle photo into our storage, so the shop never loads images from
 Fragplace. Set `RAPIDAPI_KEY` in `server/.env` and in the Vercel project; without it the lookup shows a
 "not set up" message and everything else works.

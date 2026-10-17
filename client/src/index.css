@@ -13,6 +13,9 @@
   --color-accent-soft: #f3e9ee;
   --color-on-accent: #ffffff;
 
+  /* brand banner: a warm linen panel; logos' white backgrounds are multiplied into it */
+  --color-panel: #ebe7df;
+
   /* availability badges */
   --color-instock: #3f6b4f;
   --color-instock-soft: #e6efe8;

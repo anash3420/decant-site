@@ -347,6 +347,39 @@ await check('a fragrance photo stands in for listings without photos; removing i
   assert.equal((await catalog('smoke-test-house-test-accord')).photos, undefined)
   assert.equal((await fetch(new URL(up.url, API).href)).status, 404)
 })
+await check(
+  'brand banner: description and logos reach the shop; a rename keeps them; removing deletes the file',
+  async () => {
+    const up = (await api('/admin/uploads', { body: PNG, headers: { 'content-type': 'image/png' } })).body
+    const logo = { url: up.url, pathname: up.pathname, width: 600, height: 150 }
+    const description = 'A smoke-test house known for testing things.'
+    const r = await api(`/admin/brands/${brandId}`, {
+      method: 'PATCH',
+      json: { name: 'Smoke House', description, logo, logoMobile: null, fragplaceId: 427 },
+    })
+    assert.equal(r.status, 200, JSON.stringify(r.body))
+    assert.deepEqual(r.body.brand.logo, logo)
+    const shop = async () =>
+      (await api('/brands', { auth: false })).body.brands.find((b: any) => b.slug === 'smoke-house')
+    assert.deepEqual((await shop()).logo, { src: up.url, width: 600, height: 150 })
+    assert.equal((await shop()).description, description)
+    assert.equal((await shop()).logoMobile, null)
+
+    // A plain rename (name only) leaves the banner alone
+    await api(`/admin/brands/${brandId}`, { method: 'PATCH', json: { name: 'Smoke House' } })
+    assert.equal((await api(`/admin/brands/${brandId}`)).body.brand.logo.url, up.url)
+
+    // null removes the logo and deletes its file
+    await api(`/admin/brands/${brandId}`, { method: 'PATCH', json: { name: 'Smoke House', logo: null } })
+    assert.equal((await shop()).logo, null)
+    assert.equal((await fetch(new URL(up.url, API).href)).status, 404)
+  },
+)
+await check('the brand lookup validates its input', async () => {
+  assert.equal((await api('/admin/fragplace/brands')).status, 400)
+  const foreign = await api('/admin/fragplace/logo', { json: { thumb: 'https://example.com/plain/x.png' } })
+  assert.equal(foreign.status, 400)
+})
 await check('the Fragplace lookup validates its input', async () => {
   assert.equal((await api('/admin/fragplace?brand=Creed')).status, 400)
   const foreign = await api('/admin/fragplace/photo', { json: { thumb: 'https://example.com/plain/x.png' } })
