@@ -22,17 +22,18 @@ export default function Header() {
   const [searching, setSearching] = useState(false)
   return (
     <header className="border-b border-border bg-surface pt-[env(safe-area-inset-top)]">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-2 sm:px-8 md:py-3">
-        <Link
-          to="/"
-          className="inline-flex min-h-11 items-center font-display text-xl whitespace-nowrap text-text sm:text-2xl"
-        >
-          {SITE_NAME}
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-2 sm:px-8 md:py-3">
+        <Link to="/" className="inline-flex min-h-11 min-w-0 items-center gap-2 font-display text-text sm:gap-2.5">
+          <img src="/logo-mark.svg" alt="" width="40" height="40" className="size-8 shrink-0 sm:size-10" />
+          {/* Phones: the name sits on two short lines beside the seal; under 360px only the seal shows */}
+          <span className="max-w-[6.5em] text-[15px] leading-tight max-[359px]:sr-only sm:max-w-none sm:text-2xl sm:leading-normal sm:whitespace-nowrap">
+            {SITE_NAME}
+          </span>
         </Link>
         <div className="hidden max-w-xs flex-1 lg:block">
           <SearchBox />
         </div>
-        <nav aria-label="Main" className="flex items-center gap-3 whitespace-nowrap md:gap-6">
+        <nav aria-label="Main" className="flex items-center gap-2 whitespace-nowrap sm:gap-3 md:gap-6">
           <button
             type="button"
             onClick={() => setSearching((v) => !v)}
@@ -49,7 +50,7 @@ export default function Header() {
           ))}
           <Link
             to="/inquiry"
-            className="inline-flex min-h-11 items-center rounded-md bg-accent px-4 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover"
+            className="inline-flex min-h-11 items-center rounded-md bg-accent px-3 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover sm:px-4"
           >
             My inquiry
             {count > 0 && (
