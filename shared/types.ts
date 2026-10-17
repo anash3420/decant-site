@@ -53,6 +53,11 @@ interface ListingBase {
   kind: ListingKind
   name: string
   house: string
+  /**
+   * The brand's stored link name (?brand=…). Fixed when the brand is renamed so shared links keep working,
+   * so never derive it from `house`.
+   */
+  brandSlug: string
   /** niche · designer · designer-private · dupe (from the fragrance) */
   category: FragranceCategory
   concentration: Concentration

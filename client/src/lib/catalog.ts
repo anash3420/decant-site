@@ -82,7 +82,7 @@ export const byCategory = (list: Fragrance[], category: FragranceCategory | null
 export function brandsOf(list: Fragrance[]) {
   const map = new Map<string, { slug: string; name: string; count: number }>()
   for (const f of list) {
-    const slug = slugify(f.house)
+    const slug = f.brandSlug
     const entry = map.get(slug) ?? { slug, name: f.house, count: 0 }
     entry.count++
     map.set(slug, entry)
@@ -91,7 +91,7 @@ export function brandsOf(list: Fragrance[]) {
 }
 
 export const byBrand = (list: Fragrance[], brand: string | null) =>
-  brand ? list.filter((f) => slugify(f.house) === brand) : list
+  brand ? list.filter((f) => f.brandSlug === brand) : list
 
 /** In stock first, newest first within each group */
 export const sortForDisplay = (list: Fragrance[]) =>
