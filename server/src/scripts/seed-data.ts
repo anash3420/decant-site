@@ -4,8 +4,11 @@
  */
 import type { Fragrance } from '../../../shared/types.ts'
 
+/** A listing as the seed writes it: brands (and so their slugs) are created from `house` */
+type SeedListing = Fragrance extends infer F ? (F extends Fragrance ? Omit<F, 'brandSlug'> : never) : never
+
 // The original epic 1 sample catalog, loaded by `npm run seed`.
-const decants: Fragrance[] = [
+const decants: SeedListing[] = [
   {
     slug: 'diptyque-philosykos',
     kind: 'decant',
@@ -196,7 +199,7 @@ const decants: Fragrance[] = [
   },
 ]
 
-const catchRelease: Fragrance[] = [
+const catchRelease: SeedListing[] = [
   {
     slug: 'xerjoff-naxos-cr',
     kind: 'catch-release',
@@ -305,7 +308,7 @@ const catchRelease: Fragrance[] = [
   },
 ]
 
-const fullBottles: Fragrance[] = [
+const fullBottles: SeedListing[] = [
   {
     slug: 'creed-aventus-100ml',
     kind: 'full-bottle',
@@ -429,7 +432,7 @@ const fullBottles: Fragrance[] = [
 ]
 
 // The original epic 1 sample catalog, loaded by `npm run seed`.
-export const fragrances: Fragrance[] = [...decants, ...catchRelease, ...fullBottles]
+export const fragrances: SeedListing[] = [...decants, ...catchRelease, ...fullBottles]
 
 export const defaultSettings = {
   ownerFacebookUrl: 'https://www.facebook.com/profile.php?id=61584200071946',

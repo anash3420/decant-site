@@ -375,6 +375,22 @@ await check(
     assert.equal((await fetch(new URL(up.url, API).href)).status, 404)
   },
 )
+await check(
+  'a renamed brand keeps its slug, and listings carry it (so brand links and banners still match)',
+  async () => {
+    const r = await api(`/admin/brands/${brandId}`, { method: 'PATCH', json: { name: 'Smoke House Renamed' } })
+    assert.equal(r.status, 200, JSON.stringify(r.body))
+    assert.equal(r.body.brand.slug, 'smoke-house', 'renaming leaves the link alone')
+    const listing = await catalog('smoke-test-house-test-accord')
+    assert.equal(listing.house, 'Smoke House Renamed')
+    assert.equal(listing.brandSlug, 'smoke-house', 'not derived from the new name')
+    const filtered = (await api('/catalog?brand=smoke-house', { auth: false })).body.listings
+    assert.ok(filtered.some((l: any) => l.slug === 'smoke-test-house-test-accord'))
+    const brand = (await api('/brands', { auth: false })).body.brands.find((b: any) => b.slug === listing.brandSlug)
+    assert.equal(brand?.name, 'Smoke House Renamed', 'the banner finds the brand by the listing’s slug')
+    await api(`/admin/brands/${brandId}`, { method: 'PATCH', json: { name: 'Smoke House' } })
+  },
+)
 await check('the brand lookup validates its input', async () => {
   assert.equal((await api('/admin/fragplace/brands')).status, 400)
   const foreign = await api('/admin/fragplace/logo', { json: { thumb: 'https://example.com/plain/x.png' } })

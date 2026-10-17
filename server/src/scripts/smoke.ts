@@ -53,13 +53,15 @@ await check('GET /catalog returns 16 listings in the client shape', async () => 
 await check('admin-only fields are never exposed', async () => {
   const { body } = await api('/catalog')
   const text = JSON.stringify(body)
-  for (const field of ['costPaid', 'sourcedFrom', 'batchCode', '__v', 'brandSlug'])
+  for (const field of ['costPaid', 'sourcedFrom', 'batchCode', '__v'])
     assert.ok(!text.includes(field), `found "${field}" in public catalog`)
 })
 await check('?kind and ?brand filter', async () => {
   assert.equal((await api('/catalog?kind=full-bottle')).body.listings.length, 4)
   const creed = (await api('/catalog?brand=creed')).body.listings
   assert.deepEqual(creed.map((l: any) => l.kind).sort(), ['catch-release', 'full-bottle'])
+  // Each listing carries its brand's stored slug, which the shop uses for brand links and banners
+  assert.ok(creed.every((l: any) => l.brandSlug === 'creed'))
 })
 await check('bad ?kind is a 400, unknown slug is a 404', async () => {
   assert.equal((await api('/catalog?kind=perfume')).status, 400)
