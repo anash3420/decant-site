@@ -36,9 +36,15 @@ export default function Home({ category }: { category?: FragranceCategory }) {
         {brand || meta ? (
           <h1 className="text-4xl sm:text-5xl">{brandName && brand ? brandName : (meta?.title ?? 'Fragrances')}</h1>
         ) : (
-          // The front page: the seal beside the shop's name
-          <h1 className="flex items-center gap-3 text-4xl sm:gap-4 sm:text-5xl">
-            <img src="/logo-mark.svg" alt="" width="64" height="64" className="size-12 shrink-0 sm:size-16" />
+          // The front page: the full seal, large enough for its ring text to read, beside the shop's name
+          <h1 className="flex items-center gap-4 text-4xl sm:gap-6 sm:text-6xl">
+            <img
+              src="/logo-seal.svg"
+              alt="Seal: Anash’s Fragrances · Calgary · Decants"
+              width="176"
+              height="176"
+              className="size-32 shrink-0 sm:size-44"
+            />
             Anash Decants
           </h1>
         )}
