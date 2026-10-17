@@ -4,7 +4,7 @@ import { slugify } from '../../../../shared/slug.ts'
 import { CONCENTRATIONS, FRAGRANCE_CATEGORIES } from '../../../../shared/types.ts'
 import { HttpError, notFound } from '../../http.ts'
 import { findFragrances, importFragplacePhoto } from '../../services/fragplace.ts'
-import { deleteImage } from '../../services/storage.ts'
+import { copyImage, deleteImage } from '../../services/storage.ts'
 import { Brand, Fragrance, Listing } from '../../models/index.ts'
 import type { LeanFragrance } from '../../models/lean.ts'
 import { objectId, searchRegex } from '../../validation.ts'
@@ -174,6 +174,19 @@ catalogRouter.delete('/fragrances/:id', async (req, res) => {
   if (!deleted) throw notFound('Fragrance')
   if (deleted.photo?.url) await deleteImage(deleted.photo)
   res.json({ ok: true })
+})
+
+/**
+ * A copy of the fragrance's bottle photo for a listing to use as one of its own photos
+ * (its own file, so the listing and the fragrance can each remove theirs safely)
+ */
+catalogRouter.post('/fragrances/:id/photo/copy', async (req, res) => {
+  const id = objectId.parse(req.params.id)
+  const fragrance = await Fragrance.findById(id).lean<LeanFragrance>()
+  if (!fragrance) throw notFound('Fragrance')
+  if (!fragrance.photo?.url) throw new HttpError(404, 'not_found', 'This fragrance has no photo yet.')
+  const copied = await copyImage(fragrance.photo)
+  res.status(201).json({ ...copied, width: fragrance.photo.width, height: fragrance.photo.height })
 })
 
 // ── Fragplace lookup ──────────────────────────────────────────────────────────

@@ -203,6 +203,46 @@ function ListingForm({
   }, [fragrances])
 
   const set = (patch: Partial<Form>) => setForm((f) => ({ ...f, ...patch }))
+
+  // The fragrance's bottle photo becomes the listing's first photo as soon as the fragrance is picked.
+  // It's a copy (its own file), so removing it here never touches the fragrance's photo.
+  const fragranceId = isNew ? form.fragrance : listing?.fragrance?.id
+  const chosen = fragrances.find((f) => f.id === fragranceId)
+  /** The copy added automatically on this form, swapped out if a different fragrance is picked before saving */
+  const autoPhoto = useRef<string>(undefined)
+  const pickTicket = useRef(0)
+  const [addingPhoto, setAddingPhoto] = useState(false)
+
+  const addFragrancePhoto = async (frId: string, auto: boolean) => {
+    const ticket = ++pickTicket.current
+    setAddingPhoto(true)
+    try {
+      const p = await api<{ url: string; pathname: string; width?: number; height?: number }>(
+        `/fragrances/${frId}/photo/copy`,
+        { json: {} },
+      )
+      if (ticket !== pickTicket.current) return // a different fragrance was picked meanwhile
+      if (auto) autoPhoto.current = p.url
+      setForm((f) => ({
+        ...f,
+        photos: [{ ...p, label: 'Bottle', order: 0 }, ...f.photos].slice(0, 12),
+      }))
+    } catch (e) {
+      toast({ title: 'Couldn’t add the bottle photo', detail: e instanceof ApiError ? e.message : undefined })
+    } finally {
+      if (ticket === pickTicket.current) setAddingPhoto(false)
+    }
+  }
+
+  const chooseFragrance = (frId: string) => {
+    pickTicket.current++
+    const previous = autoPhoto.current
+    autoPhoto.current = undefined
+    setAddingPhoto(false)
+    setForm((f) => ({ ...f, fragrance: frId, photos: f.photos.filter((p) => p.url !== previous) }))
+    if (fragrances.find((f) => f.id === frId)?.photo) void addFragrancePhoto(frId, true)
+  }
+
   const title = isNew ? 'New listing' : (listing?.fragrance?.name ?? 'Listing')
   const fieldErrors = saveError?.fieldErrors ?? {}
 
@@ -303,7 +343,7 @@ function ListingForm({
               >
                 <select
                   value={form.fragrance}
-                  onChange={(e) => set({ fragrance: e.target.value })}
+                  onChange={(e) => chooseFragrance(e.target.value)}
                   aria-invalid={!!fieldErrors.fragrance}
                   className={inputClass}
                 >
@@ -373,7 +413,13 @@ function ListingForm({
         {form.kind === 'catch-release' && <VialFields form={form} set={set} errors={fieldErrors} />}
         {form.kind === 'full-bottle' && <BottleFields form={form} set={set} errors={fieldErrors} />}
 
-        <PhotoFields photos={form.photos} onChange={(update) => setForm((f) => ({ ...f, photos: update(f.photos) }))} />
+        <PhotoFields
+          photos={form.photos}
+          onChange={(update) => setForm((f) => ({ ...f, photos: update(f.photos) }))}
+          fragrancePhoto={chosen?.photo ? chosen.photo.url : undefined}
+          addingFragrancePhoto={addingPhoto}
+          onAddFragrancePhoto={() => chosen && void addFragrancePhoto(chosen.id, false)}
+        />
 
         <Card title="Link">
           <Field
@@ -737,9 +783,16 @@ function BottleFields({ form, set, errors }: FieldsProps) {
 function PhotoFields({
   photos,
   onChange,
+  fragrancePhoto,
+  addingFragrancePhoto,
+  onAddFragrancePhoto,
 }: {
   photos: Photo[]
   onChange: (update: (prev: Photo[]) => Photo[]) => void
+  /** The fragrance's bottle photo, when it has one */
+  fragrancePhoto?: string
+  addingFragrancePhoto: boolean
+  onAddFragrancePhoto: () => void
 }) {
   const input = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(0)
@@ -794,7 +847,9 @@ function PhotoFields({
     <Card title="Photos" actions={<span className="text-sm text-muted">{photos.length}/12</span>}>
       <p className="mb-3 text-sm text-muted">
         The first photo is the cover. You frame each photo after picking it; shoppers see exactly that frame.
+        {fragrancePhoto && ' The fragrance’s bottle photo is added first; keep it, move it or remove it.'}
       </p>
+      {addingFragrancePhoto && <p className="mb-3 text-sm text-muted">Adding the fragrance’s bottle photo…</p>}
       {photos.length > 0 && (
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {photos.map((p, i) => (
@@ -862,15 +917,26 @@ function PhotoFields({
           e.target.value = ''
         }}
       />
-      <Button
-        variant="secondary"
-        className="mt-3"
-        busy={uploading > 0}
-        disabled={photos.length >= 12}
-        onClick={() => input.current?.click()}
-      >
-        {uploading > 0 ? `Uploading ${uploading}…` : '+ Add photos'}
-      </Button>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button
+          variant="secondary"
+          busy={uploading > 0}
+          disabled={photos.length >= 12}
+          onClick={() => input.current?.click()}
+        >
+          {uploading > 0 ? `Uploading ${uploading}…` : '+ Add photos'}
+        </Button>
+        {fragrancePhoto && (
+          <Button
+            variant="ghost"
+            busy={addingFragrancePhoto}
+            disabled={photos.length >= 12}
+            onClick={onAddFragrancePhoto}
+          >
+            + Fragrance’s bottle photo
+          </Button>
+        )}
+      </div>
       {error && <p className="mt-2 text-sm font-medium text-error">{error}</p>}
       {queue[0] && (
         <CropDialog
