@@ -158,7 +158,22 @@ export interface AdminBrand {
   id: string
   name: string
   slug: string
+  description: string
+  /** Banner logo on wider screens */
+  logo: FragrancePhoto | null
+  /** Optional separate banner logo for phones */
+  logoMobile: FragrancePhoto | null
+  fragplaceId: number | null
   fragranceCount: number
+}
+
+/** A brand lookup result (GET /api/admin/fragplace/brands) */
+export interface FragplaceBrand {
+  id: number
+  name: string
+  description: string
+  thumb: string | null
+  url: string
 }
 
 export interface InquirySummary {

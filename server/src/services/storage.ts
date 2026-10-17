@@ -23,7 +23,11 @@ export const IMAGE_TYPES: Record<string, string> = {
 /** Every upload gets a fresh random name and is never edited in place, so browsers and the CDN can keep it a year */
 const ONE_YEAR = 365 * 24 * 60 * 60
 
-export async function storeImage(data: Buffer, contentType: string, folder: 'listings' | 'fragrances' = 'listings') {
+export async function storeImage(
+  data: Buffer,
+  contentType: string,
+  folder: 'listings' | 'fragrances' | 'brands' = 'listings',
+) {
   const ext = IMAGE_TYPES[contentType]
   if (!ext) throw new Error(`Unsupported image type ${contentType}`)
   const pathname = `${folder}/${randomUUID()}.${ext}`
