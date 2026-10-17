@@ -1,29 +1,17 @@
 import { useEffect, useState } from 'react'
 import { fetchBrands, type ShopBrand } from '../api/shop.ts'
-import { slugify } from '../lib/catalog.ts'
-
-// One request per visit is plenty: brand details rarely change
-let cache: Promise<ShopBrand[]> | undefined
-const loadBrands = () => (cache ??= fetchBrands().catch((err) => ((cache = undefined), Promise.reject(err))))
 
 /**
  * A brand's logo and description, shown when browsing one brand. Logo on the left with the description
  * beside it on wider screens; stacked on phones, where the phone logo (if there is one) is used.
  * Renders nothing until loaded, and nothing for brands without a logo or description.
  */
-export default function BrandBanner({
-  slug,
-  name,
-  className = '',
-}: {
-  slug?: string | null
-  name?: string
-  className?: string
-}) {
+export default function BrandBanner({ slug, className = '' }: { slug?: string | null; className?: string }) {
   const [brands, setBrands] = useState<ShopBrand[]>()
   useEffect(() => {
     let current = true
-    loadBrands()
+    // Fetched on each view (CDN-cached briefly), so a logo or description edited in the admin shows up
+    fetchBrands()
       .then((b) => current && setBrands(b))
       .catch(() => {}) // the banner is a nice-to-have; the listings below still work
     return () => {
@@ -31,7 +19,8 @@ export default function BrandBanner({
     }
   }, [])
 
-  const brand = brands?.find((b) => b.slug === slug || (name && (b.name === name || b.slug === slugify(name))))
+  // Matched on the stored slug: a renamed brand keeps its slug, so its banner keeps working
+  const brand = slug ? brands?.find((b) => b.slug === slug) : undefined
   if (!brand || (!brand.logo && !brand.description)) return null
   const logo = brand.logo ?? brand.logoMobile
 

@@ -4,7 +4,7 @@ import type { Fragrance, Photo } from '@shared/types.ts'
 import { fetchListing, ShopApiError } from '../api/shop.ts'
 import { useShop } from '../context/ShopContext.tsx'
 import { CatalogError } from '../components/CatalogState.tsx'
-import { kindMeta, slugify } from '../lib/catalog.ts'
+import { kindMeta } from '../lib/catalog.ts'
 import { formatPrice, getOptions, maxQty, remainingMl } from '@shared/stock.ts'
 import { useInquiry } from '../context/InquiryContext.tsx'
 import { useToast } from '../context/ToastContext.tsx'
@@ -115,7 +115,7 @@ function FragranceView({ fragrance }: { fragrance: Fragrance }) {
 
         <div>
           <Link
-            to={`/?brand=${slugify(f.house)}`}
+            to={`/?brand=${f.brandSlug}`}
             className="-my-3 inline-block py-3 text-muted underline-offset-4 transition-colors hover:text-accent hover:underline"
           >
             {f.house}
