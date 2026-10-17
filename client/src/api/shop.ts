@@ -101,6 +101,25 @@ export const fetchListing = (slug: string) =>
   request<{ listing: Fragrance }>(`/catalog/${encodeURIComponent(slug)}`).then((r) => r.listing)
 export const fetchSettings = () => request<ShopSettings>('/settings/public')
 
+export interface BrandLogo {
+  src: string
+  width?: number
+  height?: number
+}
+
+/** A brand with published listings, plus what its banner shows */
+export interface ShopBrand {
+  slug: string
+  name: string
+  description: string
+  logo: BrandLogo | null
+  /** Optional separate logo for phones; the banner falls back to `logo` */
+  logoMobile: BrandLogo | null
+  count: number
+}
+
+export const fetchBrands = () => request<{ brands: ShopBrand[] }>('/brands').then((r) => r.brands)
+
 export const createInquiry = (body: {
   contact: { name: string; facebook?: string }
   fulfilment: FulfilmentId
