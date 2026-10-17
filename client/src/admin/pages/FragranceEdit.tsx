@@ -142,7 +142,7 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
     const keepOwnPhoto = form.photo && !isFragplacePhoto(form.photo)
     if (!m.thumb || keepOwnPhoto) {
       toast({
-        title: changed.length ? 'Filled in from Fragplace' : 'Nothing to fill in',
+        title: changed.length ? 'Details filled in' : 'Nothing to fill in',
         detail: keepOwnPhoto ? 'Your own photo was kept.' : undefined,
       })
       return
@@ -151,7 +151,7 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
     try {
       const photo = await api<FragrancePhoto>('/fragplace/photo', { json: { thumb: m.thumb } })
       set({ photo })
-      toast({ title: 'Filled in from Fragplace', detail: 'Check the details, then save.' })
+      toast({ title: 'Details filled in', detail: 'Check the details, then save.' })
     } catch (err) {
       toast({
         title: 'Details filled in, photo failed',

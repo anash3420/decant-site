@@ -59,7 +59,7 @@ export default function FragplaceLookup({
 
   return (
     <Card
-      title="Find on Fragplace"
+      title="Find this fragrance"
       actions={
         <Button variant="secondary" busy={loading} disabled={!query} onClick={() => query && void run(query, key)}>
           {matches ? 'Search again' : 'Search'}
@@ -128,13 +128,6 @@ export default function FragplaceLookup({
               )
             })}
           </ul>
-          <p className="mt-3 text-xs text-muted">
-            Data and photos from{' '}
-            <a href="https://fragplace.com" target="_blank" rel="noreferrer" className="underline">
-              Fragplace
-            </a>
-            .
-          </p>
         </>
       )}
     </Card>
