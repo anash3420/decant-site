@@ -47,7 +47,7 @@ export default function Search() {
           <h1 className="mt-1 text-4xl break-words sm:text-5xl">{house ?? (q || 'Search')}</h1>
         </div>
       </header>
-      {house && <BrandBanner name={house} className="mt-6" />}
+      {house && <BrandBanner slug={results[0]?.brandSlug} className="mt-6" />}
 
       {!q ? (
         <p className="mt-4 text-muted">Type a fragrance or house in the search box above.</p>

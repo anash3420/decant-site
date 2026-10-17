@@ -16,6 +16,7 @@ function toCatalogListing(l: LeanListing): CatalogListing | null {
     slug: l.slug,
     name: f.name,
     house: f.brand.name,
+    brandSlug: f.brand.slug,
     category: f.category ?? 'designer',
     concentration: f.concentration,
     year: f.year ?? undefined,
