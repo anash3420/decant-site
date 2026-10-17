@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
+import { SITE_NAME } from '../config.ts'
 import type { FragranceCategory } from '@shared/types.ts'
 import { useShop } from '../context/ShopContext.tsx'
 import { CATEGORIES, KINDS, byBrand, byCategory, categoryMeta, sortForDisplay } from '../lib/catalog.ts'
@@ -37,15 +38,15 @@ export default function Home({ category }: { category?: FragranceCategory }) {
           <h1 className="text-4xl sm:text-5xl">{brandName && brand ? brandName : (meta?.title ?? 'Fragrances')}</h1>
         ) : (
           // The front page: the full seal, large enough for its ring text to read, beside the shop's name
-          <h1 className="flex items-center gap-4 text-4xl sm:gap-6 sm:text-6xl">
+          <h1 className="flex items-center gap-4 text-3xl min-[375px]:text-4xl sm:gap-6 sm:text-6xl">
             <img
               src="/logo-seal.svg"
               alt="Seal: Anash’s Fragrances · Calgary · Decants"
               width="176"
               height="176"
-              className="size-32 shrink-0 sm:size-44"
+              className="size-28 shrink-0 min-[375px]:size-32 sm:size-44"
             />
-            Anash Decants
+            {SITE_NAME}
           </h1>
         )}
         {brand ? (

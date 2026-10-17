@@ -24,13 +24,13 @@ export default function Header() {
     <header className="border-b border-border bg-surface pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-2 sm:px-8 md:py-3">
         <Link to="/" className="inline-flex min-h-11 min-w-0 items-center gap-2 font-display text-text sm:gap-2.5">
-          {/* Fills the bar to ~3px from its top and bottom: negative margins let it into the padding, so the bar keeps its height */}
+          {/* Sits ~7px from the bar's top and bottom: negative margins let it into the padding, so the bar keeps its height */}
           <img
             src="/logo-seal.svg"
             alt=""
-            width="62"
-            height="62"
-            className="-my-[5px] size-[54px] shrink-0 md:-my-[9px] md:size-[62px]"
+            width="54"
+            height="54"
+            className="-my-px size-[46px] shrink-0 md:-my-[5px] md:size-[54px]"
           />
           {/* Phones: the name sits on two short lines beside the seal; under 360px only the seal shows */}
           <span className="max-w-[6.5em] text-[15px] leading-tight max-[359px]:sr-only sm:max-w-none sm:text-2xl sm:leading-normal sm:whitespace-nowrap">
