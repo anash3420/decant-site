@@ -19,7 +19,17 @@ const fragranceSchema = new Schema(
       base: { type: [String], default: [] },
     },
     description: { type: String, default: '' },
-    /** Placeholder colour until real photos exist */
+    /** Bottle photo for the scent itself; listings without photos of their own show it */
+    photo: {
+      type: new Schema(
+        { url: { type: String, required: true }, pathname: String, width: Number, height: Number },
+        { _id: false },
+      ),
+      default: undefined,
+    },
+    /** The Fragplace fragrance this was filled in from, if any (for refreshing notes and accords later) */
+    fragplaceId: { type: Number },
+    /** Bottle drawing colour when there's no photo at all */
     tint: { type: String, default: '#B8A88A', match: /^#[0-9a-f]{6}$/i },
   },
   { timestamps: true },

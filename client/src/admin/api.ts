@@ -127,8 +127,31 @@ export interface AdminFragrance {
   accords: string[]
   notes: { top: string[]; heart: string[]; base: string[] }
   description: string
+  photo: FragrancePhoto | null
+  /** The Fragplace fragrance it was filled in from */
+  fragplaceId: number | null
   tint: string
   listingCount?: number
+}
+
+export interface FragrancePhoto {
+  url: string
+  pathname?: string
+  width?: number
+  height?: number
+}
+
+/** A Fragplace lookup result (GET /api/admin/fragplace) */
+export interface FragplaceMatch {
+  id: number
+  name: string
+  brand: string
+  year: number | null
+  perfumers: string[]
+  accords: string[]
+  notes: { top: string[]; heart: string[]; base: string[] }
+  thumb: string | null
+  url: string
 }
 
 export interface AdminBrand {

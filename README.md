@@ -87,7 +87,8 @@ npm run create-admin:prod -- you@example.com   # your live admin login
 
 - Import the GitHub repo; leave Root Directory as the repo root. `vercel.json` handles the build.
 - Storage: connect the Blob store. This adds `BLOB_READ_WRITE_TOKEN`.
-- Environment variables: `MONGODB_URI`, `JWT_SECRET` (a long random string) and `NODE_ENV=production`.
+- Environment variables: `MONGODB_URI`, `JWT_SECRET` (a long random string), `NODE_ENV=production`, and
+  `RAPIDAPI_KEY` for the admin fragrance lookup (Fragplace, see `server/README.md`).
 - Atlas: under Network Access, allow `0.0.0.0/0`, because Vercel functions have no fixed IP. Put the cluster in
   AWS us-east-1, next to Vercel's default `iad1` function region.
 

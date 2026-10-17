@@ -15,6 +15,12 @@ const schema = z.object({
     .optional()
     // An empty `BLOB_READ_WRITE_TOKEN=` line means "not set"
     .or(z.literal('').transform(() => undefined)),
+  /** RapidAPI key for the Fragplace Fragrance API (admin fragrance lookup). Optional: without it the lookup is off. */
+  RAPIDAPI_KEY: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) => v || undefined),
   /** Set to "1" by Vercel on every deployment */
   VERCEL: z.string().optional(),
 })
