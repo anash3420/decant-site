@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto'
-import { mkdir, unlink, writeFile } from 'node:fs/promises'
+import { copyFile, mkdir, unlink, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
-import { BlobError, del, put } from '@vercel/blob'
+import { BlobError, copy, del, put } from '@vercel/blob'
 import { env } from '../env.ts'
 import { HttpError } from '../http.ts'
 
@@ -48,6 +48,34 @@ export async function storeImage(data: Buffer, contentType: string, folder: 'lis
 
   await mkdir(LOCAL_UPLOAD_DIR + folder, { recursive: true })
   await writeFile(LOCAL_UPLOAD_DIR + pathname, data)
+  return { url: `/api/uploads/${pathname}`, pathname }
+}
+
+/**
+ * A separate copy of a stored image, e.g. a fragrance's bottle photo reused as a listing photo.
+ * Each owner gets its own file, so removing the photo from one never deletes it from the other.
+ */
+export async function copyImage(photo: { url: string; pathname?: string | null }) {
+  const ext = (photo.pathname ?? photo.url).split('.').pop()?.toLowerCase()
+  if (!ext || !Object.values(IMAGE_TYPES).includes(ext)) throw new Error(`Unsupported image ${photo.url}`)
+  const pathname = `listings/${randomUUID()}.${ext}`
+
+  if (photo.url.startsWith('http')) {
+    try {
+      const blob = await copy(photo.url, pathname, {
+        access: 'public',
+        cacheControlMaxAge: ONE_YEAR,
+        token: env.BLOB_READ_WRITE_TOKEN,
+      })
+      return { url: blob.url, pathname: blob.pathname }
+    } catch (err) {
+      console.error('Vercel Blob copy failed:', err)
+      throw new HttpError(502, 'storage_error', 'Couldn’t copy the photo. Try again or upload one.')
+    }
+  }
+  if (!photo.pathname || photo.pathname.includes('..')) throw new HttpError(404, 'not_found', 'Photo not found.')
+  await mkdir(LOCAL_UPLOAD_DIR + 'listings', { recursive: true })
+  await copyFile(LOCAL_UPLOAD_DIR + photo.pathname, LOCAL_UPLOAD_DIR + pathname)
   return { url: `/api/uploads/${pathname}`, pathname }
 }
 

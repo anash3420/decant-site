@@ -323,6 +323,20 @@ await check('a fragrance photo stands in for listings without photos; removing i
   assert.equal(saved.body.fragrance.fragplaceId, 169)
   const pub = await catalog('smoke-test-house-test-accord')
   assert.deepEqual(pub.photos, [{ label: 'Bottle', src: up.url, width: 900, height: 1200 }])
+
+  // A listing gets its own copy of the bottle photo; removing that copy leaves the fragrance's photo alone
+  const copy = await api(`/admin/fragrances/${fragranceId}/photo/copy`, { json: {} })
+  assert.equal(copy.status, 201, JSON.stringify(copy.body))
+  assert.notEqual(copy.body.url, up.url)
+  assert.equal(copy.body.height, 1200)
+  const current = (await api(`/admin/listings/${listingId}`)).body.listing
+  const withCopy = { ...current, photos: [{ ...copy.body, label: 'Bottle', order: 0 }] }
+  assert.equal((await api(`/admin/listings/${listingId}`, { method: 'PATCH', json: withCopy })).status, 200)
+  assert.equal((await catalog('smoke-test-house-test-accord')).photos[0].src, copy.body.url)
+  await api(`/admin/listings/${listingId}`, { method: 'PATCH', json: { ...current, photos: [] } })
+  assert.equal((await fetch(new URL(copy.body.url, API).href)).status, 404, 'the listing copy is deleted')
+  assert.equal((await fetch(new URL(up.url, API).href)).status, 200, 'the fragrance photo is untouched')
+
   // Saving without the photo removes it everywhere
   const cleared = await api(`/admin/fragrances/${fragranceId}`, {
     method: 'PATCH',
