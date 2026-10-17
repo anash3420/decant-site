@@ -86,6 +86,7 @@ function RequireAdmin() {
       <header className="border-b border-border bg-surface pt-[env(safe-area-inset-top)]">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-2 sm:px-6">
           <Link to="/admin" className="inline-flex min-h-11 items-center gap-2 font-display text-xl whitespace-nowrap">
+            <img src="/logo-mark.svg" alt="" width="32" height="32" className="size-8 shrink-0" />
             {SITE_NAME}
             <span className="rounded-full bg-accent-soft px-2 py-0.5 font-sans text-xs text-accent">Admin</span>
           </Link>
