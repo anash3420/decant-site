@@ -48,3 +48,27 @@ export async function cropAndResize(
   if (!jpeg) throw new Error('Could not process this image.')
   return { blob: jpeg, ...size }
 }
+
+/**
+ * Shrinks a logo to at most `maxEdge` px on its long edge, keeping its shape and any transparency
+ * (no cropping: logos come in every shape). WebP, or PNG where the browser can't encode WebP.
+ */
+export async function resizeLogo(file: File, maxEdge = 1200): Promise<{ blob: Blob; width: number; height: number }> {
+  const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' })
+  const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height))
+  const canvas = document.createElement('canvas')
+  canvas.width = Math.round(bitmap.width * scale)
+  canvas.height = Math.round(bitmap.height * scale)
+  const ctx = canvas.getContext('2d')!
+  ctx.imageSmoothingQuality = 'high'
+  ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height)
+  bitmap.close()
+
+  const encode = (type: string) => new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, type, 0.9))
+  const size = { width: canvas.width, height: canvas.height }
+  const webp = await encode('image/webp')
+  if (webp && webp.type === 'image/webp') return { blob: webp, ...size }
+  const png = await encode('image/png')
+  if (!png) throw new Error('Could not process this image.')
+  return { blob: png, ...size }
+}

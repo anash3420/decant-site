@@ -89,7 +89,10 @@ publicRouter.get('/brands', async (_req, res) => {
     { $match: { status: 'published' } },
     { $group: { _id: { brand: '$brandSlug', kind: '$kind' }, count: { $sum: 1 } } },
   ])
-  const brands = await Brand.find({ slug: { $in: [...new Set(counts.map((c) => c._id.brand))] } }, { name: 1, slug: 1 })
+  const brands = await Brand.find(
+    { slug: { $in: [...new Set(counts.map((c) => c._id.brand))] } },
+    { name: 1, slug: 1, description: 1, logo: 1, logoMobile: 1 },
+  )
     .sort({ name: 1 })
     .lean()
   cdnCache(res, 60)
@@ -99,6 +102,12 @@ publicRouter.get('/brands', async (_req, res) => {
       return {
         slug: b.slug,
         name: b.name,
+        // For the brand banner: description plus a desktop and an optional phone logo
+        description: b.description ?? '',
+        logo: b.logo?.url ? { src: b.logo.url, width: b.logo.width, height: b.logo.height } : null,
+        logoMobile: b.logoMobile?.url
+          ? { src: b.logoMobile.url, width: b.logoMobile.width, height: b.logoMobile.height }
+          : null,
         count: mine.reduce((n, c) => n + c.count, 0),
         byKind: Object.fromEntries(mine.map((c) => [c._id.kind, c.count])),
       }

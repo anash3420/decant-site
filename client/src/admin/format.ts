@@ -29,5 +29,8 @@ export const num = (s: string) => (s.trim() === '' ? undefined : Number(s))
 
 export const dateTime = new Intl.DateTimeFormat('en-CA', { dateStyle: 'medium', timeStyle: 'short' })
 
+/** Logos copied from the brand lookup are stored under brands/; ones you upload yourself under listings/ */
+export const isLookupLogo = (p: FragrancePhoto | null) => !!p?.pathname?.startsWith('brands/')
+
 /** Photos copied from Fragplace are stored under fragrances/; ones you upload yourself under listings/ */
 export const isFragplacePhoto = (p: FragrancePhoto | null) => !!p?.pathname?.startsWith('fragrances/')

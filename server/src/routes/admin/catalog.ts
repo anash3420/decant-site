@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { slugify } from '../../../../shared/slug.ts'
 import { CONCENTRATIONS, FRAGRANCE_CATEGORIES } from '../../../../shared/types.ts'
 import { HttpError, notFound } from '../../http.ts'
-import { findFragrances, importFragplacePhoto } from '../../services/fragplace.ts'
+import { findBrands, findFragrances, importFragplaceLogo, importFragplacePhoto } from '../../services/fragplace.ts'
 import { copyImage, deleteImage } from '../../services/storage.ts'
 import { Brand, Fragrance, Listing } from '../../models/index.ts'
 import type { LeanFragrance } from '../../models/lean.ts'
@@ -20,29 +20,78 @@ const slugField = z
 
 // ── Brands ─────────────────────────────────────────────────────────────────────
 
+/** A stored image: a logo or photo already uploaded to our storage */
+const storedImage = z.object({
+  url: z.string().min(1).max(1000),
+  pathname: z.string().max(500).optional(),
+  width: z.number().int().positive().max(20_000).optional(),
+  height: z.number().int().positive().max(20_000).optional(),
+})
+
+type BrandDoc = InstanceType<typeof Brand>
+const toAdminBrand = (b: BrandDoc | (Record<string, unknown> & { _id: unknown }), fragranceCount?: number) => {
+  const d = b as {
+    _id: unknown
+    name: string
+    slug: string
+    description?: string | null
+    logo?: z.infer<typeof storedImage> | null
+    logoMobile?: z.infer<typeof storedImage> | null
+    fragplaceId?: number | null
+  }
+  const image = (i: z.infer<typeof storedImage> | null | undefined) =>
+    i?.url ? { url: i.url, pathname: i.pathname, width: i.width, height: i.height } : null
+  return {
+    id: String(d._id),
+    name: d.name,
+    slug: d.slug,
+    description: d.description ?? '',
+    logo: image(d.logo),
+    logoMobile: image(d.logoMobile),
+    fragplaceId: d.fragplaceId ?? null,
+    ...(fragranceCount !== undefined && { fragranceCount }),
+  }
+}
+
 catalogRouter.get('/brands', async (_req, res) => {
   const [brands, counts] = await Promise.all([
     Brand.find().sort({ name: 1 }).lean(),
     Fragrance.aggregate<{ _id: unknown; count: number }>([{ $group: { _id: '$brand', count: { $sum: 1 } } }]),
   ])
   res.json({
-    brands: brands.map((b) => ({
-      id: String(b._id),
-      name: b.name,
-      slug: b.slug,
-      fragranceCount: counts.find((c) => String(c._id) === String(b._id))?.count ?? 0,
-    })),
+    brands: brands.map((b) => toAdminBrand(b, counts.find((c) => String(c._id) === String(b._id))?.count ?? 0)),
   })
 })
 
-const brandInput = z.object({ name: z.string().trim().min(1).max(80), slug: slugField.optional() })
+catalogRouter.get('/brands/:id', async (req, res) => {
+  const brand = await Brand.findById(objectId.parse(req.params.id)).lean()
+  if (!brand) throw notFound('Brand')
+  res.json({ brand: toAdminBrand(brand, await Fragrance.countDocuments({ brand: brand._id })) })
+})
+
+// The extra fields are optional so a plain rename leaves them alone; null clears one
+const brandInput = z.object({
+  name: z.string().trim().min(1).max(80),
+  slug: slugField.optional(),
+  description: z.string().trim().max(2000).optional(),
+  logo: storedImage.nullable().optional(),
+  logoMobile: storedImage.nullable().optional(),
+  fragplaceId: z.number().int().positive().nullable().optional(),
+})
 
 catalogRouter.post('/brands', async (req, res) => {
   const input = brandInput.parse(req.body)
   const slug = input.slug ?? slugify(input.name)
   if (await Brand.exists({ slug })) throw new HttpError(409, 'slug_taken', 'A brand with that name already exists.')
-  const brand = await Brand.create({ name: input.name, slug })
-  res.status(201).json({ brand: { id: String(brand._id), name: brand.name, slug: brand.slug, fragranceCount: 0 } })
+  const brand = await Brand.create({
+    name: input.name,
+    slug,
+    description: input.description ?? '',
+    logo: input.logo ?? undefined,
+    logoMobile: input.logoMobile ?? undefined,
+    fragplaceId: input.fragplaceId ?? undefined,
+  })
+  res.status(201).json({ brand: toAdminBrand(brand.toObject(), 0) })
 })
 
 catalogRouter.patch('/brands/:id', async (req, res) => {
@@ -54,11 +103,21 @@ catalogRouter.patch('/brands/:id', async (req, res) => {
   if (slug !== brand.slug && (await Brand.exists({ slug })))
     throw new HttpError(409, 'slug_taken', 'Another brand uses that link.')
   const oldSlug = brand.slug
+
+  // Logo files that are being replaced or removed, deleted once the save succeeds
+  const replaced = (['logo', 'logoMobile'] as const).flatMap((k) => {
+    const old = brand[k]
+    return input[k] !== undefined && old?.url && old.url !== input[k]?.url ? [old] : []
+  })
   brand.set({ name: input.name, slug })
+  if (input.description !== undefined) brand.set({ description: input.description })
+  for (const k of ['logo', 'logoMobile', 'fragplaceId'] as const) if (input[k] !== undefined) brand.set(k, input[k])
   await brand.save()
+  await Promise.all(replaced.map((img) => deleteImage(img)))
+
   // Listings carry a copy of the brand slug for filtering
   if (slug !== oldSlug) await Listing.updateMany({ brandSlug: oldSlug }, { brandSlug: slug })
-  res.json({ brand: { id: String(brand._id), name: brand.name, slug: brand.slug } })
+  res.json({ brand: toAdminBrand(brand.toObject(), await Fragrance.countDocuments({ brand: id })) })
 })
 
 catalogRouter.delete('/brands/:id', async (req, res) => {
@@ -67,6 +126,7 @@ catalogRouter.delete('/brands/:id', async (req, res) => {
     throw new HttpError(409, 'in_use', 'Move or delete this brand’s fragrances first.')
   const deleted = await Brand.findByIdAndDelete(id)
   if (!deleted) throw notFound('Brand')
+  await Promise.all([deleted.logo, deleted.logoMobile].flatMap((img) => (img?.url ? [deleteImage(img)] : [])))
   res.json({ ok: true })
 })
 
@@ -197,6 +257,18 @@ catalogRouter.get('/fragplace', async (req, res) => {
     .object({ brand: z.string().trim().min(1).max(80), name: z.string().trim().min(1).max(120) })
     .parse(req.query)
   res.json({ matches: await findFragrances(brand, name) })
+})
+
+/** Up to 5 Fragplace brands for a name, with description and a preview of the logo */
+catalogRouter.get('/fragplace/brands', async (req, res) => {
+  const { name } = z.object({ name: z.string().trim().min(1).max(80) }).parse(req.query)
+  res.json({ matches: await findBrands(name) })
+})
+
+/** Copies a brand match's logo into our storage, as a desktop and a phone version */
+catalogRouter.post('/fragplace/logo', async (req, res) => {
+  const { thumb } = z.object({ thumb: z.string().url().max(2000) }).parse(req.body)
+  res.status(201).json(await importFragplaceLogo(thumb))
 })
 
 /** Copies a match's bottle photo into our storage; attach the result to the fragrance as `photo` */

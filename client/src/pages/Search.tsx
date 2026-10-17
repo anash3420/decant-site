@@ -4,6 +4,7 @@ import type { Fragrance } from '@shared/types.ts'
 import { normalize } from '@shared/search.ts'
 import { searchCatalog } from '../api/shop.ts'
 import { CardSkeletons } from '../components/CatalogState.tsx'
+import BrandBanner from '../components/BrandBanner.tsx'
 import FragranceCard from '../components/FragranceCard.tsx'
 import { KINDS } from '../lib/catalog.ts'
 
@@ -46,6 +47,7 @@ export default function Search() {
           <h1 className="mt-1 text-4xl break-words sm:text-5xl">{house ?? (q || 'Search')}</h1>
         </div>
       </header>
+      {house && <BrandBanner name={house} className="mt-6" />}
 
       {!q ? (
         <p className="mt-4 text-muted">Type a fragrance or house in the search box above.</p>

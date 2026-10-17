@@ -12,6 +12,7 @@ import ListingEdit from './pages/ListingEdit.tsx'
 import Fragrances from './pages/Fragrances.tsx'
 import FragranceEdit from './pages/FragranceEdit.tsx'
 import Brands from './pages/Brands.tsx'
+import BrandEdit from './pages/BrandEdit.tsx'
 import SettingsPage from './pages/Settings.tsx'
 
 export default function AdminApp() {
@@ -44,6 +45,8 @@ export default function AdminApp() {
           <Route path="fragrances/new" element={<FragranceEdit />} />
           <Route path="fragrances/:id" element={<FragranceEdit />} />
           <Route path="brands" element={<Brands />} />
+          <Route path="brands/new" element={<BrandEdit />} />
+          <Route path="brands/:id" element={<BrandEdit />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/admin" replace />} />
         </Route>
