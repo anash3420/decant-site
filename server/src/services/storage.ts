@@ -6,7 +6,7 @@ import { env } from '../env.ts'
 import { HttpError } from '../http.ts'
 
 /**
- * Listing photos. With BLOB_READ_WRITE_TOKEN set they go to Vercel Blob (required on Vercel, see env.ts);
+ * Listing and fragrance photos. With BLOB_READ_WRITE_TOKEN set they go to Vercel Blob (required on Vercel, see env.ts);
  * without it (local dev) they're written to server/.uploads and served from /api/uploads.
  */
 
@@ -23,10 +23,10 @@ export const IMAGE_TYPES: Record<string, string> = {
 /** Every upload gets a fresh random name and is never edited in place, so browsers and the CDN can keep it a year */
 const ONE_YEAR = 365 * 24 * 60 * 60
 
-export async function storeImage(data: Buffer, contentType: string) {
+export async function storeImage(data: Buffer, contentType: string, folder: 'listings' | 'fragrances' = 'listings') {
   const ext = IMAGE_TYPES[contentType]
   if (!ext) throw new Error(`Unsupported image type ${contentType}`)
-  const pathname = `listings/${randomUUID()}.${ext}`
+  const pathname = `${folder}/${randomUUID()}.${ext}`
 
   if (usingBlob) {
     try {
@@ -46,7 +46,7 @@ export async function storeImage(data: Buffer, contentType: string) {
     }
   }
 
-  await mkdir(LOCAL_UPLOAD_DIR + 'listings', { recursive: true })
+  await mkdir(LOCAL_UPLOAD_DIR + folder, { recursive: true })
   await writeFile(LOCAL_UPLOAD_DIR + pathname, data)
   return { url: `/api/uploads/${pathname}`, pathname }
 }

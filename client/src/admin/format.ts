@@ -1,4 +1,4 @@
-import type { InquiryStatus, Kind } from './api.ts'
+import type { FragrancePhoto, InquiryStatus, Kind } from './api.ts'
 
 // Labels and small text helpers shared by admin pages (kept out of ui.tsx so it only exports components)
 
@@ -28,3 +28,6 @@ export const joinList = (xs: string[] | undefined) => (xs ?? []).join(', ')
 export const num = (s: string) => (s.trim() === '' ? undefined : Number(s))
 
 export const dateTime = new Intl.DateTimeFormat('en-CA', { dateStyle: 'medium', timeStyle: 'short' })
+
+/** Photos copied from Fragplace are stored under fragrances/; ones you upload yourself under listings/ */
+export const isFragplacePhoto = (p: FragrancePhoto | null) => !!p?.pathname?.startsWith('fragrances/')

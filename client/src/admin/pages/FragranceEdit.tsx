@@ -1,11 +1,20 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useToast } from '../../context/ToastContext.tsx'
-import { ApiError, api, type AdminBrand, type AdminFragrance } from '../api.ts'
+import {
+  ApiError,
+  api,
+  type AdminBrand,
+  type AdminFragrance,
+  type FragplaceMatch,
+  type FragrancePhoto,
+} from '../api.ts'
+import FragplaceLookup from '../FragplaceLookup.tsx'
+import FragrancePhotoCard from '../FragrancePhotoCard.tsx'
 import { Button, Card, ErrorBox, Field, Loading, PageHeader, inputClass } from '../ui.tsx'
 import { CONCENTRATIONS, type Concentration, type FragranceCategory } from '@shared/types.ts'
 import { CATEGORIES } from '../../lib/catalog.ts'
-import { joinList, splitList } from '../format.ts'
+import { isFragplacePhoto, joinList, splitList } from '../format.ts'
 import { useLoad } from '../useLoad.ts'
 
 interface Form {
@@ -21,6 +30,8 @@ interface Form {
   base: string
   description: string
   tint: string
+  photo: FragrancePhoto | null
+  fragplaceId: number | null
 }
 
 const empty: Form = {
@@ -36,6 +47,8 @@ const empty: Form = {
   base: '',
   description: '',
   tint: '#B8A88A',
+  photo: null,
+  fragplaceId: null,
 }
 
 const toForm = (f: AdminFragrance): Form => ({
@@ -51,6 +64,8 @@ const toForm = (f: AdminFragrance): Form => ({
   base: joinList(f.notes.base),
   description: f.description,
   tint: f.tint,
+  photo: f.photo,
+  fragplaceId: f.fragplaceId,
 })
 
 export default function FragranceEdit() {
@@ -95,6 +110,8 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
       notes: { top: splitList(form.top), heart: splitList(form.heart), base: splitList(form.base) },
       description: form.description,
       tint: form.tint,
+      photo: form.photo,
+      fragplaceId: form.fragplaceId,
     }
     try {
       const r = isNew
@@ -104,6 +121,42 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
       if (isNew) navigate('/admin/fragrances', { replace: true })
     } catch (err) {
       setSaveError(err instanceof ApiError ? err : new ApiError(0, 'error', 'Could not save.'))
+    } finally {
+      setBusy(undefined)
+    }
+  }
+
+  /** Fills the form from a Fragplace match: empty fields only unless `replace`, and the photo unless it's your own */
+  const applyMatch = async (m: FragplaceMatch, replace: boolean) => {
+    const fill = (current: string, next: string) => (next && (replace || !current.trim()) ? next : current)
+    const filled: Partial<Form> = {
+      fragplaceId: m.id,
+      year: fill(form.year, m.year ? String(m.year) : ''),
+      accords: fill(form.accords, joinList(m.accords)),
+      top: fill(form.top, joinList(m.notes.top)),
+      heart: fill(form.heart, joinList(m.notes.heart)),
+      base: fill(form.base, joinList(m.notes.base)),
+    }
+    set(filled)
+    const changed = (['year', 'accords', 'top', 'heart', 'base'] as const).filter((k) => filled[k] !== form[k])
+    const keepOwnPhoto = form.photo && !isFragplacePhoto(form.photo)
+    if (!m.thumb || keepOwnPhoto) {
+      toast({
+        title: changed.length ? 'Filled in from Fragplace' : 'Nothing to fill in',
+        detail: keepOwnPhoto ? 'Your own photo was kept.' : undefined,
+      })
+      return
+    }
+    setBusy('import')
+    try {
+      const photo = await api<FragrancePhoto>('/fragplace/photo', { json: { thumb: m.thumb } })
+      set({ photo })
+      toast({ title: 'Filled in from Fragplace', detail: 'Check the details, then save.' })
+    } catch (err) {
+      toast({
+        title: 'Details filled in, photo failed',
+        detail: err instanceof ApiError ? err.message : 'Upload your own photo instead.',
+      })
     } finally {
       setBusy(undefined)
     }
@@ -232,6 +285,23 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
           </div>
         </Card>
 
+        <FragplaceLookup
+          brand={brands.find((b) => b.id === form.brand)?.name}
+          name={form.name}
+          // Searches by itself while the fragrance hasn't been matched yet; afterwards only on request
+          auto={!form.fragplaceId}
+          pickedId={form.fragplaceId}
+          busy={busy === 'import'}
+          onPick={(m, replace) => void applyMatch(m, replace)}
+        />
+
+        <FragrancePhotoCard
+          photo={form.photo}
+          tint={form.tint}
+          importing={busy === 'import'}
+          onChange={(photo) => set({ photo })}
+        />
+
         <Card title="Notes and accords">
           <p className="mb-3 text-sm text-muted">Separate with commas.</p>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -252,7 +322,7 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
             <Field label="Base notes">
               <input value={form.base} onChange={(e) => set({ base: e.target.value })} className={inputClass} />
             </Field>
-            <Field label="Placeholder colour" hint="Used for the bottle drawing until a listing has photos.">
+            <Field label="Drawing colour" hint="Used for the bottle drawing when there's no photo at all.">
               <input
                 type="color"
                 value={form.tint}
@@ -277,7 +347,7 @@ function FragranceForm({ id, brands, fragrance }: { id?: string; brands: AdminBr
           ) : (
             <span />
           )}
-          <Button type="submit" busy={busy === 'save'} className="min-h-12 px-6">
+          <Button type="submit" busy={busy === 'save'} disabled={busy === 'import'} className="min-h-12 px-6">
             {isNew ? 'Add fragrance' : 'Save changes'}
           </Button>
         </div>

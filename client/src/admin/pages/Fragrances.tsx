@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { api, type AdminFragrance } from '../api.ts'
 import { Empty, ErrorBox, Loading, PageHeader, inputClass } from '../ui.tsx'
 import { useLoad } from '../useLoad.ts'
+import BottleArt from '../../components/BottleArt.tsx'
 import CategoryBadge from '../../components/CategoryBadge.tsx'
 
 export default function Fragrances() {
@@ -56,11 +57,20 @@ export default function Fragrances() {
                 to={`/admin/fragrances/${f.id}`}
                 className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-bg sm:px-5"
               >
-                <span
-                  className="size-8 shrink-0 rounded-full border border-border"
-                  style={{ background: f.tint }}
-                  aria-hidden="true"
-                />
+                {f.photo ? (
+                  <img
+                    src={f.photo.url}
+                    alt=""
+                    loading="lazy"
+                    className="h-12 w-9 shrink-0 rounded border border-border bg-white object-contain"
+                  />
+                ) : (
+                  <BottleArt
+                    tint={f.tint}
+                    variant="bottle"
+                    className="h-12 w-9 shrink-0 overflow-hidden rounded border border-border"
+                  />
+                )}
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-xs text-muted">{f.brand?.name}</span>
                   <span className="block truncate font-medium">{f.name}</span>
