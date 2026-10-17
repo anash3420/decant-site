@@ -24,6 +24,8 @@ export interface LeanFragrance {
   accords: string[]
   notes: { top: string[]; heart: string[]; base: string[] }
   description: string
+  photo?: { url: string; pathname?: string; width?: number; height?: number }
+  fragplaceId?: number
   tint: string
 }
 
