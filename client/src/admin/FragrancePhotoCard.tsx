@@ -53,12 +53,12 @@ export default function FragrancePhotoCard({
         <div className="min-w-0 flex-1 basis-48">
           <p className="text-sm text-muted">
             {importing
-              ? 'Copying the photo from Fragplace…'
+              ? 'Adding the photo…'
               : photo
                 ? isFragplacePhoto(photo)
-                  ? 'From Fragplace. Wrong bottle? Upload your own instead.'
+                  ? 'Wrong bottle? Upload your own instead.'
                   : 'Your own photo.'
-                : 'No photo yet. Pick a Fragplace match or upload your own.'}
+                : 'No photo yet. Pick a match above or upload your own.'}
           </p>
           <p className="mt-1 text-xs text-muted">Shown in the shop for listings that don’t have photos of their own.</p>
           <div className="mt-3 flex flex-wrap gap-2">
