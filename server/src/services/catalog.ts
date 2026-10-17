@@ -29,7 +29,10 @@ function toCatalogListing(l: LeanListing): CatalogListing | null {
       ? [...l.photos]
           .sort((a, b) => a.order - b.order)
           .map((p) => ({ label: p.label, src: p.url, width: p.width, height: p.height }))
-      : undefined,
+      : // No listing photos yet: the fragrance's own bottle photo stands in
+        f.photo
+        ? [{ label: 'Bottle', src: f.photo.url, width: f.photo.width, height: f.photo.height }]
+        : undefined,
     addedAt: l.addedAt.toISOString().slice(0, 10),
   }
 

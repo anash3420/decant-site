@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { slugify } from '../../../../shared/slug.ts'
 import { CONCENTRATIONS, FRAGRANCE_CATEGORIES } from '../../../../shared/types.ts'
 import { HttpError, notFound } from '../../http.ts'
+import { findFragrances, importFragplacePhoto } from '../../services/fragplace.ts'
+import { copyImage, deleteImage } from '../../services/storage.ts'
 import { Brand, Fragrance, Listing } from '../../models/index.ts'
 import type { LeanFragrance } from '../../models/lean.ts'
 import { objectId, searchRegex } from '../../validation.ts'
@@ -88,6 +90,21 @@ const fragranceInput = z.object({
   accords: notesList,
   notes: z.object({ top: notesList, heart: notesList, base: notesList }).default({ top: [], heart: [], base: [] }),
   description: z.string().trim().max(2000).default(''),
+  photo: z
+    .object({
+      url: z.string().min(1).max(1000),
+      pathname: z.string().max(500).optional(),
+      width: z.number().int().positive().max(20_000).optional(),
+      height: z.number().int().positive().max(20_000).optional(),
+    })
+    .nullish()
+    .transform((v) => v ?? undefined),
+  fragplaceId: z
+    .number()
+    .int()
+    .positive()
+    .nullish()
+    .transform((v) => v ?? undefined),
   tint: z
     .string()
     .regex(/^#[0-9a-f]{6}$/i)
@@ -139,8 +156,11 @@ catalogRouter.patch('/fragrances/:id', async (req, res) => {
   if (slug !== fragrance.slug && (await Fragrance.exists({ slug })))
     throw new HttpError(409, 'slug_taken', 'Another fragrance uses that link.')
   const brandChanged = String(fragrance.brand) !== input.brand
-  fragrance.set({ ...input, slug })
+  const oldPhoto = fragrance.photo?.url !== input.photo?.url ? fragrance.photo : undefined
+  // set() leaves a field alone when it's undefined, so clear removed ones explicitly
+  fragrance.set({ ...input, slug, photo: input.photo ?? null, fragplaceId: input.fragplaceId ?? null })
   await fragrance.save()
+  if (oldPhoto?.url) await deleteImage(oldPhoto)
   if (brandChanged) await Listing.updateMany({ fragrance: id }, { brandSlug: brand.slug })
   const doc = await Fragrance.findById(id).populate('brand', 'name slug').lean<LeanFragrance>()
   res.json({ fragrance: toAdminFragrance(doc!) })
@@ -152,7 +172,37 @@ catalogRouter.delete('/fragrances/:id', async (req, res) => {
     throw new HttpError(409, 'in_use', 'Delete or archive this fragrance’s listings first.')
   const deleted = await Fragrance.findByIdAndDelete(id)
   if (!deleted) throw notFound('Fragrance')
+  if (deleted.photo?.url) await deleteImage(deleted.photo)
   res.json({ ok: true })
+})
+
+/**
+ * A copy of the fragrance's bottle photo for a listing to use as one of its own photos
+ * (its own file, so the listing and the fragrance can each remove theirs safely)
+ */
+catalogRouter.post('/fragrances/:id/photo/copy', async (req, res) => {
+  const id = objectId.parse(req.params.id)
+  const fragrance = await Fragrance.findById(id).lean<LeanFragrance>()
+  if (!fragrance) throw notFound('Fragrance')
+  if (!fragrance.photo?.url) throw new HttpError(404, 'not_found', 'This fragrance has no photo yet.')
+  const copied = await copyImage(fragrance.photo)
+  res.status(201).json({ ...copied, width: fragrance.photo.width, height: fragrance.photo.height })
+})
+
+// ── Fragplace lookup ──────────────────────────────────────────────────────────
+
+/** Up to 5 Fragplace matches for a brand + name, with year, notes, accords and a preview image */
+catalogRouter.get('/fragplace', async (req, res) => {
+  const { brand, name } = z
+    .object({ brand: z.string().trim().min(1).max(80), name: z.string().trim().min(1).max(120) })
+    .parse(req.query)
+  res.json({ matches: await findFragrances(brand, name) })
+})
+
+/** Copies a match's bottle photo into our storage; attach the result to the fragrance as `photo` */
+catalogRouter.post('/fragplace/photo', async (req, res) => {
+  const { thumb } = z.object({ thumb: z.string().url().max(2000) }).parse(req.body)
+  res.status(201).json(await importFragplacePhoto(thumb))
 })
 
 function toAdminFragrance(f: LeanFragrance) {
@@ -168,6 +218,10 @@ function toAdminFragrance(f: LeanFragrance) {
     accords: f.accords,
     notes: f.notes,
     description: f.description,
+    photo: f.photo
+      ? { url: f.photo.url, pathname: f.photo.pathname, width: f.photo.width, height: f.photo.height }
+      : null,
+    fragplaceId: f.fragplaceId ?? null,
     tint: f.tint,
   }
 }
