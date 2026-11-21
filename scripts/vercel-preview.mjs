@@ -1,14 +1,12 @@
 /**
  * Serves the built Vercel output (.vercel/output) locally the way Vercel does, so a deploy can be tested
- * before pushing: /api/* runs the bundled function, real files are served as-is, everything else gets
- * index.html. Uses server/.env (your local database) unless another --env-file is passed.
+ * before pushing: real files are served as-is, everything else gets index.html.
  *
  *   npm run build:vercel && npm run preview:vercel     # http://localhost:3000
  */
 import { createReadStream, existsSync, statSync } from 'node:fs'
 import { createServer } from 'node:http'
 import { extname, join, normalize } from 'node:path'
-import { pathToFileURL } from 'node:url'
 
 const OUT = '.vercel/output'
 const PORT = Number(process.env.PREVIEW_PORT ?? 3000)
@@ -18,7 +16,6 @@ if (!existsSync(`${OUT}/config.json`)) {
   process.exit(1)
 }
 
-const { default: api } = await import(pathToFileURL(`${OUT}/functions/api.func/index.mjs`).href)
 const STATIC = join(OUT, 'static')
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -37,19 +34,10 @@ const sendFile = (res, file, headers = {}) => {
 
 createServer((req, res) => {
   const path = new URL(req.url, 'http://x').pathname
-  // Vercel sits in front of the function as a proxy; mirror the headers it adds
-  req.headers['x-forwarded-for'] ??= req.socket.remoteAddress
-  req.headers['x-forwarded-proto'] = 'https'
-  req.headers['x-forwarded-host'] = req.headers.host
-
-  if (path === '/api' || path.startsWith('/api/')) return api(req, res)
-
   const file = normalize(join(STATIC, decodeURIComponent(path)))
   if (file.startsWith(STATIC) && existsSync(file) && statSync(file).isFile()) {
     const cache = path.startsWith('/assets/') ? { 'cache-control': 'public, max-age=31536000, immutable' } : {}
     return sendFile(res, file, cache)
   }
   sendFile(res, join(STATIC, 'index.html'))
-}).listen(PORT, () =>
-  console.log(`Vercel build preview on http://localhost:${PORT} (API env: ${process.env.NODE_ENV ?? 'development'})`),
-)
+}).listen(PORT, () => console.log(`Vercel build preview on http://localhost:${PORT}`))

@@ -31,12 +31,6 @@ export default tseslint.config(
     },
   },
 
-  // Context modules export a provider and its useX() hook together, the usual React pattern
-  {
-    files: ['client/src/context/*.tsx', 'client/src/admin/AuthContext.tsx'],
-    rules: { 'react-refresh/only-export-components': 'off' },
-  },
-
   // API, scripts, shared code and config files (Node)
   {
     files: ['server/**/*.ts', 'shared/**/*.ts', '*.js', 'scripts/*.mjs', 'client/*.ts'],

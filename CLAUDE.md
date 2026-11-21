@@ -4,110 +4,333 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A decant shop for the CFE Facebook community. Visitors browse decants, Catch & Release vials and full bottles, then send an
-**inquiry**. There is no checkout and no payments: the owner contacts the buyer on Facebook. The app has three
-parts: `client/` (React 19 + Vite + Tailwind v4, with the shop and a lazy-loaded `/admin`), `server/` (Express 5 +
-Mongoose 9, run by `tsx` with no build step) and `shared/` (rules used by both).
+A retail decant shop ("Anash's Fragrances"). **It is being rebuilt.** The old React shop, admin panel and Express API
+were removed (they are in git history, on `main`). What exists now:
+
+- `server/src/models/`: the MongoDB schema (Mongoose 9). This is kept and is the base for the new backend.
+- `server/src/db.ts` (cached Mongoose connection) and `server/src/env.ts` (zod-validated environment).
+- `shared/`: types, stock maths, the lettermail rule, validation regexes and slugs, for both backend and frontend.
+- `client/`: the Vite + React 19 + Tailwind v4 setup with a placeholder page. The new frontend is written here.
+
+The new backend will be written from scratch as separate services; their layout isn't decided yet. The new frontend
+follows the "Storefront redesign" section below.
 
 ## Commands
 
-Run setup and checks from the repo root:
+Run from the repo root:
 
 - `npm run setup` installs root tooling, client and server
-- `npm run check` runs typecheck + lint + format:check + client build (use this as the "done" check)
+- `npm run check` runs typecheck + lint + format:check + client build (use this as the "done" check). Untracked
+  folders (`design-previews/`, `.agents/`, `.impeccable/`) fail format:check; they aren't part of the code.
 - `npm run typecheck`, `npm run lint` / `lint:fix`, `npm run format` / `format:check`
-- `npm run build:vercel` writes `.vercel/output` (Build Output API: static shop + one esbuild-bundled API function
-  from `server/src/vercel.ts`). `npm run preview:vercel` serves it on :3000 so the smoke tests can target it with
-  `API_URL=http://localhost:3000/api`.
-- Production DB: `server/.env.production` (git-ignored). `npm run db:setup:prod` creates indexes and default
-  settings without deleting anything. `npm run create-admin:prod`. `seed` refuses `NODE_ENV=production`.
+- `npm run build:vercel` writes `.vercel/output` (Build Output API, static frontend only for now).
+  `npm run preview:vercel` serves it on :3000.
 
-Local dev needs Node 20.19+ (`.nvmrc`) and MongoDB 7+ with `mongod` and `mongosh` on PATH. Run these in `server/`:
+Local database (needs MongoDB 7+ with `mongod` and `mongosh` on PATH), in `server/`:
 
-- `cp .env.example .env` and set `JWT_SECRET` (min 32 chars; `env.ts` exits on invalid env)
-- `npm run db`: local replica set on :27018, data in `server/.mongo`. Keep it running. It must be a replica set
-  because inquiries use transactions.
-- `npm run db:init` (once), `npm run seed`, `npm run create-admin -- you@example.com`
-- `npm run dev`: API on http://localhost:5050/api (not 5000, which macOS AirPlay uses)
+- `cp .env.example .env`. `env.ts` exits on invalid env; it still requires the old API's `JWT_SECRET` (min 32 chars)
+  until the new services decide what they need.
+- `npm run db`: local replica set on :27018, data in `server/.mongo`. It must be a replica set because stock holds
+  use transactions. `npm run db:init` once to initiate it.
+- Production DB settings are in `server/.env.production` (git-ignored).
 
-In `client/`, `npm run dev` serves http://localhost:5173 and proxies `/api` to :5050. The client has no catalog data
-of its own, so the server must be running.
+In `client/`, `npm run dev` serves http://localhost:5173 and proxies `/api` to :5050.
 
-### Tests
+There are no tests yet.
 
-There is no unit test runner. The tests are end-to-end smoke scripts that run against a live `npm run dev` server.
-They change data (they create inquiries and hold stock), so re-seed before and after:
+## Schema (server/src/models)
 
-    cd server && npm run seed && npm run smoke && npm run seed
-    ADMIN_EMAIL=... ADMIN_PASSWORD=... npm run smoke:admin && npm run seed
+- **One `listings` collection with three kinds**, Mongoose discriminators on `kind`: `decant` | `catch-release` |
+  `full-bottle` (`Listing.ts`). The shop is now decants only (see below), but removing the other kinds from the schema
+  is a separate change; ask before starting it.
+- A listing points to a `Fragrance` (the scent: notes, accords, category, concentration, gender, year). That
+  reference is `immutable` once created, because inquiries and price history point at the listing.
+- `brandSlug` is copied from the brand onto each listing so brand filtering needs no `$lookup`. Renaming a brand slug
+  must update its listings.
+- Decant listings hold `bottles` (`sizeMl`, `remainingMl`, admin-only `batchCode`, `acquiredAt`, `costPaid`) and
+  `prices` per size. Admin-only fields (`costPaid`, `sourcedFrom`, `batchCode`) must never reach shoppers, and
+  neither may ml left (see "Never show" below).
+- `Inquiry.ts`: line snapshots (name, option, unit price), `heldFrom` per decant line (which bottles the held ml came
+  from, so a cancellation can put it back), status history (`new → contacted → confirmed → fulfilled`, or
+  `cancelled`), `stockHeld`. The redesign moves to paid orders, so this model will change.
+- `Settings.ts`: one document (`key: 'site'`) with delivery options, lettermail limits and `deductStock`.
+- `Brand.ts` (name, slug, description, `logo`, `logoMobile`), `Admin.ts` (email + password hash).
+- Typed `.lean()` shapes are in `lean.ts`.
 
-You can't run a single check on its own. Each one is a `check(name, fn)` call in `server/src/scripts/smoke*.ts`.
-`API_URL` overrides the target.
+Rules the old API enforced and the new backend should keep: the server prices everything (the browser sends only
+slug, size and quantity); stock is held inside a MongoDB transaction when an order is placed (decants take ml from
+the fullest bottle first); stock maths comes from `shared/stock.ts` (`getOptions`, `maxQty`, `isSoldOut`) so the
+frontend and backend agree.
 
-## Architecture
-
-**Shared rules.** `shared/` holds the catalog types (`types.ts`), stock maths (`stock.ts`: `getOptions`, `maxQty`,
-`isSoldOut`), the lettermail rule (`shipping.ts`), validation regexes and slugs. The server enforces these rules and
-the client reuses them for instant feedback. Change a rule here, never in only one place. Imports work differently
-on each side: the client uses the `@shared/*` alias (Vite + tsconfig), while the server uses relative paths with the
-`.ts` extension (`'../../../shared/stock.ts'`).
-
-**The server prices everything.** The browser sends only `{ slug, optionId, qty }` items plus an optional
-`expectedTotal`. In `server/src/services/inquiries.ts`, `createInquiry` re-reads listings inside
-`mongoose.connection.transaction`. It then checks stock with the shared `maxQty`, applies the lettermail limits from
-settings, prices the inquiry (returning 409 `price_changed` if the total differs) and calls `holdStock`.
-
-**Stock is held when an inquiry is created** (buy-it-now style). This happens in `services/stock.ts`:
-
-- Decants take ml from the fullest bottle first and record `heldFrom` so a release can put it back.
-- C&R decrements the vial's `qty`.
-- Full bottles get `soldAt` set.
-
-When an admin cancels an inquiry, `releaseStock` reverses the hold. Races between buyers show up as transaction
-write conflicts, and the transaction retries.
-
-**One `listings` collection with three kinds.** These are Mongoose discriminators on `kind`: `decant` |
-`catch-release` | `full-bottle` (`models/Listing.ts`). Key points:
-
-- A listing points to a `Fragrance` (the scent: notes, accords, category, concentration). That reference is
-  `immutable` once created.
-- `brandSlug` is copied from the brand onto each listing so `?brand=` filtering needs no `$lookup`. Renaming a brand
-  slug must update its listings.
-- The public API never returns raw documents. `services/catalog.ts` `toCatalogListing` flattens
-  listing + fragrance + brand into the shared `Fragrance` type and strips admin-only fields (`costPaid`,
-  `sourcedFrom`, `batchCode`). Typed `.lean()` shapes live in `models/lean.ts`.
-
-**Server layout.** `app.ts` exports the Express app without `listen()`, so it can be wrapped as a Vercel function;
-`index.ts` is local dev only. The DB connects lazily on each request via `withDb` and the connection is cached in
-`db.ts`. Routes are `routes/public.ts` and `routes/admin/*`. The admin router applies `sameOriginOnly` (an Origin
-check), then `Cache-Control: no-store`, then `/auth`, then `requireAdmin` (a JWT in an HttpOnly SameSite=Strict
-cookie) for everything else. Business logic lives in `services/`. Request bodies are validated with zod.
-
-**Errors.** Throw `HttpError(status, code, message, details?)` from `http.ts`. Express 5 forwards async throws.
-`middleware/errors.ts` turns every error, ZodErrors included, into `{ error: { code, message, details? } }`. The
-client switches on `code`, so keep codes stable (`unavailable`, `lettermail_unavailable`, `price_changed`,
-`rate_limited`, `invalid_request`, `not_found`...). On the client, `admin/api.ts` `ApiError.fieldErrors` maps zod
-details to form fields.
-
-**Photos.** `services/storage.ts` stores photos in Vercel Blob when `BLOB_READ_WRITE_TOKEN` is set. Otherwise it
-writes to `server/.uploads`, served at `/api/uploads`. On Vercel the token is required (`env.ts` refuses to start
-without it), and `npm run blob:check` verifies a store end to end. The admin crops each photo in the browser
-(`admin/CropDialog.tsx`, `admin/processImage.ts`) to landscape 4:3 or portrait 3:4 and stores `width`/`height`. The
-shop never crops photos: frames take the cover photo's shape or fit photos whole (`lib/photos.ts`).
-
-**Client.** `ShopContext` loads the catalog and settings and refreshes them when the tab regains focus.
-`InquiryContext` holds the visitor's picks. Sent inquiries are kept in localStorage (`lib/history.ts`), and the History
-page polls the public status endpoint. `/admin` is `lazy()`-loaded so it stays out of the shop bundle. Both API
-clients (`api/shop.ts`, `admin/api.ts`) share one request between overlapping GETs to the same path. The full
-endpoint list is in `server/README.md`.
+**Shared imports.** The client uses the `@shared/*` alias (Vite + tsconfig); server code uses relative paths with
+the `.ts` extension (`'../../../shared/stock.ts'`). Change a rule in `shared/`, never in only one place.
 
 ## Conventions
 
 - **Mobile first.** Most traffic is from phones. Check UI at 375px and 320px: no horizontal scroll, 44px tap
   targets, 16px form inputs.
-- Style comes from theme tokens in `client/src/index.css`, used as Tailwind classes (`bg-surface`, `text-muted`,
-  `bg-accent`, `text-instock`, `font-display`, ...), not raw colours.
+- Style comes from theme tokens defined in `client/src/index.css` and used as Tailwind classes, not raw colours.
+  The tokens are to be rewritten for the redesign's visual system.
 - Prettier sets no semicolons, single quotes, 120 columns and Tailwind class sorting. ESLint enforces
   `consistent-type-imports`, and `_`-prefixed names may go unused.
-- Concentrations and fragrance categories are fixed lists in `shared/types.ts`, and the server rejects anything else.
+- Concentrations and fragrance categories are fixed lists in `shared/types.ts`, and the schema rejects anything else.
 - Prices are in CAD (`formatPrice` in `shared/stock.ts`).
+
+## Storefront redesign (owner's decisions)
+
+The shop is being redesigned. Everything below was decided with the owner; build to it without re-asking. The
+mockups in `design-previews/` are the visual spec. Each `.html` is self-contained (its CSS holds exact sizes, colours
+and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first, then the `.html` for exact values.
+
+### Mockup index (all approved unless noted)
+
+| Page                                      | Files                                                                                                                                                                             |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Homepage, desktop                         | `final-home-desktop.html`, `final-home-desktop-*.jpg`                                                                                                                             |
+| Homepage, phone (draft, not reviewed yet) | `draft-home-phone.html` / `.jpg`                                                                                                                                                  |
+| Top bar menus, desktop                    | `topbar-houses.jpg`, `topbar-all-decants.jpg`, `topbar-fragrances.jpg` (source `topbar-menus.html`, `topbar-fragrances-shop-all.html`; use only the chosen variants listed below) |
+| Top bar menu, phone                       | `topbar-phone-menu.html` / `.jpg`                                                                                                                                                 |
+| All decants (catalogue)                   | `catalogue-final-desktop.*` (+ `-drawer`, `-filtered` jpgs), `catalogue-final-phone.*`                                                                                            |
+| Quick buy (desktop only)                  | `catalogue-quick-buy.*`                                                                                                                                                           |
+| All houses                                | `houses-az3-desktop.jpg`; phone is the third frame of `houses-az-phone.jpg` (source `houses-az-*.html`, idea "Z3")                                                                |
+| Brand (house) page                        | `brand-banner-name-desktop.jpg`, `brand-banner-logo-desktop.jpg`, `brand-banner-phone.jpg`                                                                                        |
+| Bag (side panel) and free shipping        | `bag-desktop.jpg`, `bag-phone.jpg`, `bag-free-shipping.jpg`                                                                                                                       |
+| Fragrance (product) page                  | `product-final-desktop*.jpg` (+ `-scrolled`, `-hover`), `product-final-phone.jpg`, viewer `product-photo-viewer-*.jpg`                                                            |
+| Homepage module ideas (optional extras)   | `idea-*.jpg`                                                                                                                                                                      |
+
+### What the shop is
+
+- A **retail decant shop**: decants only. No Catch & Release, no full bottles, no "Samples" in nav, chips, counts
+  or footer. All counts come from decant listings only. Removing the other listing kinds from code is a separate
+  change; ask before starting it.
+- **Never show** ml left in a bottle ("92 ml left", "Only 20 ml left", the old shop's ml-left card badge,
+  "Fill level" photos) or **spray counts**. Availability is only in stock or sold out. **Cost per ml** appears only
+  on the fragrance page's size tiles (owner's later decision); cards, menus and the quick buy show prices only.
+- The look is luxury but shop-first (Holt Renfrew / Harrods feeling) and must be original: don't copy reference
+  sites. Rejected directions were generic, discount-looking, playful, "funky" loud colours, and dark "Maison" heroes.
+
+### Visual system
+
+- Accent **burgundy `#6d1f33`**; plum is not the primary colour. Use soft, low-saturation, warm neutrals. The page
+  background is warm ivory (`#f5efe7` to `#f2e9e4`), with white cards and text `#0f1720`. Muted text is `#6e645b`.
+- Burgundy panels use a radial gradient `#93374f → #7a2640 → #62192e → #4c1222` with a soft white sheen.
+- Type: **Fraunces** for display and names, **Schibsted Grotesk** for UI. Italic Fraunces is for quotes and links
+  like "Make it yours". Use US spelling ("cozy").
+- "Atelier light" art: warm light pools and grain in the background, a fine burgundy scent-trail line running down
+  the page to the footer, and big outlined numbers (01/02/03 or a letter) behind headings. A numbered kicker
+  ("01 — The collection") sits above headings. The empty space right of a heading holds a hairline ending in a
+  dot, an italic line and the section link. Don't repeat the same information on both sides.
+- Announcement ticker: burgundy, scrolling, champagne sparkle separators, pauses on hover, static with reduced
+  motion, hidden when no message is enabled.
+- Logos: brand logos are multiplied onto white. On photos or dark panels they are reversed to white, which needs a
+  white or clean logo version per house (Roja's and Essential Parfums' logos read faintly).
+
+### Header and top bar
+
+- Desktop header: search on the left, the A.S. seal and "Anash's Fragrances" in the centre, account, wishlist and
+  Bag (n) on the right.
+- **Nav: New in · All decants · Fragrances · Houses.** Moods is not in the top bar.
+- Hovering a nav item opens a full-width white panel under the header and dims the page. **Photo cards zoom their
+  photo outwards on hover** (scale about 1.08, ~0.6s ease), and the tile lifts slightly.
+  - **Houses (M1):** A to Z house list with counts and "View all 11 houses" on the left, then four tall photo tiles,
+    each with the house logo in white near the bottom. No "Shop the house" text.
+  - **All decants (M2 "Salon"):** a dark burgundy-black panel with ivory Fraunces columns (Accord, Worn by, Type,
+    Size, Shop by) and counts. The hovered link turns gold `#e2c79c`. One lit featured photo with a caption.
+  - **Fragrances (F1 + Shop all tile):** Worn by and Strength lists on the left, four scent-family photo tiles
+    (Woody & Oud, Amber & Spice, Fresh & Citrus, Floral & Fruity; families are grouped from existing accords),
+    then a burgundy **"Not sure yet? Shop all 13 decants · Browse the catalogue"** tile that links to All decants.
+    Sweet & Gourmand / vanilla is left out until the owner stocks one, so families must be easy to add or remove.
+- **Phone:** a hamburger, the logo and the bag in the header. The hamburger opens a drawer from the left (dimmed
+  page) with close, name, bag and search. Below that: New in →, then one-open-at-a-time accordions:
+  - **All decants:** Shop all button, then Accord, Size and Type chips.
+  - **Fragrances:** 2×2 family tiles, the burgundy Shop all bar, then Worn by chips.
+  - **Houses:** round A to Z letters, 2-column logo tiles, then View all.
+
+  At the bottom are Account, Wishlist and the customer-service email. Phones have no hover effects.
+
+### Homepage (desktop settled)
+
+Order:
+
+1. Ticker and header.
+2. **Spotlight carousel** ("Pool of light"): photos fill the slide with a vignette, and the colour pools down onto a
+   glass shelf with a faint reflection. A white caption card at the bottom left shows house, name, "From $X" and
+   Discover. No buy bar.
+3. **01 The shelf:** product grid.
+4. **02 Discover houses:** logo tiles, with the last tile opening all houses.
+5. **03 Shop by mood:** "the list", all six moods typeset like a wine list. Moods: Cold evenings, Long summer days,
+   Nine to five, Date night, Weddings and parties, Cozy nights in.
+6. **"From me to you":** an italic note with the A.S. seal signature, and four details on the right.
+7. Footer: four stacked columns.
+
+Phone: a single-slide spotlight, a 2-column shelf, three moods plus "3 more moods", and a 2-column footer.
+
+### Product card (everywhere)
+
+- **No card box.** The photo **fills a 4:5 frame** (cover, 14 px radius on desktop, 12 px on phone). The details
+  sit straight on the page background below it: house (small), name (Fraunces), "From $X / for N ml", and an
+  italic burgundy **"Make it yours →"** link to the product page (desktop).
+- **Phone card ("C"):** house (12 px), then the name (Fraunces 17 px, at most 2 lines, no reserved height). Below
+  them, one row: the price on the left ("From $12" with "for 5 ml" under it) and a 40 px round outline arrow button
+  on the right that opens the product page. There's no "Make it yours" text on phone, and the whole card is
+  tappable. Rows of cards are 22 px apart.
+- On the photo: the heart top right (in a white circle) and an optional "New" tag top left. No "Add" or "Add to bag"
+  button on cards.
+- **Desktop only:** on hover a round burgundy bag button appears on the photo's corner (with a "Quick buy" tooltip).
+  It opens the **quick-buy drawer from the right** (500 px):
+  - a photo mosaic (one large, two small), house, name, concentration and gender, and one italic line of the story
+  - the accords, typeset with dots
+  - a segmented size picker ("3 ml $14 | 5 ml $20 | 10 ml $35")
+  - a quantity stepper and a sticky "Add to bag" button. The price shows only once, in the size picker, never
+    again in the button.
+
+  No delivery or trust notes in the drawer. **Phones have no quick buy;** the card links to the full page.
+
+### All decants page
+
+- Page head: crumb, a kicker, "All decants", and an italic line. The right fill holds an italic line and a "How
+  decants are poured" link.
+- **Desktop:** full-width 4-column grid with no fixed sidebar.
+  - A burgundy **Filter & Sort** button (showing the active count) opens a **440 px drawer from the left**. Sort by
+    is first (radio: Newest, Price low to high, Price high to low, Name A to Z), then Price, Accord and Size open,
+    with Mood, House and Type collapsed. Clear all, and a sticky "Show N decants" button.
+  - Price uses **bands** (Under $10, $10 to $15, Over $15), never a slider.
+  - Active filters show as white chips with a burgundy outline.
+  - Short results get an "Only N match, widen your search" box.
+  - "Not sure where to start? Shop by mood" is the **8th card**. A 2-column "A note: Looking for something that
+    isn't here?" tile ends the grid.
+- **Phone:** under the heading, a scrolling row of accord pills (Everything 13, Woody 10…). Then a row with a burgundy
+  "Filter (n)" button and a "Sort Newest" button. Filter opens a bottom sheet: accord tiles (three round bottle
+  thumbnails, name and count) in 2 columns, then Price, Size and Mood, Clear all, and a sticky "Show N decants" button.
+
+### All houses page ("Z3")
+
+- Page head like the catalogue's. The right fill is "Browse by letter" plus type chips (All, Niche, Designer, Dupe).
+- **Desktop:** a sticky vertical A to Z rail (white pill, round letters, current letter burgundy). Each letter is a
+  section with a big burgundy letter, a fading hairline and "N houses". Below it, a 3-column grid of white tiles:
+  - the logo large on white
+  - the name, "Niche · 1 decant"
+  - small round bottle thumbnails
+  - "from $X" and "Shop →"
+
+  The hovered tile lifts.
+
+- **Phone:** round 44 px letter buttons, then the letter sections with 2-column logo tiles. Only letters that have
+  houses appear. A tile opens the brand page.
+
+### Brand (house) page
+
+- A full-width **photo banner** (about 480 px desktop, 300 px phone) using a photo the owner uploads per house, with a
+  dark left-to-right scrim. Over it:
+  - a white crumb and a kicker ("The houses — Niche · 2 decants")
+  - the house **name** in large white Fraunces, _or_ the house **logo** reversed to white (both mocked; owner hasn't
+    picked)
+  - one italic line from the brand description (on phone, this sits under the banner)
+- Below: Filter & Sort (desktop drawer / phone sheet) **without a House group, so no brand filter on a brand page**.
+  Then "Sorted by…", "N decants", the card grid, a "Want another <house>?" note tile, and an "Other houses" row of
+  logo tiles.
+
+### Fragrance (product) page
+
+- **Desktop, top:** the crumb, then two columns.
+  - **Left: the photos stacked and scrolling.** Each photo **fills its frame** (cover, about 780 px tall, rounded) with
+    no captions or "1 / 4" counters. A round outline **bubble** (expand icon only, white hairline, light blur) sits
+    bottom right and opens the viewer.
+  - **Right: a sticky white buy card ("R2").** It holds the house logo, the name in Fraunces, then "Concentration ·
+    Gender · Year", one italic line of the story, and the accords with dots. Below those:
+    - "Choose your size": tiles showing only the size (big Fraunces "5 ml") and its **cost per ml** ("$4.00 / ml").
+      The selected tile is filled burgundy.
+    - **The price shows once**: "5 ml decant / $20" as the total, with the quantity stepper on the right.
+    - **Add to bag** is an **outline** burgundy button that fills burgundy on hover, with no price in it. The heart
+      sits beside it.
+    - "In stock".
+- **Below the top**, in order:
+  - **01 The notes:** a horizontal burgundy trail with Top / Heart / Base and big outlined 01 02 03.
+  - **The story:** the full description beside the house tile (logo, one line, "Meet the house").
+  - **02 You may also like:** 4 standard cards, chosen by shared accords.
+  - **03 Recently viewed:** the **same standard cards**, kept in localStorage, with a "Clear" link.
+- **Photo viewer:** takes 100% of the screen on warm ivory.
+  - Desktop has house and name, "2 / 4 · Box", zoom − / Fit / +, close, arrows and thumbnails. Zoom goes up to 2×,
+    with a minimap and "drag to look closer".
+  - Phone has close, swipe, dots and pinch to zoom.
+- **Phone** (synced to desktop):
+  - The photos are a swipe strip (about 300 px tall) with dots and the same bubble.
+  - Next is the **same R2 white card**, reordered so buying comes first: logo, name and sub; the size tiles with
+    cost per ml; the total with the stepper; then a filled Add to bag (phones have no hover) and the heart; In
+    stock. The story line and accords close the card.
+  - Then the notes trail, the story and house, and You may also like and Recently viewed as swipe rows of cards.
+  - Once the card's button scrolls out of view, a sticky bar appears showing "5 ml decant / $20" and Add to bag.
+    The price is still shown only once on screen.
+- **Photos:** every current store photo will be replaced. Mockups use photos of the fragrance from the web (brand
+  shots, Unsplash mood shots). Card photos fill their frames too (see Product card).
+
+### Bag (cart)
+
+There is no bag page: the bag is a **side panel**. It ends in **Checkout** (paying online). The checkout itself will
+be designed later and may be replaced by a hosted shop checkout.
+
+- **Desktop:** Add to bag opens a 480 px panel from the right and dims the page. From top to bottom:
+  - "Your bag (n)" and close.
+  - The **free-shipping bar** (see below).
+  - One row per line:
+    - a cover photo (88×110)
+    - "Just added" on the newest line
+    - the house and the name in Fraunces
+    - a size menu ("5 ml ⌄") and a quantity stepper
+    - the line price on the right, with "Remove" under it
+  - **No "Pairs well".**
+  - A sticky foot with "Subtotal $42", "Delivery and taxes are worked out at checkout." and a filled
+    **Checkout** button.
+- **You may also like (desktop):** about **350 ms after the bag opens**, a second 290 px white panel slides out to
+  the bag's left. It holds two picks as tall cover photos (house, name, "From $X for N ml", Make it yours, and a
+  quick-buy bag on the photo), then a burgundy "Shop all 13 decants" button. Picks come from shared accords with
+  what's in the bag.
+- **Phone:** the bag is a sheet from the right that covers **90% of the width** (the dimmed page shows on the left).
+  - The rows are compact: a 64 px photo, the price beside the name, and the size menu and stepper underneath.
+    There's no Remove link; at quantity 1 the stepper's minus becomes a bin.
+  - "You may also like" becomes a **swipe row of small cards just above the subtotal**.
+  - The foot is the same as desktop.
+- **Free shipping:** **$50 for free lettermail, $75 for free tracked.**
+  - The bag shows **one bar running to $75**, with a stop at $50 and one at $75, labelled "$50 Lettermail" and
+    "$75 Tracked" (on phone, just "$50" and "$75").
+  - The line above the bar changes with the subtotal:
+    - under $50: "You're $8 away from free lettermail"
+    - $50 to $74: "Lettermail is free. Add $21 for free tracked shipping"
+    - $75 and over: "Free tracked shipping unlocked"
+  - **At checkout**, the delivery list (lettermail $4 / tracked $20, from settings) strikes each price through to
+    "Free" once its level is reached. The cheapest free option is picked, and a one-line hint shows what's left.
+  - Mockups: `bag-desktop.*`, `bag-phone.*`, `bag-free-shipping.*`.
+- **Delivery is lettermail or tracked shipping only. Pickup is being removed.**
+  - Drop the `pickup` fulfilment option from settings, the admin and the checkout.
+  - Remove pickup wording elsewhere: the "Free collection in Calgary" ticker message and the "Collection and post"
+    footer link.
+  - Decants over the lettermail limit (`shared/shipping.ts`) can only go tracked.
+
+### Data and admin needed when building
+
+- Content the owner changes often lives in the DB with admin forms, never hardcoded, so changes need no deploy:
+  - ticker messages (ordered, each with on/off)
+  - spotlight slides (photo, fragrance, order)
+  - moods (name, line, fragrances)
+  - the "From me to you" note
+  - the two free-shipping levels: free lettermail from $50 and free tracked from $75. These are used by the
+    ticker, the bag's bar and checkout.
+
+  Store these in the `Settings` singleton or a new config collection, validate with zod, and expose them through
+  a public settings endpoint.
+
+- Spotlight photos are cropped in admin with a **live preview** (the caption card, vignette, glow and reflection,
+  for desktop about 3:2 and phone about 3:4), then saved and published. The old admin's cropper
+  (`CropDialog.tsx`, `processImage.ts`, in git history on `main`) is a starting point.
+- New brand fields: **banner photo** (desktop wide crop about 3:1 and a phone crop, with preview), an optional
+  **white logo**, and (optional, only mocked so far) **origin** and **founded year**.
+- Scent families map from accords (see Fragrances above). Moods map to fragrances through the mood lists.
+- **Build in code only after the full design is settled.** All pages are designed except the checkout (later,
+  possibly a hosted shop checkout). The phone homepage still needs review.
+
+### Rules for working on the design
+
+- Show real data (the shop's live decants, houses and logos), never placeholders, and keep counts accurate. For
+  product photos, use web photos of that fragrance, not the store's current photos.
+- Check every phone design at 375 and 320 px: no sideways scroll, 44 px tap targets, 16 px inputs.
+- Put superseded mockups in the macOS Trash and keep `design-previews/` to approved files.
