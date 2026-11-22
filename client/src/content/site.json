@@ -1,0 +1,105 @@
+{
+  "shopName": "Anash’s Fragrances",
+  "location": "Calgary, Alberta",
+  "email": "customer-service@cfefragrances.com",
+  "about": "Fragrance decants poured from my own bottles in Calgary, Alberta, and posted across Canada.",
+  "checkoutLine": "Secure checkout by card or Interac",
+  "shipping": {
+    "lettermail": {
+      "label": "Lettermail",
+      "cost": 4,
+      "freeFrom": 50
+    },
+    "tracked": {
+      "label": "Tracked",
+      "cost": 20,
+      "freeFrom": 75
+    }
+  },
+  "ticker": [
+    {
+      "text": "Free lettermail from {lettermailFree}",
+      "enabled": true
+    },
+    {
+      "text": "100% authentic fragrances",
+      "enabled": true
+    },
+    {
+      "text": "Poured to order from my own bottles",
+      "enabled": true
+    },
+    {
+      "text": "Free tracked shipping from {trackedFree}",
+      "enabled": true
+    },
+    {
+      "text": "Decants from 3 ml",
+      "enabled": true
+    },
+    {
+      "text": "Secure checkout by card or Interac",
+      "enabled": true
+    }
+  ],
+  "note": {
+    "kicker": "From me to you",
+    "quote": "Every decant is poured by hand from my own bottles, labelled, and packed to travel safely.",
+    "steps": [
+      {
+        "title": "Poured",
+        "text": "From my own bottles, into glass atomizers"
+      },
+      {
+        "title": "Labelled and packed",
+        "text": "Each one labelled and packed to travel safely"
+      },
+      {
+        "title": "Posted",
+        "text": "Lettermail {lettermailCost}, free from {lettermailFree}\nTracked {trackedCost}, free from {trackedFree}"
+      }
+    ]
+  },
+  "footer": {
+    "shop": [
+      {
+        "label": "New in",
+        "to": "/new"
+      },
+      {
+        "label": "All decants",
+        "to": "/decants"
+      },
+      {
+        "label": "Fragrances",
+        "to": "/fragrances"
+      },
+      {
+        "label": "Houses",
+        "to": "/houses"
+      },
+      {
+        "label": "Moods",
+        "to": "/moods"
+      }
+    ],
+    "help": [
+      {
+        "label": "Shipping",
+        "to": "/shipping"
+      },
+      {
+        "label": "Track an order",
+        "to": "/track"
+      },
+      {
+        "label": "How decants are poured",
+        "to": "/how-decants-are-poured"
+      },
+      {
+        "label": "Write to us",
+        "to": "/contact"
+      }
+    ]
+  }
+}

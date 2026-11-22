@@ -1,0 +1,124 @@
+{
+  "brands": [
+    {
+      "slug": "amouage",
+      "name": "Amouage",
+      "description": "Amouage is a luxury perfume brand known for its opulent and sophisticated fragrances, expertly crafted in Oman. Each scent tells a unique story, blending rich ingredients and traditional artistry, evoking a sense of elegance and timeless allure for discerning individuals.",
+      "logo": {
+        "src": "/mock/logos/amouage.webp",
+        "width": 410,
+        "height": 55
+      }
+    },
+    {
+      "slug": "arabiyat-prestige",
+      "name": "Arabiyat Prestige",
+      "description": "Arabiyat is a luxurious fragrance brand that captures the essence of Arabian heritage. Each perfume blends exotic notes of oud, spices, and florals, crafted with precision to evoke passion and allure. Experience the enchanting world of Arabiyat—where tradition meets elegance.",
+      "logo": {
+        "src": "/mock/logos/arabiyat-prestige.webp",
+        "width": 122,
+        "height": 155
+      }
+    },
+    {
+      "slug": "atkinsons",
+      "name": "Atkinsons",
+      "description": "Atkinsons is a luxurious perfume brand steeped in British tradition, known for its captivating fragrances inspired by history and culture. Since 1799, it has blended exquisite ingredients to create timeless scents that evoke elegance, sophistication, and individuality.",
+      "logo": {
+        "src": "/mock/logos/atkinsons.webp",
+        "width": 300,
+        "height": 197
+      }
+    },
+    {
+      "slug": "essential-parfums",
+      "name": "Essential Parfums",
+      "description": "Essential Parfums embodies the essence of nature, blending exquisite ingredients to create captivating fragrances. Each scent is thoughtfully crafted to evoke emotion and inspire memories, offering a luxurious yet accessible olfactory experience for all. Unveil your essence.",
+      "logo": {
+        "src": "/mock/logos/essential-parfums.webp",
+        "width": 490,
+        "height": 480
+      }
+    },
+    {
+      "slug": "ex-nihilo",
+      "name": "Ex Nihilo",
+      "description": "Ex Nihilo is a luxury perfume brand that embodies the art of fragrance creation, blending innovative techniques with the finest ingredients. Inspired by the concept of \"creation from nothing,\" each scent offers a unique olfactory experience that captivates and intrigues, encouraging individuality and self-expression.",
+      "logo": {
+        "src": "/mock/logos/ex-nihilo.webp",
+        "width": 642,
+        "height": 293
+      }
+    },
+    {
+      "slug": "grln",
+      "name": "Guerlain",
+      "description": "Guerlain is a prestigious French perfume house renowned for its exquisite fragrances that blend tradition with innovation. Since 1828, it has crafted iconic scents using luxurious ingredients, artfully capturing emotions and moments, making each bottle a work of art.",
+      "logo": {
+        "src": "/mock/logos/grln.webp",
+        "width": 1145,
+        "height": 140
+      }
+    },
+    {
+      "slug": "michael-malul",
+      "name": "Michael Malul",
+      "description": "Michael Malul London is a luxury perfume brand that embodies sophistication and elegance. Each fragrance captures the essence of modern artistry, blending unique notes to create captivating scents. Inspired by the vibrant spirit of London, these perfumes exude timeless allure.",
+      "logo": {
+        "src": "/mock/logos/michael-malul.webp",
+        "width": 1064,
+        "height": 162
+      }
+    },
+    {
+      "slug": "mind-games",
+      "name": "Mind Games",
+      "description": "Mind Games is a captivating perfume brand that explores the art of scent as a sensory journey. Each fragrance invites you to play with your emotions, intertwining notes of mystery, allure, and elegance. Experience the mind's intrigue in every captivating spritz.",
+      "logo": {
+        "src": "/mock/logos/mind-games.webp",
+        "width": 961,
+        "height": 108
+      }
+    },
+    {
+      "slug": "nishane",
+      "name": "Nishane",
+      "description": "Nishane is a luxurious Turkish perfume brand that embodies the art of fragrance creation. Known for its bold, unisex scents and intricate compositions, each fragrance tells a unique story, blending traditional craftsmanship with modern influences, inspiring exploration and expression.",
+      "logo": {
+        "src": "/mock/logos/nishane.webp",
+        "width": 876,
+        "height": 150
+      }
+    },
+    {
+      "slug": "rayhaan",
+      "name": "Rayhaan",
+      "description": "Rayhaan is an exquisite perfume brand that embodies luxury and elegance. Inspired by nature's finest essences, each fragrance tells a unique story, blending floral, woody, and spicy notes. With a commitment to quality, Rayhaan offers an unforgettable olfactory experience. Discover your signature scent.",
+      "logo": {
+        "src": "/mock/logos/rayhaan.webp",
+        "width": 335,
+        "height": 82
+      }
+    },
+    {
+      "slug": "roja-dove",
+      "name": "Roja Dove",
+      "description": "Roja Dove is an exquisite niche perfume brand renowned for its luxurious fragrances that blend artistry with high-quality ingredients. Each scent is a masterpiece, capturing emotions and memories, inviting wearers into a world of elegance and sophistication. Indulge in a sensory journey.",
+      "logo": {
+        "src": "/mock/logos/roja-dove.webp",
+        "width": 959,
+        "height": 480
+      }
+    },
+    {
+      "slug": "sospiro",
+      "name": "Sospiro",
+      "description": "",
+      "logo": {
+        "src": "/mock/logos/sospiro.svg",
+        "width": 400,
+        "height": 80
+      }
+    }
+  ]
+}

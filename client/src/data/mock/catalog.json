@@ -1,0 +1,651 @@
+{
+  "listings": [
+    {
+      "slug": "sospiro-vibrato",
+      "kind": "decant",
+      "name": "Vibrato",
+      "house": "Sospiro",
+      "brandSlug": "sospiro",
+      "category": "niche",
+      "concentration": "Eau de Parfum",
+      "year": 2022,
+      "gender": "Unisex",
+      "accords": [],
+      "notes": {
+        "top": ["Grapefruit", "Bergamot", "Jasmine", "Magnolia"],
+        "heart": ["Ginger", "Herbal Notes", "Powdery Notes"],
+        "base": ["Musk", "Cedar", "Amber", "Patchouli", "Orris Root"]
+      },
+      "description": "A 2022 Eau de Parfum by Christian Provenzano: bright grapefruit and bergamot over warm ginger, settling into musk, cedar and amber.",
+      "tint": "#1f5a3e",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/sospiro-vibrato.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-11-20T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "mock-sospiro-vibrato-1",
+          "sizeMl": 100,
+          "remainingMl": 100
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 5,
+          "price": 15
+        },
+        {
+          "sizeMl": 10,
+          "price": 28
+        }
+      ]
+    },
+    {
+      "slug": "ex-nihilo-blue-talisman",
+      "kind": "decant",
+      "name": "Blue Talisman",
+      "house": "Ex Nihilo",
+      "brandSlug": "ex-nihilo",
+      "category": "niche",
+      "concentration": "Extrait de Parfum",
+      "year": 2025,
+      "gender": "Unisex",
+      "accords": ["Fruity", "Floral", "Woody", "Amber", "Musky"],
+      "notes": {
+        "top": ["Bergamot"],
+        "heart": ["Pear", "Jasmine", "Orange Blossom"],
+        "base": ["Akigalawood", "Amberwood", "Ambrox", "Sandalwood", "Vanilla", "Musk"]
+      },
+      "description": "A richer, slower extrait take on Blue Talisman. Bright bergamot opens onto a juicy heart of pear, jasmine and orange blossom, settling into a warm, ambery base of sandalwood, vanilla, Ambrox and musk.",
+      "tint": "#19508a",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/ex-nihilo-blue-talisman.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-11-18T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1e0dc12b29cce796aa081",
+          "sizeMl": 7.5,
+          "remainingMl": 7.5
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 7.5,
+          "price": 36
+        }
+      ]
+    },
+    {
+      "slug": "mind-games-french-defense",
+      "kind": "decant",
+      "name": "French Defense",
+      "house": "Mind Games",
+      "brandSlug": "mind-games",
+      "category": "niche",
+      "concentration": "Extrait de Parfum",
+      "year": 2023,
+      "gender": "Unisex",
+      "accords": ["Fruity", "Cherry", "Floral", "Amber", "Woody"],
+      "notes": {
+        "top": ["Cherry", "Violet Leaf", "Chamomile"],
+        "heart": ["Rose", "Geranium", "Mimosa"],
+        "base": ["Amber", "Blond Woods", "Cedarwood"]
+      },
+      "description": "A chess-inspired extrait by Christelle Laprade from Mind Games. Dark cherry and violet leaf open sweet and green, a soft floral heart of rose, geranium and mimosa follows, and it settles on warm amber and blond woods.",
+      "tint": "#030302",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/mind-games-french-defense.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-11-12T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1e126182ec64e8c9d2af0",
+          "sizeMl": 7.5,
+          "remainingMl": 7.5
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 7.5,
+          "price": 20
+        }
+      ]
+    },
+    {
+      "slug": "atkinsons-oud-save-the-queen",
+      "kind": "decant",
+      "name": "Oud Save the Queen",
+      "house": "Atkinsons",
+      "brandSlug": "atkinsons",
+      "category": "niche",
+      "concentration": "Eau de Parfum",
+      "year": 2013,
+      "gender": "Unisex",
+      "accords": ["Oud", "Floral", "Tea", "Warm Spicy", "Woody"],
+      "notes": {
+        "top": ["Earl Grey Tea", "Clove", "Bergamot"],
+        "heart": ["Jasmine", "Orange Blossom"],
+        "base": ["Oud", "Tonka Bean", "Guaiac Wood"]
+      },
+      "description": "Launched with Oud Save the King to mark Atkinsons' 200th anniversary. Earl Grey tea, clove and bergamot open onto jasmine and orange blossom, over a smooth base of oud, tonka and guaiac wood.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/atkinsons-oud-save-the-queen.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-16T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1b82617674a4046e0ecd2",
+          "sizeMl": 100,
+          "remainingMl": 87
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 3,
+          "price": 9
+        },
+        {
+          "sizeMl": 5,
+          "price": 15
+        },
+        {
+          "sizeMl": 10,
+          "price": 30
+        }
+      ]
+    },
+    {
+      "slug": "grln-santal-royal",
+      "kind": "decant",
+      "name": "Santal Royal",
+      "house": "Guerlain",
+      "brandSlug": "grln",
+      "category": "designer",
+      "concentration": "Eau de Parfum",
+      "year": 2014,
+      "gender": "Masculine",
+      "accords": ["Woody", "Amber", "Oud", "Leather", "Warm Spicy"],
+      "notes": {
+        "top": ["Neroli", "Jasmine", "Cinnamon"],
+        "heart": ["Rose", "Oud", "Leather"],
+        "base": ["Sandalwood", "Amber", "Musk", "Vanilla", "Tonka Bean"]
+      },
+      "description": "From Guerlain's Les Absolus d'Orient, a creamy, regal sandalwood. Neroli and jasmine lead into a warm heart of rose, oud and soft leather, finishing on sandalwood, amber and vanilla.",
+      "tint": "#161513",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/grln-santal-royal.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-15T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1b90817674a4046e0ecd5",
+          "sizeMl": 100,
+          "remainingMl": 70
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 5,
+          "price": 12
+        },
+        {
+          "sizeMl": 10,
+          "price": 20
+        }
+      ]
+    },
+    {
+      "slug": "grln-shalimar-l-essence",
+      "kind": "decant",
+      "name": "Shalimar L’Essence",
+      "house": "Guerlain",
+      "brandSlug": "grln",
+      "category": "designer",
+      "concentration": "Eau de Parfum",
+      "year": 2025,
+      "gender": "Feminine",
+      "accords": ["Vanilla", "Amber", "Balsamic", "Powdery", "Citrus"],
+      "notes": {
+        "top": ["Bergamot", "Almond", "Incense"],
+        "heart": ["Opoponax", "Rose"],
+        "base": ["Vanilla", "Benzoin", "Tonka Bean", "Musk"]
+      },
+      "description": "An intense reinterpretation of Shalimar, released for the legend's 100th anniversary. Bergamot, almond and incense open onto opoponax and rose, with Madagascar vanilla, benzoin and tonka deepening the classic Shalimar base.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/grln-shalimar-l-essence.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-14T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1b957dc7ea1e1e1f65420",
+          "sizeMl": 50,
+          "remainingMl": 40
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 5,
+          "price": 10
+        },
+        {
+          "sizeMl": 10,
+          "price": 20
+        }
+      ]
+    },
+    {
+      "slug": "amouage-interlude-m",
+      "kind": "decant",
+      "name": "Interlude M",
+      "house": "Amouage",
+      "brandSlug": "amouage",
+      "category": "niche",
+      "concentration": "Eau de Parfum",
+      "year": 2016,
+      "gender": "Unisex",
+      "accords": ["Woody", "Incensy", "Smoky", "Amber", "Warm Spicy"],
+      "notes": {
+        "top": ["Oregano", "Allspice", "Bergamot"],
+        "heart": ["Frankincense", "Amber", "Opoponax", "Labdanum"],
+        "base": ["Oud", "Leather", "Sandalwood", "Patchouli"]
+      },
+      "description": "A bold, smoky signature from Amouage, built around incense and oud. Oregano and allspice give a herbal, peppery opening before a dense heart of frankincense, amber and labdanum, finishing on leathery oud and sandalwood.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/amouage-interlude-m.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-13T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad07b0d6ed1555ae2333b08",
+          "sizeMl": 100,
+          "remainingMl": 82
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 3,
+          "price": 14
+        },
+        {
+          "sizeMl": 5,
+          "price": 20
+        },
+        {
+          "sizeMl": 10,
+          "price": 35
+        }
+      ]
+    },
+    {
+      "slug": "roja-dove-burlington-1819",
+      "kind": "decant",
+      "name": "Burlington 1819",
+      "house": "Roja Dove",
+      "brandSlug": "roja-dove",
+      "category": "niche",
+      "concentration": "Extrait de Parfum",
+      "year": 2021,
+      "gender": "Unisex",
+      "accords": ["Citrus", "Warm Spicy", "Boozy", "Amber", "Tobacco"],
+      "notes": {
+        "top": ["Grapefruit", "Lime", "Bitter Orange", "Mint", "Mandarin"],
+        "heart": ["Ginger", "Cinnamon", "Cumin", "Saffron", "Rum"],
+        "base": [
+          "Tobacco",
+          "Ambergris",
+          "Cashmere Wood",
+          "Vanilla",
+          "Benzoin",
+          "Oakmoss",
+          "Patchouli",
+          "Labdanum",
+          "Musk"
+        ]
+      },
+      "description": "Named for the year London's Burlington Arcade opened, home to Roja's flagship boutique. A zesty burst of grapefruit, lime and mint gives way to ginger, saffron and boozy rum, settling into a rich base of tobacco, ambergris, vanilla and oakmoss.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/roja-dove-burlington-1819.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-12T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad260e76045b1ed08717a19",
+          "sizeMl": 100,
+          "remainingMl": 63
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 3,
+          "price": 10
+        },
+        {
+          "sizeMl": 5,
+          "price": 18
+        },
+        {
+          "sizeMl": 10,
+          "price": 32
+        }
+      ]
+    },
+    {
+      "slug": "nishane-favonius",
+      "kind": "decant",
+      "name": "Favonius",
+      "house": "Nishane",
+      "brandSlug": "nishane",
+      "category": "niche",
+      "concentration": "Extrait de Parfum",
+      "year": 2023,
+      "gender": "Unisex",
+      "accords": ["Woody", "Aromatic", "Oud", "Incense", "Fresh Spicy"],
+      "notes": {
+        "top": ["Bergamot", "Pink Pepper", "Incense"],
+        "heart": ["Geranium", "Cypriol", "Rose", "Mugwort", "Clary Sage"],
+        "base": ["Oud", "Cedarwood", "Patchouli", "Sandalwood"]
+      },
+      "description": "Originally created as a Harrods exclusive and named after the Roman god of the west wind. Bergamot, pink pepper and incense open onto an aromatic heart of geranium, rose and clary sage, drying down to smooth oud, cedar and sandalwood.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/nishane-favonius.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-11T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad260661272dfc1b189a962",
+          "sizeMl": 50,
+          "remainingMl": 47
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 3,
+          "price": 11
+        },
+        {
+          "sizeMl": 5,
+          "price": 17
+        },
+        {
+          "sizeMl": 10,
+          "price": 35
+        }
+      ]
+    },
+    {
+      "slug": "essential-parfums-bois-imperial",
+      "kind": "decant",
+      "name": "Bois Impérial",
+      "house": "Essential Parfums",
+      "brandSlug": "essential-parfums",
+      "category": "niche",
+      "concentration": "Eau de Parfum",
+      "year": 2025,
+      "gender": "Unisex",
+      "accords": ["Woody", "Aromatic", "Fresh Spicy", "Earthy", "Green"],
+      "notes": {
+        "top": ["Thai Basil", "Timut Pepper"],
+        "heart": ["Haitian Vetiver"],
+        "base": ["Akigalawood", "Georgywood", "Patchouli", "Ambrofix"]
+      },
+      "description": "A modern woody aromatic by Quentin Bisch. Thai basil and Timut pepper open green and zesty, Haitian vetiver forms an earthy heart, and Akigalawood and Georgywood give it a luminous, magnetic woody finish.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/essential-parfums-bois-imperial.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-10T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad2612e6045b1ed08717a1b",
+          "sizeMl": 100,
+          "remainingMl": 92
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 5,
+          "price": 12
+        },
+        {
+          "sizeMl": 10,
+          "price": 20
+        }
+      ]
+    },
+    {
+      "slug": "michael-malul-sangria-embers",
+      "kind": "decant",
+      "name": "Sangria Embers",
+      "house": "Michael Malul",
+      "brandSlug": "michael-malul",
+      "category": "niche",
+      "concentration": "Eau de Parfum",
+      "gender": "Unisex",
+      "accords": ["Fruity", "Amber", "Warm Spicy", "Rose", "Woody"],
+      "notes": {
+        "top": ["Orange", "Green Apple", "Saffron"],
+        "heart": ["Raspberry", "Jasmine", "Damask Rose", "Cedarwood"],
+        "base": ["Amber", "Cashmeran", "Sandalwood", "Tonka Bean"]
+      },
+      "description": "A sophisticated evening scent that opens with orange and green apple laced with saffron. Raspberry, jasmine and rose bring a sangria-like fruity heart, warmed by a resinous base of amber, cashmeran, sandalwood and tonka.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/michael-malul-sangria-embers.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-09T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1ba9317674a4046e0ece8",
+          "sizeMl": 100,
+          "remainingMl": 75
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 5,
+          "price": 8
+        },
+        {
+          "sizeMl": 10,
+          "price": 15
+        }
+      ]
+    },
+    {
+      "slug": "michael-malul-wood-cardamon",
+      "kind": "decant",
+      "name": "Wood Cardamon",
+      "house": "Michael Malul",
+      "brandSlug": "michael-malul",
+      "category": "niche",
+      "concentration": "Eau de Parfum",
+      "year": 2024,
+      "gender": "Masculine",
+      "accords": ["Woody", "Aromatic", "Fresh Spicy", "Citrus", "Musky"],
+      "notes": {
+        "top": ["Cardamom", "Bergamot", "Apple"],
+        "heart": ["Violet Leaf", "Damask Rose"],
+        "base": ["Ambroxan", "Sandalwood", "Woody Notes", "Musk"]
+      },
+      "description": "A fresh, refined woody scent by Hamid Merati-Kashani. Cardamom and bergamot open crisp and aromatic with a hint of apple, violet leaf and rose soften the heart, and ambroxan, sandalwood and musk give a clean woody finish.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/michael-malul-wood-cardamon.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-08T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1bac4dc7ea1e1e1f6542e",
+          "sizeMl": 100,
+          "remainingMl": 80
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 5,
+          "price": 8
+        },
+        {
+          "sizeMl": 10,
+          "price": 15
+        }
+      ]
+    },
+    {
+      "slug": "arabiyat-prestige-marwa",
+      "kind": "decant",
+      "name": "Marwa",
+      "house": "Arabiyat Prestige",
+      "brandSlug": "arabiyat-prestige",
+      "category": "dupe",
+      "concentration": "Eau de Parfum",
+      "year": 2025,
+      "gender": "Unisex",
+      "accords": ["Citrus", "Fresh Spicy", "Tea", "Woody", "Amber"],
+      "notes": {
+        "top": ["Bergamot", "Lemon", "Orange"],
+        "heart": ["Neroli", "Ginger", "Cinnamon"],
+        "base": ["Black Tea", "Olibanum", "Ambroxan", "Guaiac Wood"]
+      },
+      "description": "Widely compared to Louis Vuitton Imagination. Sparkling bergamot, lemon and orange lead into neroli warmed by ginger and cinnamon, drying down to black tea, olibanum, ambroxan and guaiac wood.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/arabiyat-prestige-marwa.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-07T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1be6117674a4046e0ecfa",
+          "sizeMl": 100,
+          "remainingMl": 70
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 5,
+          "price": 4.5
+        },
+        {
+          "sizeMl": 10,
+          "price": 8
+        }
+      ]
+    },
+    {
+      "slug": "rayhaan-aquatica",
+      "kind": "decant",
+      "name": "Aquatica",
+      "house": "Rayhaan",
+      "brandSlug": "rayhaan",
+      "category": "dupe",
+      "concentration": "Extrait de Parfum",
+      "year": 2025,
+      "gender": "Unisex",
+      "accords": ["Tropical", "Citrus", "Coconut", "Sweet", "Boozy"],
+      "notes": {
+        "top": ["Lime", "Bergamot", "Mandarin", "Coconut"],
+        "heart": ["Jasmine", "Hibiscus", "Ginger"],
+        "base": ["Sugarcane", "White Rum", "Musk"]
+      },
+      "description": "A sunny, tropical scent with a zesty opening of lime, bergamot and mandarin over creamy coconut. Jasmine and hibiscus bring a light floral heart, and it finishes sweet and boozy with sugarcane, white rum and musk.",
+      "tint": "#B8A88A",
+      "photos": [
+        {
+          "label": "",
+          "src": "/mock/photos/rayhaan-aquatica.webp",
+          "width": 720,
+          "height": 900
+        }
+      ],
+      "addedAt": "2026-10-06T12:00:00.000Z",
+      "bottles": [
+        {
+          "id": "6ad1be9cdc7ea1e1e1f6543b",
+          "sizeMl": 100,
+          "remainingMl": 90
+        }
+      ],
+      "prices": [
+        {
+          "sizeMl": 5,
+          "price": 4
+        },
+        {
+          "sizeMl": 10,
+          "price": 8
+        }
+      ]
+    }
+  ]
+}

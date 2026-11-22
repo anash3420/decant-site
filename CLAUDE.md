@@ -10,10 +10,31 @@ were removed (they are in git history, on `main`). What exists now:
 - `server/src/models/`: the MongoDB schema (Mongoose 9). This is kept and is the base for the new backend.
 - `server/src/db.ts` (cached Mongoose connection) and `server/src/env.ts` (zod-validated environment).
 - `shared/`: types, stock maths, the lettermail rule, validation regexes and slugs, for both backend and frontend.
-- `client/`: the Vite + React 19 + Tailwind v4 setup with a placeholder page. The new frontend is written here.
+- `client/`: the new frontend (Vite + React 19 + Tailwind v4 + React Router). The homepage is built; every other
+  route shows a lazy-loaded "coming soon" page.
 
 The new backend will be written from scratch as separate services; their layout isn't decided yet. The new frontend
 follows the "Storefront redesign" section below.
+
+**Frontend layout (`client/src`).**
+
+- `content/site.json`: shop text and rules that change with the business (email, location, shipping costs and
+  free-shipping levels, ticker messages, the owner's note, footer links). Text may use `{lettermailFree}`,
+  `{trackedFree}`, `{lettermailCost}`, `{trackedCost}`, filled by `lib/content.ts` `fill()`, so a price is written
+  once. This moves to the database and admin later.
+- `api/shop.ts`: the only data layer. It serves `data/mock/*.json` (a snapshot of the 13 live decants and 11 houses,
+  plus homepage content: spotlight slides, featured houses, moods) after a short delay. Swap each function for a
+  `fetch()` when the services exist. Each resource is one cached promise, read in components with React's `use()`
+  inside `<Suspense>` with a same-size skeleton, so nothing shifts while loading.
+- Mock images are in `public/mock/` (product photos 720×900, spotlight crops desktop 1410×900 and phone 618×840,
+  house logos).
+- `components/ProductCard.tsx` is the one product card (props: `listing`, `priority`), memoised; the heart uses
+  `lib/wishlist.ts` (a `useSyncExternalStore` store in localStorage) so hearting re-renders only that button.
+  `Photo.tsx` keeps an image's frame with a shimmer until it loads, lazy by default.
+- Effects Tailwind can't express (ticker, scent trail, light pools, burgundy glow, outlined numbers, spotlight pool
+  and reflection, reveal-on-scroll) are classes in `index.css` under `@layer components`. Reveal uses CSS
+  scroll-driven animations (no JavaScript) and everything respects `prefers-reduced-motion`.
+- Desktop styles start at `lg` (1024 px); below that is the phone layout.
 
 ## Commands
 
@@ -96,6 +117,7 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 | Brand (house) page                        | `brand-banner-name-desktop.jpg`, `brand-banner-logo-desktop.jpg`, `brand-banner-phone.jpg`                                                                                        |
 | Bag (side panel) and free shipping        | `bag-desktop.jpg`, `bag-phone.jpg`, `bag-free-shipping.jpg`                                                                                                                       |
 | Fragrance (product) page                  | `product-final-desktop*.jpg` (+ `-scrolled`, `-hover`), `product-final-phone.jpg`, viewer `product-photo-viewer-*.jpg`                                                            |
+| "From me to you" band (homepage)          | `home-note-pour.jpg` (idea 3 in `note-ideas.html#3`); saved alternative to revisit: `idea-note-the-bench.jpg` (`#4`)                                                              |
 | Homepage module ideas (optional extras)   | `idea-*.jpg`                                                                                                                                                                      |
 
 ### What the shop is
@@ -103,9 +125,21 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 - A **retail decant shop**: decants only. No Catch & Release, no full bottles, no "Samples" in nav, chips, counts
   or footer. All counts come from decant listings only. Removing the other listing kinds from code is a separate
   change; ask before starting it.
+- **The whole store will be restocked with different perfumes.** Only the four spotlight fragrances stay: Roja
+  Dove Burlington 1819, Essential Parfums Bois Impérial, Nishane Favonius and Sospiro Vibrato. Every other decant
+  in the mock data (and the moods, featured houses and counts built from them) is temporary. Never hardcode product
+  names, house names or counts in components; derive them from the data.
+- **Spotlight photos are the owner's.** Don't retouch them. When a square or portrait photo is too narrow for the
+  wide desktop slide (about 3:2), the owner prefers keeping the whole bottle: place the photo at full height in the
+  centre and fill the sides with the same photo stretched and heavily blurred, with the photo's left and right edges
+  feathered into it (as done for Sospiro Vibrato). A tight crop that cuts the bottle was rejected as "too zoomed in".
 - **Never show** ml left in a bottle ("92 ml left", "Only 20 ml left", the old shop's ml-left card badge,
   "Fill level" photos) or **spray counts**. Availability is only in stock or sold out. **Cost per ml** appears only
   on the fragrance page's size tiles (owner's later decision); cards, menus and the quick buy show prices only.
+- **No personal name on the site** (owner, 2026-11-22): the owner's first name must not appear in the note, footer,
+  links ("Write to us", not "Write to Anash") or anywhere else. The shop name "Anash's Fragrances" and the A.S. logo
+  stay for now; the shop will be renamed to a brand without the owner's name (a candidate is "Niche Decants",
+  nichedecants.ca / .com), which only changes `shopName` in `content/site.json` plus the logo.
 - The look is luxury but shop-first (Holt Renfrew / Harrods feeling) and must be original: don't copy reference
   sites. Rejected directions were generic, discount-looking, playful, "funky" loud colours, and dark "Maison" heroes.
 
@@ -117,8 +151,11 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 - Type: **Fraunces** for display and names, **Schibsted Grotesk** for UI. Italic Fraunces is for quotes and links
   like "Make it yours". Use US spelling ("cozy").
 - "Atelier light" art: warm light pools and grain in the background, a fine burgundy scent-trail line running down
-  the page to the footer, and big outlined numbers (01/02/03 or a letter) behind headings. A numbered kicker
-  ("01 — The collection") sits above headings. The empty space right of a heading holds a hairline ending in a
+  the page to the footer, and big outlined numbers behind headings with a numbered kicker above them. **On the
+  homepage the number is the section's count, from the data** (owner, 2026-11-22), and it appears **only once, as
+  the outlined number behind the heading**: the shelf shows the number of decants, Discover houses the number of
+  houses, Shop by mood the number of moods, padded to two digits ("06"). The kicker ("The collection") and the link
+  ("All decants", "All houses", "All moods") carry no number. The shelf has filter chips but no sort control. The empty space right of a heading holds a hairline ending in a
   dot, an italic line and the section link. Don't repeat the same information on both sides.
 - Announcement ticker: burgundy, scrolling, champagne sparkle separators, pauses on hover, static with reduced
   motion, hidden when no message is enabled.
@@ -127,8 +164,9 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 
 ### Header and top bar
 
-- Desktop header: search on the left, the A.S. seal and "Anash's Fragrances" in the centre, account, wishlist and
-  Bag (n) on the right.
+- Desktop header (owner, 2026-11-21): **one row**. The A.S. seal and "Anash's Fragrances" on the left, the nav in
+  the centre, and on the right a search icon (icon only) then account, wishlist and Bag (n). The search icon will
+  open a search panel sliding down from the top (to be designed). No second nav row.
 - **Nav: New in · All decants · Fragrances · Houses.** Moods is not in the top bar.
 - Hovering a nav item opens a full-width white panel under the header and dims the page. **Photo cards zoom their
   photo outwards on hover** (scale about 1.08, ~0.6s ease), and the tile lifts slightly.
@@ -160,7 +198,12 @@ Order:
 4. **02 Discover houses:** logo tiles, with the last tile opening all houses.
 5. **03 Shop by mood:** "the list", all six moods typeset like a wine list. Moods: Cold evenings, Long summer days,
    Nine to five, Date night, Weddings and parties, Cozy nights in.
-6. **"From me to you":** an italic note with the A.S. seal signature, and four details on the right.
+6. **"From me to you" (owner chose idea 3, "the pour", 2026-11-22):** a full-width burgundy band that closes the
+   page. The kicker, the italic quote in ivory, and the A.S. seal reversed to ivory with "Calgary, Alberta" (no name).
+   Below, three steps (Poured · Labelled and packed · Posted, with the shipping prices) joined by a fine line with
+   champagne dots: a row on desktop, a column down the left on phones. No icons. The steps' text is in
+   `content/site.json` `note.steps`. The "bench" idea (a photo of the owner's pouring bench with the quote on a
+   caption card) is saved to revisit if the owner sends a bench photo.
 7. Footer: four stacked columns.
 
 Phone: a single-slide spotlight, a 2-column shelf, three moods plus "3 more moods", and a 2-column footer.

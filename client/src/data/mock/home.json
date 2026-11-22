@@ -1,0 +1,104 @@
+{
+  "spotlight": [
+    {
+      "slug": "nishane-favonius",
+      "desktop": {
+        "src": "/mock/spotlight/favonius-desktop.webp",
+        "width": 1410,
+        "height": 900
+      },
+      "phone": {
+        "src": "/mock/spotlight/favonius-phone.webp",
+        "width": 618,
+        "height": 840
+      }
+    },
+    {
+      "slug": "roja-dove-burlington-1819",
+      "desktop": {
+        "src": "/mock/spotlight/burlington-1819-desktop.webp",
+        "width": 1410,
+        "height": 900
+      },
+      "phone": {
+        "src": "/mock/spotlight/burlington-1819-phone.webp",
+        "width": 618,
+        "height": 840
+      }
+    },
+    {
+      "slug": "essential-parfums-bois-imperial",
+      "desktop": {
+        "src": "/mock/spotlight/bois-imperial-desktop.webp",
+        "width": 1410,
+        "height": 900
+      },
+      "phone": {
+        "src": "/mock/spotlight/bois-imperial-phone.webp",
+        "width": 618,
+        "height": 840
+      }
+    },
+    {
+      "slug": "sospiro-vibrato",
+      "desktop": {
+        "src": "/mock/spotlight/vibrato-desktop.webp",
+        "width": 1410,
+        "height": 900
+      },
+      "phone": {
+        "src": "/mock/spotlight/vibrato-phone.webp",
+        "width": 618,
+        "height": 840
+      }
+    }
+  ],
+  "spotlightStart": 1,
+  "featuredHouses": [
+    "essential-parfums",
+    "nishane",
+    "roja-dove",
+    "grln",
+    "michael-malul",
+    "amouage",
+    "arabiyat-prestige"
+  ],
+  "moods": [
+    {
+      "slug": "cold-evenings",
+      "name": "Cold evenings",
+      "line": "Amber, vanilla and smoke for when it is dark by five.",
+      "picks": ["grln-shalimar-l-essence", "amouage-interlude-m", "grln-santal-royal"]
+    },
+    {
+      "slug": "long-summer-days",
+      "name": "Long summer days",
+      "line": "Citrus, tea and coconut that stay bright in the heat.",
+      "picks": ["rayhaan-aquatica", "arabiyat-prestige-marwa", "michael-malul-wood-cardamon"]
+    },
+    {
+      "slug": "nine-to-five",
+      "name": "Nine to five",
+      "line": "Clean woods and green spice that sit close and never shout.",
+      "picks": ["essential-parfums-bois-imperial", "michael-malul-wood-cardamon", "nishane-favonius"]
+    },
+    {
+      "slug": "date-night",
+      "name": "Date night",
+      "line": "Dark fruit and flowers with a little glamour.",
+      "picks": ["mind-games-french-defense", "ex-nihilo-blue-talisman", "michael-malul-sangria-embers"]
+    },
+    {
+      "slug": "weddings-and-parties",
+      "name": "Weddings and parties",
+      "line": "Polished oud and incense for when you are dressed up.",
+      "picks": ["atkinsons-oud-save-the-queen", "nishane-favonius", "amouage-interlude-m"]
+    },
+    {
+      "slug": "cozy-nights-in",
+      "name": "Cozy nights in",
+      "line": "Warm spice, rum and soft woods for staying home.",
+      "picks": ["roja-dove-burlington-1819", "grln-santal-royal", "michael-malul-sangria-embers"]
+    }
+  ]
+}

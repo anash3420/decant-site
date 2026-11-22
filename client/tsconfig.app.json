@@ -15,7 +15,10 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
-    "paths": { "@shared/*": ["../shared/*"] }
+    "paths": {
+      "@shared/*": ["../shared/*"]
+    },
+    "resolveJsonModule": true
   },
   "include": ["src", "../shared"]
 }

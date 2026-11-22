@@ -1,1 +1,385 @@
 @import 'tailwindcss';
+
+/* Hover effects only for a real mouse or trackpad on a wide screen; phones never see them */
+@custom-variant fine (@media (hover: hover) and (pointer: fine) and (min-width: 1024px));
+
+@theme {
+  --font-sans: 'Schibsted Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+
+  --color-ink: #0f1720;
+  --color-ink-warm: #2a1f22;
+  --color-muted: #6e645b;
+  --color-quiet: #5a4a47;
+  --color-wine: #6d1f33;
+  --color-wine-soft: #e7cdd3;
+  --color-line: #e4ddd3;
+  --color-rose-line: #e3c6cc;
+  --color-sand: #ece4d8;
+  --color-gold: #e2c79c;
+  --color-ivory: #f5efe7;
+
+  /* One easing for UI motion: a strong ease-out that starts fast and settles softly */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  /* The spotlight's slow, unhurried curve: soft start, long settle */
+  --ease-lux: cubic-bezier(0.32, 0.72, 0, 1);
+
+  /* Content that appears after a tap (caption, revealed moods): a short rise */
+  --animate-rise: rise 320ms var(--ease-out) both;
+  /* Cards swapped in by a shelf filter */
+  --animate-card-in: card-in 280ms var(--ease-out) both;
+  /* The heart when a decant is saved */
+  --animate-heart-pop: heart-pop 320ms var(--ease-out);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+}
+@keyframes settle {
+  from {
+    transform: scale(1.035);
+  }
+}
+@keyframes caption-up {
+  from {
+    transform: translateY(calc(100% + var(--cap-gap, 24px)));
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+@keyframes drift {
+  50% {
+    transform: scale(1.02);
+  }
+}
+@keyframes heart-pop {
+  40% {
+    transform: scale(1.22);
+  }
+}
+
+@layer base {
+  /* ── Page ─────────────────────────────────────────────────────────── */
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    margin: 0;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    /* Atelier light: warm light pools and a fine grain over ivory */
+    background:
+      radial-gradient(700px 520px at 88% 6%, rgb(214 170 150 / 0.35), transparent 70%),
+      radial-gradient(800px 600px at 6% 18%, rgb(196 140 150 / 0.22), transparent 70%),
+      radial-gradient(900px 700px at 80% 40%, rgb(224 196 150 / 0.3), transparent 70%),
+      url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .18 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, #f5efe7, #f2e9e4 50%, #f3ede5);
+    background-color: #f5efe7;
+  }
+
+  /* Fraunces at display sizes */
+  .font-display {
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  /* ── Announcement ticker ──────────────────────────────────────────── */
+
+  .ticker {
+    background: linear-gradient(90deg, #5a1729, #6d1f33 30%, #7a2640 50%, #6d1f33 70%, #5a1729);
+    position: relative;
+    overflow: hidden;
+  }
+  .ticker::before,
+  .ticker::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    width: 28px;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .ticker::before {
+    left: 0;
+    background: linear-gradient(90deg, #5a1729, rgb(90 23 41 / 0));
+  }
+  .ticker::after {
+    right: 0;
+    background: linear-gradient(270deg, #5a1729, rgb(90 23 41 / 0));
+  }
+  .ticker-track {
+    display: flex;
+    width: max-content;
+    animation: ticker 70s linear infinite;
+  }
+  .ticker:hover .ticker-track {
+    animation-play-state: paused;
+  }
+  @media (min-width: 1024px) {
+    .ticker::before,
+    .ticker::after {
+      width: 60px;
+    }
+  }
+
+  /* ── Photo placeholder: holds its space and shimmers until the image arrives ── */
+
+  .photo {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background: var(--color-sand);
+  }
+  .photo::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.45) 50%, transparent 70%);
+    background-size: 250% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+  .photo.is-loaded::before {
+    display: none;
+  }
+  .photo > img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    /* Fade in on load; hover zooms (product cards) glide slowly on the spotlight's unhurried curve */
+    transition:
+      opacity 500ms var(--ease-out),
+      scale 1100ms var(--ease-lux);
+  }
+  .photo.is-loaded > img {
+    opacity: 1;
+  }
+
+  /* ── Reveal on scroll (CSS only, no JavaScript or re-renders) ─────── */
+
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: reveal linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 35%;
+      }
+    }
+  }
+
+  /* ── Section headings: big outlined number, kicker, and the line that fills the space to the right ── */
+
+  .outline-num {
+    position: absolute;
+    z-index: -1;
+    font-family: var(--font-display);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 1.2px rgb(109 31 51 / 0.34);
+    pointer-events: none;
+    user-select: none;
+  }
+  .trail-line {
+    position: relative;
+    height: 1px;
+    background: linear-gradient(90deg, rgb(109 31 51 / 0.05), rgb(109 31 51 / 0.45));
+  }
+  .trail-line::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: -3px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--color-wine);
+  }
+
+  /* ── Burgundy tiles: a soft glow from the centre and a light sheen ── */
+
+  .burgundy {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background: radial-gradient(ellipse 75% 88% at 50% 50%, #93374f 0%, #7a2640 38%, #62192e 72%, #4c1222 100%);
+    box-shadow:
+      inset 0 0 0 1px rgb(255 255 255 / 0.07),
+      0 10px 30px rgb(109 31 51 / 0.18);
+  }
+  .burgundy::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgb(255 255 255 / 0.1), rgb(255 255 255 / 0) 42%);
+    pointer-events: none;
+  }
+  .burgundy > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Spotlight "Pool of light": vignette, colour pooling onto a glass shelf, faint reflection ── */
+
+  .spot-slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse 90% 80% at 50% 45%, transparent 55%, rgb(20 8 12 / 0.28) 100%);
+  }
+  .spot-pool {
+    position: absolute;
+    left: 6%;
+    width: 88%;
+    object-fit: cover;
+    border-radius: 50%;
+    opacity: 0.75;
+    filter: blur(var(--pool-blur, 40px)) saturate(1.8);
+    pointer-events: none;
+  }
+  .spot-reflection {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .spot-reflection::before {
+    content: '';
+    position: absolute;
+    left: 4%;
+    right: 4%;
+    top: 0;
+    height: 1px;
+    z-index: 1;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.95), transparent);
+  }
+  .spot-reflection img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    object-fit: cover;
+    transform: scaleY(-1);
+    opacity: 0.3;
+    filter: blur(1.5px);
+    /* the mask flips with the image, so it fades from the bottom of the box */
+    mask-image: linear-gradient(0deg, rgb(0 0 0 / 0.9), transparent 23%);
+  }
+
+  /* Horizontal scrollers (chips) fade out at the right edge and hide their scrollbar */
+  .scroll-row {
+    scrollbar-width: none;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 36px), transparent);
+  }
+  .scroll-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ── Spotlight motion: one slow dissolve for photo, light, reflection and side slides together ── */
+  .spot-in {
+    animation: fade-in 1100ms var(--ease-lux) both;
+  }
+  .spot-in-late {
+    animation: fade-in 1100ms var(--ease-lux) 150ms both;
+  }
+  /* The new photo also settles from slightly larger, like a camera finishing its focus */
+  .spot-settle {
+    animation:
+      fade-in 1100ms var(--ease-lux) both,
+      settle 1800ms var(--ease-lux) both;
+  }
+  /* A very slow breath while the slide rests */
+  .spot-drift {
+    animation: drift 24s ease-in-out infinite;
+  }
+  /* The caption starts just below the photo's bottom edge (the slide clips it) and glides up into place */
+  .spot-caption {
+    animation: caption-up 900ms var(--ease-lux) 150ms both;
+  }
+  .spot-dot {
+    transition:
+      width 700ms var(--ease-lux),
+      background-color 700ms var(--ease-lux);
+  }
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+/* Reduced motion: nothing scrolls or travels; things still fade, so changes don't snap */
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track,
+  .photo::before,
+  .animate-heart-pop {
+    animation: none;
+  }
+  .animate-rise,
+  .animate-card-in {
+    animation-name: fade-in;
+  }
+  /* The spotlight still dissolves, quicker and without the settle or the drift */
+  .spot-in,
+  .spot-in-late,
+  .spot-settle,
+  .spot-caption {
+    animation: fade-in 400ms ease both;
+  }
+  .spot-drift {
+    animation: none;
+  }
+  .spot-dot {
+    transition: none;
+  }
+}
