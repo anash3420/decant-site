@@ -49,11 +49,11 @@ export function Houses() {
       ))}
       <Link
         to="/houses"
-        className={`burgundy reveal items-start! justify-between! p-4 lg:p-6 ${growClass} ${tileClass}`}
+        className={`burgundy burgundy-mid reveal items-start! justify-between! p-4 lg:p-6 ${growClass} ${tileClass}`}
       >
         <b className="font-display text-[22px] leading-[1.1] font-normal lg:text-3xl">All {brands.length} houses</b>
         {others.length > 0 && <span className="hidden text-sm text-wine-soft lg:block">Plus {listAnd(others)}</span>}
-        <em className="flex items-center gap-2 text-sm not-italic lg:text-[15px]">
+        <em className="flex items-center gap-2 text-sm text-gold not-italic lg:text-[15px]">
           Browse <ChevronRight size={16} />
         </em>
       </Link>

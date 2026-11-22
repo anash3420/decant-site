@@ -34,6 +34,14 @@ follows the "Storefront redesign" section below.
 - Effects Tailwind can't express (ticker, scent trail, light pools, burgundy glow, outlined numbers, spotlight pool
   and reflection, reveal-on-scroll) are classes in `index.css` under `@layer components`. Reveal uses CSS
   scroll-driven animations (no JavaScript) and everything respects `prefers-reduced-motion`.
+- Top bar hover menus (desktop): `components/MegaMenu.tsx`, opened from `SiteHeader.tsx` (hover with a short intent
+  delay, keyboard focus, Escape, closes on scroll or link click, dims the page). Their content is **hardcoded** in
+  `data/mock/menus.json` (owner, 2026-11-22): lists, counts, families and photos. It was generated from the mock
+  catalogue, so its counts don't update by themselves; it moves to the API later. The Houses tiles show the four
+  spotlight houses (Nishane, Roja Dove, Essential Parfums, Sospiro) with the owner's photos.
+- Phone menu: `components/PhoneMenu.tsx`, a drawer from the left opened by the header's menu button. It stays
+  mounted (inert while closed) so it slides both ways; one accordion open at a time (grid-rows animation); Escape,
+  the dimmed page or any link closes it and focus returns to the menu button. It reads the same `menus.json`.
 - Desktop styles start at `lg` (1024 px); below that is the phone layout.
 
 ## Commands
@@ -147,7 +155,10 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 
 - Accent **burgundy `#6d1f33`**; plum is not the primary colour. Use soft, low-saturation, warm neutrals. The page
   background is warm ivory (`#f5efe7` to `#f2e9e4`), with white cards and text `#0f1720`. Muted text is `#6e645b`.
-- Burgundy panels use a radial gradient `#93374f → #7a2640 → #62192e → #4c1222` with a soft white sheen.
+- Burgundy panels use a deep burgundy-black radial gradient `#4a1626 → #2a0d16 → #170709` (lit from the top right, the same as the
+  All decants menu; owner, 2026-11-22) with a soft white sheen. On burgundy panels the headings stay ivory and the small links ("Shop all new in →", "Browse") are gold `#e2c79c`
+  (`text-gold`, underline `border-gold/60`); big gold headings were rejected (owner, 2026-11-22). The two homepage tiles among the product cards (the shelf tile and "All N houses") use `.burgundy-mid`, a
+  lighter burgundy `#6a2238 → #4a1628 → #2e0d18`, so they don't pull too much attention. A page that ends with a burgundy band sits flush on the footer.
 - Type: **Fraunces** for display and names, **Schibsted Grotesk** for UI. Italic Fraunces is for quotes and links
   like "Make it yours". Use US spelling ("cozy").
 - "Atelier light" art: warm light pools and grain in the background, a fine burgundy scent-trail line running down
@@ -168,9 +179,16 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
   the centre, and on the right a search icon (icon only) then account, wishlist and Bag (n). The search icon will
   open a search panel sliding down from the top (to be designed). No second nav row.
 - **Nav: New in · All decants · Fragrances · Houses.** Moods is not in the top bar.
+- **New in ("Arrivals wall", owner chose C, 2026-11-22; `topbar-new-in.jpg`, source `topbar-new-in-ideas.html#C`):**
+  the newest arrival as a large photo tile ("Newest arrival", no date; name, "From $X for N ml · Discover"), the
+  next two as cards, and a burgundy "This month · N new decants · Shop all new in" tile. On phones it is the first
+  accordion: the newest as a wide photo, two small cards, then the burgundy button. New = added in the last 30 days.
+  **Every New in photo is designed art, never the listing photo** (owner's rule): each new decant needs a wide and a
+  tall art image. Vibrato uses the owner's spotlight photo; Blue Talisman and French Defense have designed stand-ins
+  (the bottle on a moody backdrop in its colour) in `client/public/mock/art/` until the owner's art arrives.
 - Hovering a nav item opens a full-width white panel under the header and dims the page. **Photo cards zoom their
   photo outwards on hover** (scale about 1.08, ~0.6s ease), and the tile lifts slightly.
-  - **Houses (M1):** A to Z house list with counts and "View all 11 houses" on the left, then four tall photo tiles,
+  - **Houses (M1):** "Top houses" list (the seven with the most decants, ties A to Z; owner, 2026-11-22) with counts and "View all N houses" on the left, then four tall photo tiles,
     each with the house logo in white near the bottom. No "Shop the house" text.
   - **All decants (M2 "Salon"):** a dark burgundy-black panel with ivory Fraunces columns (Accord, Worn by, Type,
     Size, Shop by) and counts. The hovered link turns gold `#e2c79c`. One lit featured photo with a caption.

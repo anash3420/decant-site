@@ -1,0 +1,546 @@
+{
+  "totalDecants": 14,
+  "newIn": {
+    "count": 3,
+    "items": [
+      {
+        "slug": "sospiro-vibrato",
+        "house": "Sospiro",
+        "name": "Vibrato",
+        "price": 15,
+        "sizeMl": 5,
+        "addedAt": "2026-11-20",
+        "art": {
+          "wide": {
+            "src": "/mock/spotlight/vibrato-desktop.webp",
+            "width": 1410,
+            "height": 900
+          },
+          "tall": {
+            "src": "/mock/spotlight/vibrato-phone.webp",
+            "width": 618,
+            "height": 840
+          }
+        }
+      },
+      {
+        "slug": "ex-nihilo-blue-talisman",
+        "house": "Ex Nihilo",
+        "name": "Blue Talisman",
+        "price": 36,
+        "sizeMl": 7.5,
+        "addedAt": "2026-11-18",
+        "art": {
+          "wide": {
+            "src": "/mock/art/ex-nihilo-blue-talisman-wide.webp",
+            "width": 1410,
+            "height": 900
+          },
+          "tall": {
+            "src": "/mock/art/ex-nihilo-blue-talisman-tall.webp",
+            "width": 720,
+            "height": 900
+          }
+        }
+      },
+      {
+        "slug": "mind-games-french-defense",
+        "house": "Mind Games",
+        "name": "French Defense",
+        "price": 20,
+        "sizeMl": 7.5,
+        "addedAt": "2026-11-12",
+        "art": {
+          "wide": {
+            "src": "/mock/art/mind-games-french-defense-wide.webp",
+            "width": 1410,
+            "height": 900
+          },
+          "tall": {
+            "src": "/mock/art/mind-games-french-defense-tall.webp",
+            "width": 720,
+            "height": 900
+          }
+        }
+      }
+    ]
+  },
+  "houses": {
+    "total": 12,
+    "list": [
+      {
+        "slug": "grln",
+        "name": "Guerlain",
+        "count": 2
+      },
+      {
+        "slug": "michael-malul",
+        "name": "Michael Malul",
+        "count": 2
+      },
+      {
+        "slug": "amouage",
+        "name": "Amouage",
+        "count": 1
+      },
+      {
+        "slug": "arabiyat-prestige",
+        "name": "Arabiyat Prestige",
+        "count": 1
+      },
+      {
+        "slug": "atkinsons",
+        "name": "Atkinsons",
+        "count": 1
+      },
+      {
+        "slug": "essential-parfums",
+        "name": "Essential Parfums",
+        "count": 1
+      },
+      {
+        "slug": "ex-nihilo",
+        "name": "Ex Nihilo",
+        "count": 1
+      }
+    ],
+    "all": [
+      {
+        "slug": "amouage",
+        "name": "Amouage",
+        "logo": {
+          "src": "/mock/logos/amouage.webp",
+          "width": 410,
+          "height": 55
+        }
+      },
+      {
+        "slug": "arabiyat-prestige",
+        "name": "Arabiyat Prestige",
+        "logo": {
+          "src": "/mock/logos/arabiyat-prestige.webp",
+          "width": 122,
+          "height": 155
+        }
+      },
+      {
+        "slug": "atkinsons",
+        "name": "Atkinsons",
+        "logo": {
+          "src": "/mock/logos/atkinsons.webp",
+          "width": 300,
+          "height": 197
+        }
+      },
+      {
+        "slug": "essential-parfums",
+        "name": "Essential Parfums",
+        "logo": {
+          "src": "/mock/logos/essential-parfums.webp",
+          "width": 490,
+          "height": 480
+        }
+      },
+      {
+        "slug": "ex-nihilo",
+        "name": "Ex Nihilo",
+        "logo": {
+          "src": "/mock/logos/ex-nihilo.webp",
+          "width": 642,
+          "height": 293
+        }
+      },
+      {
+        "slug": "grln",
+        "name": "Guerlain",
+        "logo": {
+          "src": "/mock/logos/grln.webp",
+          "width": 1145,
+          "height": 140
+        }
+      },
+      {
+        "slug": "michael-malul",
+        "name": "Michael Malul",
+        "logo": {
+          "src": "/mock/logos/michael-malul.webp",
+          "width": 1064,
+          "height": 162
+        }
+      },
+      {
+        "slug": "mind-games",
+        "name": "Mind Games",
+        "logo": {
+          "src": "/mock/logos/mind-games.webp",
+          "width": 961,
+          "height": 108
+        }
+      },
+      {
+        "slug": "nishane",
+        "name": "Nishane",
+        "logo": {
+          "src": "/mock/logos/nishane.webp",
+          "width": 876,
+          "height": 150
+        }
+      },
+      {
+        "slug": "rayhaan",
+        "name": "Rayhaan",
+        "logo": {
+          "src": "/mock/logos/rayhaan.webp",
+          "width": 335,
+          "height": 82
+        }
+      },
+      {
+        "slug": "roja-dove",
+        "name": "Roja Dove",
+        "logo": {
+          "src": "/mock/logos/roja-dove.webp",
+          "width": 959,
+          "height": 480
+        }
+      },
+      {
+        "slug": "sospiro",
+        "name": "Sospiro",
+        "logo": {
+          "src": "/mock/logos/sospiro.svg",
+          "width": 400,
+          "height": 80
+        }
+      }
+    ],
+    "tiles": [
+      {
+        "slug": "nishane",
+        "photo": {
+          "src": "/mock/spotlight/favonius-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "name": "Nishane",
+        "logo": {
+          "src": "/mock/logos/nishane.webp",
+          "width": 876,
+          "height": 150
+        }
+      },
+      {
+        "slug": "roja-dove",
+        "photo": {
+          "src": "/mock/spotlight/burlington-1819-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "name": "Roja Dove",
+        "logo": {
+          "src": "/mock/logos/roja-dove.webp",
+          "width": 959,
+          "height": 480
+        }
+      },
+      {
+        "slug": "essential-parfums",
+        "photo": {
+          "src": "/mock/spotlight/bois-imperial-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "name": "Essential Parfums",
+        "logo": {
+          "src": "/mock/logos/essential-parfums.webp",
+          "width": 490,
+          "height": 480
+        }
+      },
+      {
+        "slug": "sospiro",
+        "photo": {
+          "src": "/mock/spotlight/vibrato-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "name": "Sospiro",
+        "logo": {
+          "src": "/mock/logos/sospiro.svg",
+          "width": 400,
+          "height": 80
+        }
+      }
+    ]
+  },
+  "decants": {
+    "columns": [
+      {
+        "title": "Accord",
+        "items": [
+          {
+            "label": "Woody",
+            "count": 10,
+            "to": "/decants?accord=Woody"
+          },
+          {
+            "label": "Amber",
+            "count": 8,
+            "to": "/decants?accord=Amber"
+          },
+          {
+            "label": "Citrus",
+            "count": 5,
+            "to": "/decants?accord=Citrus"
+          },
+          {
+            "label": "Warm Spicy",
+            "count": 5,
+            "to": "/decants?accord=Warm%20Spicy"
+          },
+          {
+            "label": "Fresh Spicy",
+            "count": 4,
+            "to": "/decants?accord=Fresh%20Spicy"
+          },
+          {
+            "label": "Aromatic",
+            "count": 3,
+            "to": "/decants?accord=Aromatic"
+          },
+          {
+            "label": "Floral",
+            "count": 3,
+            "to": "/decants?accord=Floral"
+          }
+        ]
+      },
+      {
+        "title": "Worn by",
+        "items": [
+          {
+            "label": "Unisex",
+            "count": 11,
+            "to": "/decants?worn=unisex"
+          },
+          {
+            "label": "Masculine",
+            "count": 2,
+            "to": "/decants?worn=masculine"
+          },
+          {
+            "label": "Feminine",
+            "count": 1,
+            "to": "/decants?worn=feminine"
+          }
+        ]
+      },
+      {
+        "title": "Type",
+        "items": [
+          {
+            "label": "Niche",
+            "count": 10,
+            "to": "/decants?type=niche"
+          },
+          {
+            "label": "Designer",
+            "count": 2,
+            "to": "/decants?type=designer"
+          },
+          {
+            "label": "Dupe",
+            "count": 2,
+            "to": "/decants?type=dupe"
+          }
+        ]
+      },
+      {
+        "title": "Size",
+        "items": [
+          {
+            "label": "3 ml",
+            "count": 4,
+            "to": "/decants?size=3"
+          },
+          {
+            "label": "5 ml",
+            "count": 12,
+            "to": "/decants?size=5"
+          },
+          {
+            "label": "7.5 ml",
+            "count": 2,
+            "to": "/decants?size=7.5"
+          },
+          {
+            "label": "10 ml",
+            "count": 12,
+            "to": "/decants?size=10"
+          }
+        ]
+      },
+      {
+        "title": "Shop by",
+        "items": [
+          {
+            "label": "New in",
+            "to": "/new"
+          },
+          {
+            "label": "Under $10",
+            "count": 5,
+            "to": "/decants?price=under-10"
+          },
+          {
+            "label": "All 14 decants",
+            "to": "/decants"
+          }
+        ]
+      }
+    ],
+    "feature": {
+      "photo": {
+        "src": "/mock/spotlight/vibrato-phone.webp",
+        "width": 618,
+        "height": 840
+      },
+      "kicker": "Amber",
+      "title": "Warm, golden and glowing",
+      "cta": "Shop amber",
+      "to": "/decants?accord=Amber",
+      "count": 8
+    },
+    "features": {
+      "Woody": {
+        "photo": {
+          "src": "/mock/spotlight/bois-imperial-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "kicker": "Woody",
+        "title": "Dry woods and quiet smoke",
+        "cta": "Shop woody",
+        "to": "/decants?accord=Woody",
+        "count": 10
+      },
+      "Amber": {
+        "photo": {
+          "src": "/mock/spotlight/vibrato-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "kicker": "Amber",
+        "title": "Warm, golden and glowing",
+        "cta": "Shop amber",
+        "to": "/decants?accord=Amber",
+        "count": 8
+      },
+      "Citrus": {
+        "photo": {
+          "src": "/mock/spotlight/burlington-1819-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "kicker": "Citrus",
+        "title": "Bright, crisp and sunlit",
+        "cta": "Shop citrus",
+        "to": "/decants?accord=Citrus",
+        "count": 5
+      },
+      "Floral": {
+        "photo": {
+          "src": "/mock/spotlight/favonius-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "kicker": "Floral",
+        "title": "Rose petals and soft light",
+        "cta": "Shop floral",
+        "to": "/decants?accord=Floral",
+        "count": 3
+      }
+    }
+  },
+  "fragrances": {
+    "wornBy": [
+      {
+        "label": "Unisex",
+        "count": 11,
+        "to": "/fragrances?worn=unisex"
+      },
+      {
+        "label": "Masculine",
+        "count": 2,
+        "to": "/fragrances?worn=masculine"
+      },
+      {
+        "label": "Feminine",
+        "count": 1,
+        "to": "/fragrances?worn=feminine"
+      }
+    ],
+    "strength": [
+      {
+        "label": "Eau de Parfum",
+        "count": 9,
+        "to": "/fragrances?strength=Eau%20de%20Parfum"
+      },
+      {
+        "label": "Extrait de Parfum",
+        "count": 5,
+        "to": "/fragrances?strength=Extrait%20de%20Parfum"
+      }
+    ],
+    "families": [
+      {
+        "slug": "woody-oud",
+        "name": "Woody & Oud",
+        "line": "Cedar, sandalwood, oud and smoke",
+        "count": 10,
+        "photo": {
+          "src": "/mock/spotlight/bois-imperial-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "to": "/fragrances/woody-oud"
+      },
+      {
+        "slug": "amber-spice",
+        "name": "Amber & Spice",
+        "line": "Resins, rum and warm spice",
+        "count": 10,
+        "photo": {
+          "src": "/mock/spotlight/vibrato-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "to": "/fragrances/amber-spice"
+      },
+      {
+        "slug": "fresh-citrus",
+        "name": "Fresh & Citrus",
+        "line": "Bergamot, tea and green herbs",
+        "count": 8,
+        "photo": {
+          "src": "/mock/spotlight/burlington-1819-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "to": "/fragrances/fresh-citrus"
+      },
+      {
+        "slug": "floral-fruity",
+        "name": "Floral & Fruity",
+        "line": "Rose, jasmine and dark fruit",
+        "count": 5,
+        "photo": {
+          "src": "/mock/spotlight/favonius-phone.webp",
+          "width": 618,
+          "height": 840
+        },
+        "to": "/fragrances/floral-fruity"
+      }
+    ]
+  }
+}

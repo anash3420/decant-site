@@ -7,7 +7,7 @@ const linkClass = 'flex min-h-11 items-center break-words transition-colors hove
 export function SiteFooter() {
   const year = new Date().getFullYear()
   return (
-    <footer className="relative z-10 mt-14 grid grid-cols-2 gap-x-4 gap-y-7 border-t border-line bg-white px-4 pt-10 pb-7 text-sm text-muted lg:mt-20 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-12 lg:px-12 lg:pt-16 lg:pb-14">
+    <footer className="relative z-10 mt-14 grid grid-cols-2 gap-x-4 gap-y-7 border-t border-line bg-white px-4 pt-10 pb-7 text-sm text-muted lg:mt-20 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:gap-12 lg:px-12 lg:pt-16 lg:pb-14 [main:has([data-closes-page])+&]:mt-0">
       <div className="col-span-2 lg:col-span-1">
         <Link to="/" className="flex min-h-11 items-center gap-3 text-wine">
           <LogoMark size={30} />

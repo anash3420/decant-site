@@ -11,6 +11,7 @@ export function OwnerNote() {
   return (
     <section
       aria-label={note.kicker}
+      data-closes-page
       className="burgundy reveal mt-14 px-5 pt-12 pb-14 lg:mt-24 lg:px-[120px] lg:pt-[84px] lg:pb-[90px]"
     >
       <p className="text-center text-[13px] tracking-[0.14em] text-[#e8c9cf] uppercase">{note.kicker}</p>

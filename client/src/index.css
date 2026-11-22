@@ -28,6 +28,10 @@
   --animate-rise: rise 320ms var(--ease-out) both;
   /* Cards swapped in by a shelf filter */
   --animate-card-in: card-in 280ms var(--ease-out) both;
+  /* The top bar's hover menus: drop in a few pixels as they appear */
+  --animate-menu-in: menu-in 240ms var(--ease-out) both;
+  /* ...and fade out a little faster when they close */
+  --animate-menu-out: menu-out 150ms var(--ease-out) forwards;
   /* The heart when a decant is saved */
   --animate-heart-pop: heart-pop 320ms var(--ease-out);
 }
@@ -52,6 +56,29 @@
 @keyframes settle {
   from {
     transform: scale(1.035);
+  }
+}
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+@keyframes menu-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes tile-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
   }
 }
 @keyframes caption-up {
@@ -231,10 +258,11 @@
     position: relative;
     overflow: hidden;
     color: #fff;
-    background: radial-gradient(ellipse 75% 88% at 50% 50%, #93374f 0%, #7a2640 38%, #62192e 72%, #4c1222 100%);
+    /* The same deep burgundy-black as the All decants menu */
+    background: radial-gradient(ellipse 60% 120% at 80% 30%, #4a1626 0%, #2a0d16 55%, #170709 100%);
     box-shadow:
       inset 0 0 0 1px rgb(255 255 255 / 0.07),
-      0 10px 30px rgb(109 31 51 / 0.18);
+      0 10px 30px rgb(23 7 9 / 0.22);
   }
   .burgundy::after {
     content: '';
@@ -247,6 +275,11 @@
   .burgundy > * {
     position: relative;
     z-index: 1;
+  }
+
+  /* Homepage tiles among the product cards: between the first mockups and the menus' burgundy-black (owner, 2026-11-22) */
+  .burgundy.burgundy-mid {
+    background: radial-gradient(ellipse 60% 120% at 80% 30%, #6a2238 0%, #4a1628 55%, #2e0d18 100%);
   }
 
   /* ── Spotlight "Pool of light": vignette, colour pooling onto a glass shelf, faint reflection ── */
@@ -329,6 +362,12 @@
   .spot-caption {
     animation: caption-up 900ms var(--ease-lux) 150ms both;
   }
+  /* The nav's single underline, sliding between items */
+  .nav-bar {
+    transition:
+      transform 180ms var(--ease-out),
+      opacity 150ms var(--ease-out);
+  }
   .spot-dot {
     transition:
       width 700ms var(--ease-lux),
@@ -366,7 +405,8 @@
     animation: none;
   }
   .animate-rise,
-  .animate-card-in {
+  .animate-card-in,
+  .animate-menu-in {
     animation-name: fade-in;
   }
   /* The spotlight still dissolves, quicker and without the settle or the drift */
@@ -378,6 +418,12 @@
   }
   .spot-drift {
     animation: none;
+  }
+  .animate-menu-out {
+    animation: fade-out 100ms ease-out forwards;
+  }
+  .nav-bar {
+    transition: none;
   }
   .spot-dot {
     transition: none;

@@ -78,14 +78,14 @@ export function Shelf() {
 function MoreTile({ count, sizes }: { count: number; sizes: number[] }) {
   const sizeList = sizes.length > 1 ? `${sizes.slice(0, -1).join(', ')} and ${sizes.at(-1)}` : `${sizes[0] ?? ''}`
   return (
-    <div className="burgundy reveal col-span-full flex flex-col gap-2.5 self-stretch rounded-[14px] px-5 py-[22px] lg:col-span-2 lg:justify-between lg:p-7">
+    <div className="burgundy burgundy-mid reveal col-span-full flex flex-col gap-2.5 self-stretch rounded-[14px] px-5 py-[22px] lg:col-span-2 lg:justify-between lg:p-7">
       <h3 className="font-display text-2xl leading-[1.15] lg:text-[34px] lg:leading-[1.1]">
         {numberWord(count)} fragrances, all poured from my own bottles.
       </h3>
       <p className="text-sm text-wine-soft lg:text-base">Decants in {sizeList} ml.</p>
       <Link
         to="/decants"
-        className="mt-1.5 flex h-11 items-center self-start rounded-full bg-white px-5 font-medium text-ink transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.97] lg:h-auto lg:px-[22px] lg:py-3"
+        className="mt-1.5 flex h-11 items-center self-start rounded-full border-2 border-gold bg-white px-5 font-medium text-ink transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.97] lg:h-auto lg:px-[22px] lg:py-3"
       >
         See all decants
       </Link>
