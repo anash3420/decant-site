@@ -103,7 +103,6 @@ function MoodsHeading() {
       title="Shop by mood"
       description="A few favourites for each moment. Prices are for the smallest size."
       note={`${numberWord(picks)} picks in each`}
-      link={{ label: 'All moods', to: '/moods' }}
     />
   )
 }

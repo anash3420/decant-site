@@ -92,6 +92,12 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
   const results = useMemo(() => applyFilters(catalog, filters, moods, sort), [catalog, filters, moods, sort])
 
   const [panel, setPanel] = useState(false)
+  // Set when the panel opens on one group (the mood tile); cleared when Filter & Sort opens it normally
+  const [focus, setFocus] = useState<{ group: GroupKey; n: number } | null>(null)
+  const openPanel = (group?: GroupKey) => {
+    setFocus((f) => (group ? { group, n: (f?.n ?? 0) + 1 } : null))
+    setPanel(true)
+  }
   const [sortSheet, setSortSheet] = useState(false)
   const closePanel = useCallback(() => setPanel(false), [])
   const closeSort = useCallback(() => setSortSheet(false), [])
@@ -129,7 +135,7 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
       <div className="sticky top-0 z-30 -mx-4 mb-3.5 flex gap-2.5 border-y border-line bg-[rgb(245_239_231/0.92)] px-4 py-2.5 backdrop-blur-sm lg:hidden">
         <button
           type="button"
-          onClick={() => setPanel(true)}
+          onClick={() => openPanel()}
           className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-wine text-[15px] font-medium text-white transition-transform duration-150 ease-out active:scale-[0.97]"
         >
           <SlidersIcon size={18} />
@@ -151,7 +157,7 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
       <div className="mb-5 hidden min-h-12 items-center gap-[18px] lg:flex">
         <button
           type="button"
-          onClick={() => setPanel(true)}
+          onClick={() => openPanel()}
           className="flex h-12 items-center gap-2.5 rounded-full bg-wine px-[22px] text-[15px] font-medium whitespace-nowrap text-white shadow-[0_6px_16px_rgb(109_31_51/0.18)] transition-transform duration-150 ease-out hover:-translate-y-px active:scale-[0.97]"
         >
           <SlidersIcon size={18} />
@@ -184,7 +190,9 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
       <div className="grid grid-cols-2 items-start gap-x-2.5 gap-y-[22px] md:grid-cols-3 lg:grid-cols-4 lg:gap-[18px]">
         {results.map((listing, i) => (
           <Fragment key={listing.slug}>
-            {!house && active === 0 && i === MOOD_TILE_AT && <MoodTile count={moods.length} />}
+            {!house && active === 0 && i === MOOD_TILE_AT && (
+              <MoodTile count={moods.length} onOpen={() => openPanel('mood')} />
+            )}
             <div className="reveal">
               <div
                 className={changed ? 'animate-card-in' : undefined}
@@ -217,6 +225,7 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
         resultCount={results.length}
         catalog={catalog}
         hide={house ? ['house'] : undefined}
+        focus={focus}
       />
       <SortSheet open={sortSheet} onClose={closeSort} sort={sort} onSort={(s) => update(filters, s)} />
     </>
@@ -361,7 +370,8 @@ function AccordPills({
 }
 
 /** The 8th card: a way in for anyone who doesn't know where to start */
-function MoodTile({ count }: { count: number }) {
+/** The 8th card: opens Filter & Sort with the moods showing */
+function MoodTile({ count, onOpen }: { count: number; onOpen: () => void }) {
   const t = copy.moodTile
   return (
     <div className="burgundy burgundy-mid reveal flex flex-col self-stretch rounded-xl p-4 lg:rounded-[14px] lg:p-6">
@@ -369,12 +379,14 @@ function MoodTile({ count }: { count: number }) {
       <p className="mt-auto pt-4 text-[13px] text-wine-soft lg:text-[15px]">
         {t.text.replace('{count}', numberWord(count))}
       </p>
-      <Link
-        to={t.to}
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-haspopup="dialog"
         className="mt-4 flex h-11 items-center self-start rounded-full border-2 border-gold bg-white px-4 text-sm font-medium text-ink transition-transform duration-200 ease-out hover:-translate-y-0.5 active:scale-[0.97] lg:mt-6 lg:px-5 lg:text-[15px]"
       >
         {t.button}
-      </Link>
+      </button>
     </div>
   )
 }

@@ -23,9 +23,11 @@ export function Ticker() {
   )
   return (
     <div className="ticker" role="region" aria-label="Shop announcements">
-      <div className="ticker-track">
-        {run(false)}
-        {run(true)}
+      <div className="ticker-fade">
+        <div className="ticker-track">
+          {run(false)}
+          {run(true)}
+        </div>
       </div>
     </div>
   )

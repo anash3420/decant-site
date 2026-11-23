@@ -1,4 +1,4 @@
-import { useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { ShopListing } from '@shared/types.ts'
 import {
@@ -33,6 +33,8 @@ interface FilterPanelProps {
   catalog: ShopListing[]
   /** Leave out a group (the brand page has no House filter) */
   hide?: GroupKey[]
+  /** Open with this group expanded and in view; `n` changes on each such opening */
+  focus?: { group: GroupKey; n: number } | null
 }
 
 /**
@@ -41,7 +43,7 @@ interface FilterPanelProps {
  * (Sort has its own button). Choices apply as they are made; "Show N decants" closes it.
  */
 export function FilterPanel(props: FilterPanelProps) {
-  const { open, onClose, groups, filters, sort, onChange, resultCount, catalog, hide = [] } = props
+  const { open, onClose, groups, filters, sort, onChange, resultCount, catalog, hide = [], focus } = props
   const closeRef = useRef<HTMLButtonElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const dimRef = useRef<HTMLDivElement>(null)
@@ -53,6 +55,14 @@ export function FilterPanel(props: FilterPanelProps) {
   const shown = (key: GroupKey) => !hide.includes(key) && groups[key].options.length > 0
   const clear = () => onChange(Object.fromEntries(Object.keys(filters).map((k) => [k, []])) as unknown as Filters, sort)
   const any = activeCount(filters) > 0
+
+  // Opened on one group (the mood tile): scroll the panel's list (not the page behind it) to that group
+  useEffect(() => {
+    if (!open || !focus) return
+    const section = document.getElementById(`filter-${focus.group}`)
+    const list = section?.closest<HTMLElement>('.overflow-y-auto')
+    if (section && list) list.scrollTop += section.getBoundingClientRect().top - list.getBoundingClientRect().top - 8
+  }, [open, focus])
 
   return createPortal(
     <>
@@ -130,7 +140,14 @@ export function FilterPanel(props: FilterPanelProps) {
             </Section>
           )}
           {shown('mood') && (
-            <Section title="Mood" meta={groups.mood.options.length}>
+            <Section
+              // A new key each time the panel is opened on Mood, so it starts expanded; otherwise it starts collapsed
+              key={focus?.group === 'mood' ? focus.n : 'mood'}
+              id="filter-mood"
+              title="Mood"
+              meta={groups.mood.options.length}
+              defaultOpen={focus?.group === 'mood'}
+            >
               <Checks group={groups.mood} filters={filters} onToggle={(v) => set('mood', v)} />
             </Section>
           )}
@@ -175,12 +192,14 @@ export function FilterPanel(props: FilterPanelProps) {
 
 /** A group that opens and closes (grid-rows animation, so it eases to its height) */
 function Section({
+  id,
   title,
   meta,
   defaultOpen = false,
   className = '',
   children,
 }: {
+  id?: string
   title: string
   meta?: number
   defaultOpen?: boolean
@@ -189,7 +208,7 @@ function Section({
 }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <section className={`border-b border-line last:border-b-0 ${className}`}>
+    <section id={id} className={`scroll-mt-2 border-b border-line last:border-b-0 ${className}`}>
       <button
         type="button"
         aria-expanded={open}

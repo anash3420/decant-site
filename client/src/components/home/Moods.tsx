@@ -85,7 +85,7 @@ function MoodList({
         })}
       </ul>
       <Link
-        to={`/moods/${mood.slug}`}
+        to={`/decants?mood=${mood.slug}`}
         className="mt-2.5 inline-flex min-h-11 items-center gap-1.5 text-sm text-wine lg:min-h-0"
       >
         <span className="link-line pb-0.5">Shop the list</span>

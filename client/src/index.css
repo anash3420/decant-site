@@ -133,13 +133,10 @@
 @layer base {
   /* ── Page ─────────────────────────────────────────────────────────── */
 
+  /* No smooth scrolling on the whole page: moving to another page must land at its top (and Back at the same spot)
+     at once, not glide there. In-page jumps that should glide ask for it themselves. */
   html {
     -webkit-text-size-adjust: 100%;
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    html {
-      scroll-behavior: smooth;
-    }
   }
 
   body {
@@ -169,26 +166,14 @@
   /* ── Announcement ticker ──────────────────────────────────────────── */
 
   .ticker {
-    background: linear-gradient(90deg, #5a1729, #6d1f33 30%, #7a2640 50%, #6d1f33 70%, #5a1729);
+    /* The same deep burgundy-black as the burgundy panels and the All decants menu */
+    background: radial-gradient(ellipse 60% 120% at 80% 30%, #4a1626 0%, #2a0d16 55%, #170709 100%);
     position: relative;
     overflow: hidden;
   }
-  .ticker::before,
-  .ticker::after {
-    content: '';
-    position: absolute;
-    inset-block: 0;
-    width: 28px;
-    z-index: 1;
-    pointer-events: none;
-  }
-  .ticker::before {
-    left: 0;
-    background: linear-gradient(90deg, #5a1729, rgb(90 23 41 / 0));
-  }
-  .ticker::after {
-    right: 0;
-    background: linear-gradient(270deg, #5a1729, rgb(90 23 41 / 0));
+  /* The messages fade out at both ends (the text, not the bar, so it works on any background) */
+  .ticker-fade {
+    mask-image: linear-gradient(90deg, transparent, #000 28px, #000 calc(100% - 28px), transparent);
   }
   .ticker-track {
     display: flex;
@@ -199,9 +184,8 @@
     animation-play-state: paused;
   }
   @media (min-width: 1024px) {
-    .ticker::before,
-    .ticker::after {
-      width: 60px;
+    .ticker-fade {
+      mask-image: linear-gradient(90deg, transparent, #000 60px, #000 calc(100% - 60px), transparent);
     }
   }
 

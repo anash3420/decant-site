@@ -149,20 +149,21 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 
 ### Mockup index (all approved unless noted)
 
-| Page                                      | Files                                                                                                                                                                             |
-| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Homepage, desktop                         | `final-home-desktop.html`, `final-home-desktop-*.jpg`                                                                                                                             |
-| Homepage, phone (draft, not reviewed yet) | `draft-home-phone.html` / `.jpg`                                                                                                                                                  |
-| Top bar menus, desktop                    | `topbar-houses.jpg`, `topbar-all-decants.jpg`, `topbar-fragrances.jpg` (source `topbar-menus.html`, `topbar-fragrances-shop-all.html`; use only the chosen variants listed below) |
-| Top bar menu, phone                       | `topbar-phone-menu.html` / `.jpg`                                                                                                                                                 |
-| All decants (catalogue)                   | `catalogue-final-desktop.*` (+ `-drawer`, `-filtered` jpgs), `catalogue-final-phone.*`                                                                                            |
-| Quick buy (desktop only)                  | `catalogue-quick-buy.*`                                                                                                                                                           |
-| All houses                                | `houses-az3-desktop.jpg`; phone is the third frame of `houses-az-phone.jpg` (source `houses-az-*.html`, idea "Z3")                                                                |
-| Brand (house) page                        | `brand-banner-name-desktop.jpg`, `brand-banner-logo-desktop.jpg`, `brand-banner-phone.jpg`                                                                                        |
-| Bag (side panel) and free shipping        | `bag-desktop.jpg`, `bag-phone.jpg`, `bag-free-shipping.jpg`                                                                                                                       |
-| Fragrance (product) page                  | `product-final-desktop*.jpg` (+ `-scrolled`, `-hover`), `product-final-phone.jpg`, viewer `product-photo-viewer-*.jpg`                                                            |
-| "From me to you" band (homepage)          | `home-note-pour.jpg` (idea 3 in `note-ideas.html#3`); saved alternative to revisit: `idea-note-the-bench.jpg` (`#4`)                                                              |
-| Homepage module ideas (optional extras)   | `idea-*.jpg`                                                                                                                                                                      |
+| Page                                                          | Files                                                                                                                                                                             |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Homepage, desktop                                             | `final-home-desktop.html`, `final-home-desktop-*.jpg`                                                                                                                             |
+| Homepage, phone (draft, not reviewed yet)                     | `draft-home-phone.html` / `.jpg`                                                                                                                                                  |
+| Top bar menus, desktop                                        | `topbar-houses.jpg`, `topbar-all-decants.jpg`, `topbar-fragrances.jpg` (source `topbar-menus.html`, `topbar-fragrances-shop-all.html`; use only the chosen variants listed below) |
+| Top bar menu, phone                                           | `topbar-phone-menu.html` / `.jpg`                                                                                                                                                 |
+| All decants (catalogue)                                       | `catalogue-final-desktop.*` (+ `-drawer`, `-filtered` jpgs), `catalogue-final-phone.*`                                                                                            |
+| Quick buy (desktop only)                                      | `catalogue-quick-buy.*`                                                                                                                                                           |
+| All houses                                                    | `houses-az3-desktop.jpg`; phone is the third frame of `houses-az-phone.jpg` (source `houses-az-*.html`, idea "Z3")                                                                |
+| Brand (house) page                                            | `brand-banner-name-desktop.jpg`, `brand-banner-logo-desktop.jpg`, `brand-banner-phone.jpg`                                                                                        |
+| Bag (side panel) and free shipping                            | `bag-desktop.jpg`, `bag-phone.jpg`, `bag-free-shipping.jpg`                                                                                                                       |
+| Fragrance (product) page                                      | `product-final-desktop*.jpg` (+ `-scrolled`, `-hover`), `product-final-phone.jpg`, viewer `product-photo-viewer-*.jpg`                                                            |
+| "From me to you" band (homepage)                              | `home-note-pour.jpg` (idea 3 in `note-ideas.html#3`); saved alternative to revisit: `idea-note-the-bench.jpg` (`#4`)                                                              |
+| All moods (**not built**; saved to revisit, owner 2026-11-23) | `moods-ideas.html`, `moods-idea-a-list.jpg`, `-b-fields.jpg`, `-c-chapters.jpg` (three directions, none chosen)                                                                   |
+| Homepage module ideas (optional extras)                       | `idea-*.jpg`                                                                                                                                                                      |
 
 ### What the shop is
 
@@ -208,7 +209,7 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
   houses, Shop by mood the number of moods, padded to two digits ("06"). The kicker ("The collection") and the link
   ("All decants", "All houses", "All moods") carry no number. The shelf has filter chips but no sort control. The empty space right of a heading holds a hairline ending in a
   dot, an italic line and the section link. Don't repeat the same information on both sides.
-- Announcement ticker: burgundy, scrolling, champagne sparkle separators, pauses on hover, static with reduced
+- Announcement ticker: the deep burgundy-black of the burgundy panels (owner, 2026-11-23), scrolling, champagne sparkle separators, pauses on hover, static with reduced
   motion, hidden when no message is enabled.
 - Logos: brand logos are multiplied onto white. On photos or dark panels they are reversed to white, which needs a
   white or clean logo version per house (Roja's and Essential Parfums' logos read faintly).
@@ -298,7 +299,9 @@ Phone: a single-slide spotlight, a 2-column shelf, three moods plus "3 more mood
   - Price uses **bands** (Under $10, $10 to $15, Over $15), never a slider.
   - Active filters show as white chips with a burgundy outline.
   - Short results get an "Only N match, widen your search" box.
-  - "Not sure where to start? Shop by mood" is the **8th card**. No note tile ends the grid (owner removed it, 2026-11-22).
+  - "Not sure where to start? Shop by mood" is the **8th card**. Its button opens Filter & Sort with the Mood group
+    expanded and in view (owner, 2026-11-23); there is no All moods page. The homepage's "Shop the list" opens
+    `/decants?mood=<slug>`. No note tile ends the grid (owner removed it, 2026-11-22).
 - **Phone:** under the heading, a scrolling row of accord pills (Everything 13, Woody 10…). Then a row with a burgundy
   "Filter (n)" button and a "Sort Newest" button. Filter opens a bottom sheet: accord tiles (three round bottle
   thumbnails, name and count) in 2 columns, then Price, Size and Mood, Clear all, and a sticky "Show N decants" button.

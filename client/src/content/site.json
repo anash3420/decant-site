@@ -77,10 +77,6 @@
       {
         "label": "Houses",
         "to": "/houses"
-      },
-      {
-        "label": "Moods",
-        "to": "/moods"
       }
     ],
     "help": [
@@ -114,8 +110,7 @@
     "moodTile": {
       "title": "Not sure where to start?",
       "text": "{count} short lists, one for each kind of day.",
-      "button": "Shop by mood",
-      "to": "/moods"
+      "button": "Shop by mood"
     }
   },
   "bag": {
