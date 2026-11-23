@@ -218,7 +218,7 @@ function PageHead({ count, smallest }: { count?: number; smallest?: number }) {
         </em>
         <Link
           to={copy.link.to}
-          className="flex items-center gap-1.5 border-b border-wine/50 pb-0.5 text-[15px] whitespace-nowrap text-wine"
+          className="flex items-center gap-1.5 link-line pb-0.5 text-[15px] whitespace-nowrap text-wine"
         >
           {copy.link.label}
           <ArrowRight size={14} />
@@ -316,9 +316,9 @@ function ActiveChips({
       <button
         type="button"
         onClick={() => onChange(emptyFilters())}
-        className="ml-1 flex min-h-11 items-center text-sm text-wine underline decoration-wine/50 underline-offset-4 lg:min-h-0"
+        className="ml-1 flex min-h-11 items-center text-sm text-wine lg:min-h-0"
       >
-        Clear all
+        <span className="link-line pb-0.5">Clear all</span>
       </button>
     </>
   )

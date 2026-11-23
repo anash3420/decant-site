@@ -72,12 +72,8 @@ export function FilterPanel(props: FilterPanelProps) {
               <span className="hidden lg:inline">Filter &amp; Sort</span>
             </h2>
             {any && (
-              <button
-                type="button"
-                onClick={clear}
-                className="min-h-11 text-[15px] text-wine underline decoration-wine/50 underline-offset-4 lg:hidden"
-              >
-                Clear all
+              <button type="button" onClick={clear} className="min-h-11 text-[15px] text-wine lg:hidden">
+                <span className="link-line pb-0.5">Clear all</span>
               </button>
             )}
             <button
@@ -157,9 +153,9 @@ export function FilterPanel(props: FilterPanelProps) {
             <button
               type="button"
               onClick={clear}
-              className="hidden min-h-11 text-[15px] whitespace-nowrap text-wine underline decoration-wine/50 underline-offset-4 lg:block"
+              className="hidden min-h-11 text-[15px] whitespace-nowrap text-wine lg:block"
             >
-              Clear all
+              <span className="link-line pb-0.5">Clear all</span>
             </button>
           )}
           <button
@@ -251,12 +247,8 @@ function Checks({
         })}
       </ul>
       {limit && group.options.length > ACCORDS_SHOWN.list && (
-        <button
-          type="button"
-          onClick={() => setAll((a) => !a)}
-          className="mt-1 min-h-11 text-sm text-wine underline decoration-wine/50 underline-offset-4 lg:min-h-0 lg:pb-0.5"
-        >
-          {all ? 'Show fewer' : `Show all ${group.options.length} accords`}
+        <button type="button" onClick={() => setAll((a) => !a)} className="mt-1 min-h-11 text-sm text-wine lg:min-h-0">
+          <span className="link-line pb-0.5">{all ? 'Show fewer' : `Show all ${group.options.length} accords`}</span>
         </button>
       )}
     </>
@@ -328,12 +320,8 @@ function AccordTiles({
         })}
       </div>
       {group.options.length > ACCORDS_SHOWN.tiles && (
-        <button
-          type="button"
-          onClick={() => setAll((a) => !a)}
-          className="mt-1 min-h-11 text-sm text-wine underline decoration-wine/50 underline-offset-4"
-        >
-          {all ? 'Show fewer' : `Show all ${group.options.length} accords`}
+        <button type="button" onClick={() => setAll((a) => !a)} className="mt-1 min-h-11 text-sm text-wine">
+          <span className="link-line pb-0.5">{all ? 'Show fewer' : `Show all ${group.options.length} accords`}</span>
         </button>
       )}
     </>

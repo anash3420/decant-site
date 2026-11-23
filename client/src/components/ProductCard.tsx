@@ -79,7 +79,7 @@ export const ProductCard = memo(function ProductCard({ listing, priority }: Prod
         >
           <ArrowRight size={18} />
         </span>
-        <span className="hidden items-center gap-1.5 border-b border-wine/40 pb-px font-display text-[17px] text-wine italic lg:inline-flex">
+        <span className="hidden items-center gap-1.5 link-line pb-px font-display text-[17px] text-wine italic lg:inline-flex">
           Make it yours{' '}
           <ArrowRight size={16} className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]" />
         </span>

@@ -108,6 +108,28 @@
   }
 }
 
+/*
+ * Text links with an underline: a short stroke under the first quarter of the link that stretches to the full width
+ * on hover (mouse and trackpad only; touch keeps the short stroke). It also stretches when the card or tile the link
+ * sits in is hovered. The stroke is the text colour at 55%; set --link-line-color to change it.
+ */
+@utility link-line {
+  background-image: linear-gradient(var(--link-line-color, color-mix(in srgb, currentColor 55%, transparent)) 0 0);
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 25% 1px;
+  @media (hover: hover) and (pointer: fine) {
+    transition: background-size 500ms var(--ease-out);
+    &:hover,
+    :is(a, button, .group):hover & {
+      background-size: 100% 1px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
 @layer base {
   /* ── Page ─────────────────────────────────────────────────────────── */
 

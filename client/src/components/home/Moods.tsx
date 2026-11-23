@@ -87,7 +87,7 @@ function MoodList({
         to={`/moods/${mood.slug}`}
         className="mt-2.5 inline-flex min-h-11 items-center gap-1.5 text-sm text-wine lg:min-h-0"
       >
-        <span className="border-b border-wine/50 pb-0.5">Shop the list</span>
+        <span className="link-line pb-0.5">Shop the list</span>
         <ChevronRight size={14} />
       </Link>
     </section>

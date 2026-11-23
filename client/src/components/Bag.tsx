@@ -443,9 +443,9 @@ function BagRow({ line, isNew, leaving, shownSize, onRemove, onResize }: BagRowP
             <button
               type="button"
               onClick={remove}
-              className="hidden min-h-10 items-center text-[13px] text-muted underline underline-offset-[3px] transition-colors hover:text-wine lg:inline-flex"
+              className="hidden min-h-10 items-center text-[13px] text-muted transition-colors hover:text-wine lg:inline-flex"
             >
-              Remove
+              <span className="link-line pb-0.5">Remove</span>
             </button>
           </div>
         </div>
@@ -490,7 +490,7 @@ function PickCard({ listing }: { listing: DecantListing }) {
       <p className="mt-0.5 text-sm font-medium">
         From {formatPrice(price)} <span className="text-xs font-normal text-muted">for {sizeMl} ml</span>
       </p>
-      <span className="mt-1.5 inline-flex items-center gap-1.5 border-b border-wine/40 font-display text-base text-wine italic">
+      <span className="mt-1.5 inline-flex items-center gap-1.5 link-line font-display text-base text-wine italic">
         Make it yours{' '}
         <ArrowRight size={15} className="transition-transform duration-200 ease-out group-hover:translate-x-[3px]" />
       </span>

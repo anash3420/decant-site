@@ -42,7 +42,7 @@ export function SectionHeading({ index, kicker, title, description, note, link, 
         <i aria-hidden="true" className="trail-line mt-1 flex-1 lg:order-1 lg:mt-0" />
         <Link
           to={link.to}
-          className="mt-1 flex min-h-11 items-center gap-1 text-[15px] whitespace-nowrap text-wine lg:order-3 lg:mt-0 lg:min-h-0 lg:border-b lg:border-wine/50 lg:pb-0.5"
+          className="mt-1 flex min-h-11 items-center gap-1 text-[15px] whitespace-nowrap text-wine lg:order-3 lg:mt-0 lg:min-h-0 lg:link-line lg:pb-0.5"
         >
           {link.label}
           <ChevronRight size={14} />

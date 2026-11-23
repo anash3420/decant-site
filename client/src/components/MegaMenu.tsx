@@ -80,7 +80,7 @@ const NewInMenu = memo(function NewInMenu() {
           {newIn.count} new {newIn.count === 1 ? 'decant' : 'decants'}
         </b>
         <small className="text-[13px] text-wine-soft">Newest first, every house</small>
-        <em className="mt-2.5 flex items-center gap-1.5 self-start border-b border-gold/60 pb-0.5 text-sm text-gold not-italic">
+        <em className="mt-2.5 flex items-center gap-1.5 self-start link-line pb-0.5 text-sm text-gold not-italic">
           Shop all new in <ArrowRight size={14} />
         </em>
       </Link>
@@ -213,7 +213,7 @@ const FragrancesMenu = memo(function FragrancesMenu() {
           </span>
           <b className="font-display text-[26px] leading-[1.1] font-normal">Shop all {totalDecants} decants</b>
           <small className="text-[13px] text-wine-soft">Every family, every house</small>
-          <em className="mt-2.5 flex items-center gap-1.5 self-start border-b border-gold/60 pb-0.5 text-sm text-gold not-italic">
+          <em className="mt-2.5 flex items-center gap-1.5 self-start link-line pb-0.5 text-sm text-gold not-italic">
             Browse the catalogue <ArrowRight size={14} />
           </em>
         </Link>
@@ -285,10 +285,7 @@ function List({ items }: { items: Item[] }) {
 
 function MoreLink({ to, children }: { to: string; children: ReactNode }) {
   return (
-    <Link
-      to={to}
-      className="mt-[18px] inline-flex items-center gap-1.5 border-b border-wine/50 pb-0.5 text-[15px] text-wine"
-    >
+    <Link to={to} className="mt-[18px] inline-flex items-center gap-1.5 link-line pb-0.5 text-[15px] text-wine">
       {children} <ArrowRight size={14} />
     </Link>
   )

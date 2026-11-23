@@ -180,7 +180,7 @@ function Caption({ listing }: { listing: DecantListing }) {
       </span>
       <Link
         to={productPath(listing.slug)}
-        className="relative -top-1.5 col-start-2 row-start-3 self-end justify-self-end border-b border-wine/55 pb-[3px] text-sm leading-none whitespace-nowrap text-wine before:absolute before:-inset-x-3 before:-inset-y-4 before:content-[''] lg:static lg:mt-3 lg:inline-block lg:border-ink lg:pb-0 lg:leading-normal lg:text-ink"
+        className="relative -top-1.5 col-start-2 row-start-3 self-end justify-self-end link-line pb-[3px] text-sm leading-none whitespace-nowrap text-wine before:absolute before:-inset-x-3 before:-inset-y-4 before:content-[''] lg:static lg:mt-3 lg:inline-block lg:pb-0 lg:leading-normal lg:text-ink lg:[--link-line-color:currentColor]"
       >
         Discover
       </Link>
