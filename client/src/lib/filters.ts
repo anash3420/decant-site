@@ -1,13 +1,13 @@
 // Filtering and sorting for the decant catalogue. The state lives in the URL, so menu links (/decants?accord=Woody)
 // and shared links open the same results. Within a group the choices widen the results (Woody or Amber); across
 // groups they narrow them (Woody and under $10).
-import type { ShopListing } from '@shared/types.ts'
+import { CONCENTRATIONS, type ShopListing } from '@shared/types.ts'
 import { fromOption } from '@shared/shop.ts'
 import { formatPrice } from '@shared/stock.ts'
 import type { Mood } from '../api/shop.ts'
 import { byNewest, hasSize } from './catalog.ts'
 
-export type GroupKey = 'price' | 'accord' | 'size' | 'mood' | 'house' | 'type' | 'worn'
+export type GroupKey = 'price' | 'accord' | 'size' | 'mood' | 'house' | 'type' | 'worn' | 'strength'
 
 export interface Option {
   value: string
@@ -24,7 +24,7 @@ export interface Group {
 
 export type Filters = Record<GroupKey, string[]>
 
-export const GROUP_KEYS: GroupKey[] = ['accord', 'price', 'size', 'mood', 'house', 'type', 'worn']
+export const GROUP_KEYS: GroupKey[] = ['accord', 'price', 'size', 'mood', 'house', 'type', 'worn', 'strength']
 
 /* ── Sort ── */
 
@@ -80,6 +80,8 @@ function matches(l: ShopListing, key: GroupKey, value: string, moods: Mood[]): b
       return typeOf(l) === value.toLowerCase()
     case 'worn':
       return same(l.gender, value)
+    case 'strength':
+      return same(l.concentration, value)
   }
 }
 
@@ -104,6 +106,8 @@ export function buildGroups(catalog: ShopListing[], moods: Mood[]): Record<Group
   )
   const types = Object.keys(TYPE_LABELS).filter((t) => catalog.some((l) => typeOf(l) === t))
   const worn = ['Unisex', 'Masculine', 'Feminine']
+  // Strongest first, only the concentrations the shop has
+  const strengths = CONCENTRATIONS.filter((c) => catalog.some((l) => l.concentration === c))
 
   return {
     price: { key: 'price', title: 'Price', options: withCounts('price', BANDS) },
@@ -153,6 +157,14 @@ export function buildGroups(catalog: ShopListing[], moods: Mood[]): Record<Group
       options: withCounts(
         'worn',
         worn.map((w) => ({ value: w.toLowerCase(), label: w })),
+      ),
+    },
+    strength: {
+      key: 'strength',
+      title: 'Strength',
+      options: withCounts(
+        'strength',
+        strengths.map((c) => ({ value: c, label: c })),
       ),
     },
   }

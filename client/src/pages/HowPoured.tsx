@@ -104,12 +104,17 @@ function Sizes() {
       <p className="mt-2 max-w-[560px] text-base text-[#3a2d30]">{copy.sizes.text}</p>
       <ul className="mt-6 grid grid-cols-2 gap-2.5 sm:grid-cols-4 lg:max-w-[860px] lg:gap-[18px]">
         {sizes.map(([ml, n]) => (
-          <li key={ml} className="flex flex-col items-center justify-center rounded-2xl bg-white py-6 lg:py-8">
-            <b className="font-display text-[40px] leading-none font-normal lg:text-5xl">
-              {ml}
-              <small className="ml-1 font-sans text-sm text-muted">ml</small>
-            </b>
-            <span className="mt-2 text-[13px] text-muted">{plural(n, 'fragrance')}</span>
+          <li key={ml}>
+            <Link
+              to={`/decants?size=${ml}`}
+              className="flex flex-col items-center justify-center rounded-2xl bg-white py-6 transition-[translate,box-shadow] duration-300 ease-out active:scale-[0.98] lg:py-8 fine:hover:-translate-y-1 fine:hover:shadow-[0_14px_30px_-18px_rgb(74_22_38/0.35)]"
+            >
+              <b className="font-display text-[40px] leading-none font-normal lg:text-5xl">
+                {ml}
+                <small className="ml-1 font-sans text-sm text-muted">ml</small>
+              </b>
+              <span className="mt-2 text-[13px] text-muted">{plural(n, 'fragrance')}</span>
+            </Link>
           </li>
         ))}
       </ul>

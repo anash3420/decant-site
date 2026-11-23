@@ -467,29 +467,29 @@
       {
         "label": "Unisex",
         "count": 11,
-        "to": "/fragrances?worn=unisex"
+        "to": "/decants?worn=unisex"
       },
       {
         "label": "Masculine",
         "count": 2,
-        "to": "/fragrances?worn=masculine"
+        "to": "/decants?worn=masculine"
       },
       {
         "label": "Feminine",
         "count": 1,
-        "to": "/fragrances?worn=feminine"
+        "to": "/decants?worn=feminine"
       }
     ],
     "strength": [
       {
         "label": "Eau de Parfum",
         "count": 9,
-        "to": "/fragrances?strength=Eau%20de%20Parfum"
+        "to": "/decants?strength=Eau%20de%20Parfum"
       },
       {
         "label": "Extrait de Parfum",
         "count": 5,
-        "to": "/fragrances?strength=Extrait%20de%20Parfum"
+        "to": "/decants?strength=Extrait%20de%20Parfum"
       }
     ],
     "families": [
@@ -503,7 +503,7 @@
           "width": 618,
           "height": 840
         },
-        "to": "/fragrances/woody-oud"
+        "to": "/decants?accord=Woody&accord=Oud&accord=Smoky&accord=Incense&accord=Incensy&accord=Leather&accord=Earthy"
       },
       {
         "slug": "amber-spice",
@@ -515,7 +515,7 @@
           "width": 618,
           "height": 840
         },
-        "to": "/fragrances/amber-spice"
+        "to": "/decants?accord=Amber&accord=Warm%20Spicy&accord=Boozy&accord=Balsamic&accord=Tobacco"
       },
       {
         "slug": "fresh-citrus",
@@ -527,7 +527,7 @@
           "width": 618,
           "height": 840
         },
-        "to": "/fragrances/fresh-citrus"
+        "to": "/decants?accord=Citrus&accord=Tea&accord=Aromatic&accord=Fresh%20Spicy&accord=Green"
       },
       {
         "slug": "floral-fruity",
@@ -539,7 +539,7 @@
           "width": 618,
           "height": 840
         },
-        "to": "/fragrances/floral-fruity"
+        "to": "/decants?accord=Floral&accord=Fruity&accord=Rose&accord=Cherry&accord=Tropical"
       }
     ]
   }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Link, NavLink, useLocation } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { openBag, useBagCount } from '../lib/bag.ts'
 import { site } from '../lib/content.ts'
 import { LogoMark } from './LogoMark.tsx'
@@ -7,10 +7,11 @@ import { MegaMenu, type MenuKey } from './MegaMenu.tsx'
 import { PhoneMenu } from './PhoneMenu.tsx'
 import { AccountIcon, BagIcon, HeartIcon, MenuIcon, SearchIcon } from './icons.tsx'
 
-const NAV: { label: string; to: string; menu?: MenuKey }[] = [
+const NAV: { label: string; to?: string; menu?: MenuKey }[] = [
   { label: 'New in', to: '/new', menu: 'new' },
   { label: 'All decants', to: '/decants', menu: 'decants' },
-  { label: 'Fragrances', to: '/fragrances', menu: 'fragrances' },
+  // No fragrance page: the tab only opens its menu
+  { label: 'Fragrances', menu: 'fragrances' },
   { label: 'Houses', to: '/houses', menu: 'houses' },
 ]
 
@@ -48,6 +49,7 @@ function DesktopBar() {
   const navRef = useRef<HTMLElement>(null)
   const barRef = useRef<HTMLSpanElement>(null)
   const { pathname } = useLocation()
+  const current = NAV.find((n) => n.to && pathname.startsWith(n.to))
   const timer = useRef<number | undefined>(undefined)
   const cancel = () => window.clearTimeout(timer.current)
   // A short delay before the first open, so sweeping the mouse across the nav doesn't flash menus; switching
@@ -81,8 +83,8 @@ function DesktopBar() {
     const bar = barRef.current
     const nav = navRef.current
     if (!bar || !nav) return
-    const target = NAV.find((n) => (open ? n.menu === open : pathname.startsWith(n.to)))
-    const link = target && nav.querySelector<HTMLElement>(`a[href="${target.to}"]`)
+    const target = open ? NAV.find((n) => n.menu === open) : current
+    const link = target && nav.querySelector<HTMLElement>(`[data-nav="${target.label}"]`)
     if (!link) {
       bar.style.opacity = '0'
       return
@@ -92,7 +94,7 @@ function DesktopBar() {
     bar.style.transition = wasHidden ? 'opacity 150ms var(--ease-out)' : ''
     bar.style.transform = `translateX(${link.offsetLeft}px) scaleX(${link.offsetWidth})`
     bar.style.opacity = '1'
-  }, [open, pathname])
+  }, [open, current])
 
   return (
     <div
@@ -111,21 +113,31 @@ function DesktopBar() {
             aria-hidden="true"
             className="nav-bar pointer-events-none absolute bottom-0 left-0 h-0.5 w-px origin-left bg-wine opacity-0"
           />
-          {NAV.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              aria-expanded={item.menu ? open === item.menu : undefined}
-              onMouseEnter={() => hoverItem(item.menu ?? null)}
-              onFocus={() => setOpen(item.menu ?? null)}
-              onClick={() => setOpen(null)}
-              className={({ isActive }) =>
-                `flex items-center transition-colors hover:text-wine ${isActive || (item.menu && open === item.menu) ? 'text-wine' : ''}`
-              }
-            >
-              {item.label}
-            </NavLink>
-          ))}
+          {NAV.map((item) => {
+            const props = {
+              'data-nav': item.label,
+              'aria-expanded': item.menu ? open === item.menu : undefined,
+              onMouseEnter: () => hoverItem(item.menu ?? null),
+              onFocus: () => setOpen(item.menu ?? null),
+              className: `flex items-center transition-colors hover:text-wine ${item === current || (item.menu && open === item.menu) ? 'text-wine' : ''}`,
+            }
+            return item.to ? (
+              <Link
+                key={item.label}
+                to={item.to}
+                aria-current={item === current ? 'page' : undefined}
+                onClick={() => setOpen(null)}
+                {...props}
+              >
+                {item.label}
+              </Link>
+            ) : (
+              // Opens its menu (a tap on a touch laptop has no hover)
+              <button key={item.label} type="button" onClick={() => setOpen(item.menu ?? null)} {...props}>
+                {item.label}
+              </button>
+            )
+          })}
         </nav>
         <div
           className="flex items-center justify-end gap-[22px] self-center text-sm"

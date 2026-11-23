@@ -14,6 +14,7 @@ const Product = lazy(() => import('./pages/Product.tsx'))
 const AllHouses = lazy(() => import('./pages/AllHouses.tsx'))
 const Brand = lazy(() => import('./pages/Brand.tsx'))
 const Wishlist = lazy(() => import('./pages/Wishlist.tsx'))
+const NewIn = lazy(() => import('./pages/NewIn.tsx'))
 const HowPoured = lazy(() => import('./pages/HowPoured.tsx'))
 const Contact = lazy(() => import('./pages/Contact.tsx'))
 const Legal = lazy(() => import('./pages/Legal.tsx'))
@@ -70,6 +71,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
+      { path: 'new', element: <NewIn /> },
       { path: 'decants', element: <Decants /> },
       { path: 'fragrance/:slug', element: <Product /> },
       { path: 'houses', element: <AllHouses /> },

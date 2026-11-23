@@ -104,10 +104,6 @@
         "to": "/decants"
       },
       {
-        "label": "Fragrances",
-        "to": "/fragrances"
-      },
-      {
         "label": "Houses",
         "to": "/houses"
       }
@@ -547,9 +543,7 @@
       },
       {
         "title": "10. Personal information",
-        "text": [
-          "How we handle personal information you give us is set out in our [Privacy policy](/privacy-policy)."
-        ]
+        "text": ["How we handle personal information you give us is set out in our [Privacy policy](/privacy-policy)."]
       },
       {
         "title": "11. Errors and omissions",
@@ -616,9 +610,7 @@
       },
       {
         "title": "20. Contact",
-        "text": [
-          "Questions about these Terms can be sent to {email}."
-        ]
+        "text": ["Questions about these Terms can be sent to {email}."]
       }
     ]
   },
@@ -629,15 +621,11 @@
     "sections": [
       {
         "title": "Where we ship",
-        "text": [
-          "We ship within Canada only."
-        ]
+        "text": ["We ship within Canada only."]
       },
       {
         "title": "How we ship",
-        "text": [
-          "Orders are posted from {location} with Canada Post or ICS ground shipping."
-        ]
+        "text": ["Orders are posted from {location} with Canada Post or ICS ground shipping."]
       },
       {
         "title": "Shipping options and costs",
@@ -649,9 +637,7 @@
       },
       {
         "title": "When your order ships",
-        "text": [
-          "Every decant is poured to order. Your order is poured and posted within one to two business days."
-        ]
+        "text": ["Every decant is poured to order. Your order is poured and posted within one to two business days."]
       },
       {
         "title": "Complimentary sample",
@@ -668,10 +654,31 @@
       },
       {
         "title": "Questions",
-        "text": [
-          "For anything about shipping or refunds, email {email}."
-        ]
+        "text": ["For anything about shipping or refunds, email {email}."]
       }
     ]
+  },
+  "newIn": {
+    "kicker": "Just poured",
+    "title": "New in",
+    "lead": "The newest decants on the shelf, freshest first.",
+    "note": "Added in the last {days} days",
+    "link": {
+      "label": "All decants",
+      "to": "/decants"
+    },
+    "empty": {
+      "title": "Nothing new this month",
+      "text": "New decants land here first. Until then, the whole collection is below."
+    },
+    "catalogue": {
+      "kicker": "The collection",
+      "title": "Our catalogue",
+      "note": "Everything else on the shelf",
+      "link": {
+        "label": "Filter all decants",
+        "to": "/decants"
+      }
+    }
   }
 }

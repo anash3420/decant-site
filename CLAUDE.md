@@ -43,7 +43,7 @@ follows the "Storefront redesign" section below.
   mounted (inert while closed) so it slides both ways; one accordion open at a time (grid-rows animation); Escape,
   the dimmed page or any link closes it and focus returns to the menu button. It reads the same `menus.json`.
 - All decants (`pages/Decants.tsx`, route `/decants`): filter and sort state lives in the URL (`lib/filters.ts`), using
-  the params the menus link with (`accord`, `price`, `size`, `mood`, `house`, `type`, `worn`, `sort`). Within a group
+  the params the menus link with (`accord`, `price`, `size`, `mood`, `house`, `type`, `worn`, `strength`, `sort`). Within a group
   choices widen the results, across groups they narrow them; option counts are whole-catalogue totals. Filter & Sort
   (`components/catalogue/FilterPanel.tsx`) is one component: a left drawer on desktop, a bottom sheet on phones, both
   portalled to `body` (`lib/useModal.ts` handles Escape, scroll lock and focus). Page copy is in `site.json` `catalogue`.
@@ -75,6 +75,10 @@ follows the "Storefront redesign" section below.
   the house's first decant photo, blurred behind and sharp on the right.
 - Dropdowns use `components/Dropdown.tsx` (the shop's pill button and white menu; Escape, click outside, arrow keys;
   opens upwards when there isn't room). Used by the sort menu and the bag's size menu; don't use a native `<select>`.
+- New in (`pages/NewIn.tsx`, route `/new`, the first nav tab and the New in menu's burgundy tile): decants added in the
+  last 30 days (`isNew` in `lib/catalog.ts`) through `Listings`, so it has the same Filter & Sort and grid as All
+  decants (the phone's sticky Filter bar ends with that section). Below it, "Our catalogue": every other decant,
+  newest first, as plain cards. Text in `site.json` `newIn`, with an empty state for a month with nothing new.
 - Wishlist (`pages/Wishlist.tsx`, route `/wishlist`, linked from the header heart and the phone menu): every decant
   hearted in this browser (`lib/wishlist.ts`, `useWishlist`), newest first, as standard cards; unhearting removes
   it. Browser only, not tied to accounts yet. Decants no longer in the shop are left out.
@@ -246,7 +250,9 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 - Desktop header (owner, 2026-11-21): **one row**. The A.S. seal and "Anash's Fragrances" on the left, the nav in
   the centre, and on the right a search icon (icon only) then account, wishlist and Bag (n). The search icon will
   open a search panel sliding down from the top (to be designed). No second nav row.
-- **Nav: New in · All decants · Fragrances · Houses.** Moods is not in the top bar.
+- **Nav: New in · All decants · Fragrances · Houses.** Moods is not in the top bar. There is no fragrances page:
+  the Fragrances tab only opens its menu (a button, not a link), and its links open All decants filtered (`worn`,
+  `strength`, a family as several `accord`s).
 - **New in ("Arrivals wall", owner chose C, 2026-11-22; `topbar-new-in.jpg`, source `topbar-new-in-ideas.html#C`):**
   the newest arrival as a large photo tile ("Newest arrival", no date; name, "From $X for N ml · Discover"), the
   next two as cards, and a burgundy "This month · N new decants · Shop all new in" tile. On phones it is the first

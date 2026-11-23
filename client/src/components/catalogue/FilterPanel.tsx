@@ -39,7 +39,7 @@ interface FilterPanelProps {
 
 /**
  * Filter & Sort. On desktop a 440 px drawer from the left: Sort first, then Price, Accord and Size open, with Mood,
- * House, Type and Worn by collapsed. On phones a sheet from the bottom: accord tiles, then Price, Size and Mood
+ * House, Type, Worn by and Strength collapsed. On phones a sheet from the bottom: accord tiles, then Price, Size and Mood
  * (Sort has its own button). Choices apply as they are made; "Show N decants" closes it.
  */
 export function FilterPanel(props: FilterPanelProps) {
@@ -151,7 +151,7 @@ export function FilterPanel(props: FilterPanelProps) {
               <Checks group={groups.mood} filters={filters} onToggle={(v) => set('mood', v)} />
             </Section>
           )}
-          {(['house', 'type', 'worn'] as const).map(
+          {(['house', 'type', 'worn', 'strength'] as const).map(
             (key) =>
               shown(key) && (
                 <Section
