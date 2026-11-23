@@ -1,6 +1,8 @@
 import { Fragment, Suspense, use, useCallback, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import type { ShopListing } from '@shared/types.ts'
+import { searchListings } from '@shared/search.ts'
+import { isSoldOut } from '@shared/shop.ts'
 import { getCatalog, getHome } from '../api/shop.ts'
 import { PageHead } from '../components/PageHead.tsx'
 import { ProductCard, ProductCardSkeleton } from '../components/ProductCard.tsx'
@@ -88,8 +90,11 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
   const { moods } = use(getHome())
   const [params, setParams] = useSearchParams()
   const { filters, sort } = useMemo(() => readParams(params), [params])
+  // A search from the search panel (?q=), shown as its own chip
+  const q = params.get('q')?.trim() ?? ''
+  const searched = useMemo(() => (q ? searchListings(catalog, q, isSoldOut) : catalog), [catalog, q])
   const groups = useMemo(() => buildGroups(catalog, moods), [catalog, moods])
-  const results = useMemo(() => applyFilters(catalog, filters, moods, sort), [catalog, filters, moods, sort])
+  const results = useMemo(() => applyFilters(searched, filters, moods, sort), [searched, filters, moods, sort])
 
   const [panel, setPanel] = useState(false)
   // Set when the panel opens on one group (the mood tile); cleared when Filter & Sort opens it normally
@@ -107,17 +112,22 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
   // The URL holds the state: menu links and shared links open the same results. Replace, so ticking boxes
   // doesn't fill the back button, and keep the scroll position.
   const update = useCallback(
-    (next: Filters, nextSort: SortValue) => {
+    (next: Filters, nextSort: SortValue, nextQ = q) => {
       setChanged(true)
-      setParams(writeParams(next, nextSort), { replace: true, preventScrollReset: true })
+      const p = writeParams(next, nextSort)
+      if (nextQ) p.set('q', nextQ)
+      setParams(p, { replace: true, preventScrollReset: true })
     },
-    [setParams],
+    [setParams, q],
   )
 
-  const active = activeCount(filters)
+  const active = activeCount(filters) + (q ? 1 : 0)
   const houses = new Set(catalog.map((l) => l.brandSlug)).size
   const short = active > 0 && results.length < SHORT
-  const widen = short ? widenings(catalog, filters, moods, groups, results.length) : []
+  // Ways to widen are worked out over filters only, so a search shows just "Clear all"
+  const widen = short && !q ? widenings(catalog, filters, moods, groups, results.length) : []
+  const clearAll = () => update(emptyFilters(), sort, '')
+  const searchChip = q ? <SearchChip query={q} onRemove={() => update(filters, sort, '')} /> : null
 
   return (
     <>
@@ -171,7 +181,13 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
             houses={house ? undefined : houses}
             active={active}
           />
-          <ActiveChips groups={groups} filters={filters} onChange={(f) => update(f, sort)} />
+          <ActiveChips
+            groups={groups}
+            filters={filters}
+            onChange={(f) => update(f, sort)}
+            onClear={clearAll}
+            first={searchChip}
+          />
         </div>
         <SortMenu sort={sort} onSort={(s) => update(filters, s)} />
       </div>
@@ -181,7 +197,13 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
         {/* One accord alone is already shown by its pill and the count */}
         {active > 0 && !(active === 1 && filters.accord.length === 1) && (
           <div className="mt-2.5 flex flex-wrap items-center gap-2">
-            <ActiveChips groups={groups} filters={filters} onChange={(f) => update(f, sort)} />
+            <ActiveChips
+              groups={groups}
+              filters={filters}
+              onChange={(f) => update(f, sort)}
+              onClear={clearAll}
+              first={searchChip}
+            />
           </div>
         )}
       </div>
@@ -206,14 +228,7 @@ export function Listings({ catalog, house, tile }: ListingsProps) {
         {tile}
       </div>
 
-      {short && (
-        <Widen
-          shown={results.length}
-          options={widen}
-          onPick={(f) => update(f, sort)}
-          onClear={() => update(emptyFilters(), sort)}
-        />
-      )}
+      {short && <Widen shown={results.length} options={widen} onPick={(f) => update(f, sort)} onClear={clearAll} />}
 
       <FilterPanel
         open={panel}
@@ -302,15 +317,21 @@ function ActiveChips({
   groups,
   filters,
   onChange,
+  onClear,
+  first,
 }: {
   groups: Record<GroupKey, Group>
   filters: Filters
   onChange: (filters: Filters) => void
+  onClear: () => void
+  /** The search chip, before the filters */
+  first?: ReactNode
 }) {
   const chips = GROUP_KEYS.flatMap((key) => filters[key].map((value) => ({ key, value })))
-  if (chips.length === 0) return null
+  if (chips.length === 0 && !first) return null
   return (
     <>
+      {first}
       {chips.map(({ key, value }) => (
         <button
           key={`${key}-${value}`}
@@ -323,14 +344,25 @@ function ActiveChips({
           <CloseIcon size={14} />
         </button>
       ))}
-      <button
-        type="button"
-        onClick={() => onChange(emptyFilters())}
-        className="ml-1 flex min-h-11 items-center text-sm text-wine lg:min-h-0"
-      >
+      <button type="button" onClick={onClear} className="ml-1 flex min-h-11 items-center text-sm text-wine lg:min-h-0">
         <span className="link-line pb-0.5">Clear all</span>
       </button>
     </>
+  )
+}
+
+/** The search from the search panel as a chip; removing it keeps the filters */
+function SearchChip({ query, onRemove }: { query: string; onRemove: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onRemove}
+      aria-label={`Remove search ${query}`}
+      className="flex h-11 animate-[tile-in_180ms_var(--ease-out)_both] items-center gap-2 rounded-full border border-wine/40 bg-white pr-3 pl-4 text-sm text-wine transition-colors duration-150 hover:border-wine lg:h-9"
+    >
+      “{query}”
+      <CloseIcon size={14} />
+    </button>
   )
 }
 

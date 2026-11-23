@@ -77,6 +77,12 @@
     opacity: 0;
   }
 }
+/* The search panel's phone "See all" bar, rising from the bottom edge */
+@keyframes bar-up {
+  from {
+    transform: translateY(100%);
+  }
+}
 @keyframes tile-in {
   from {
     opacity: 0;

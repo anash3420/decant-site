@@ -680,5 +680,24 @@
         "to": "/decants"
       }
     }
+  },
+  "search": {
+    "placeholder": "Search decants, houses or accords",
+    "phonePlaceholder": "Search decants or houses",
+    "popularTitle": "Popular searches",
+    "popular": ["Amouage", "Burlington 1819", "Blue Talisman", "Nishane", "Interlude M", "Guerlain", "Favonius"],
+    "suggestionsTitle": "Suggestions",
+    "decantsTitle": "Decants",
+    "empty": {
+      "title": "Nothing matches",
+      "text": "Try a house or a fragrance name."
+    },
+    "recommendedTitle": "Recommended products",
+    "recommended": [
+      "roja-dove-burlington-1819",
+      "essential-parfums-bois-imperial",
+      "nishane-favonius",
+      "sospiro-vibrato"
+    ]
   }
 }

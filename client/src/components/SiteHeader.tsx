@@ -5,6 +5,7 @@ import { site } from '../lib/content.ts'
 import { LogoMark } from './LogoMark.tsx'
 import { MegaMenu, type MenuKey } from './MegaMenu.tsx'
 import { PhoneMenu } from './PhoneMenu.tsx'
+import { openSearch } from '../lib/search.ts'
 import { AccountIcon, BagIcon, HeartIcon, MenuIcon, SearchIcon } from './icons.tsx'
 
 const NAV: { label: string; to?: string; menu?: MenuKey }[] = [
@@ -144,7 +145,16 @@ function DesktopBar() {
           onMouseEnter={() => hoverItem(null)}
         >
           {/* Opens a search panel from the top; the panel is designed later */}
-          <button type="button" aria-label="Search" className="transition-colors hover:text-wine">
+          <button
+            type="button"
+            aria-label="Search"
+            aria-haspopup="dialog"
+            onClick={() => {
+              setOpen(null)
+              openSearch()
+            }}
+            className="transition-colors hover:text-wine"
+          >
             <SearchIcon />
           </button>
           <Link to="/account" aria-label="Account" className="transition-colors hover:text-wine">

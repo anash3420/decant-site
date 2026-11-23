@@ -79,6 +79,14 @@ follows the "Storefront redesign" section below.
   last 30 days (`isNew` in `lib/catalog.ts`) through `Listings`, so it has the same Filter & Sort and grid as All
   decants (the phone's sticky Filter bar ends with that section). Below it, "Our catalogue": every other decant,
   newest first, as plain cards. Text in `site.json` `newIn`, with an empty state for a month with nothing new.
+- Search (`components/SearchPanel.tsx`, mounted once in the layout; open state, matching and highlighting in
+  `lib/search.ts`): opened by the header's search icon and the phone menu's search bar. Desktop: a white panel drops
+  from the top over the header; phone: it fills the screen. Nothing typed: popular searches and
+  recommended products (both hardcoded in `site.json` `search`, fetched from the API later). Typing (the search runs 0.5 s after typing stops, so keystrokes don't each hit the search API; Enter
+  submits at once): houses and accords whose words start with the query, then decants (`searchListings` in
+  `shared/search.ts`) with the matched letters underlined. Enter or "See all results" opens `/decants?q=…`, which
+  `Listings` applies before the filters and shows as a removable chip. `recordSearch` in `api/shop.ts` is the mocked
+  call for the popular-searches table (submitted searches and listings clicked in the panel).
 - Wishlist (`pages/Wishlist.tsx`, route `/wishlist`, linked from the header heart and the phone menu): every decant
   hearted in this browser (`lib/wishlist.ts`, `useWishlist`), newest first, as standard cards; unhearting removes
   it. Browser only, not tied to accounts yet. Decants no longer in the shop are left out.
@@ -190,6 +198,7 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 | Bag (side panel) and free shipping                            | `bag-desktop.jpg`, `bag-phone.jpg`, `bag-free-shipping.jpg`                                                                                                                       |
 | Fragrance (product) page                                      | `product-final-desktop*.jpg` (+ `-scrolled`, `-hover`), `product-final-phone.jpg`, viewer `product-photo-viewer-*.jpg`                                                            |
 | "From me to you" band (homepage)                              | `home-note-pour.jpg` (idea 3 in `note-ideas.html#3`); saved alternative to revisit: `idea-note-the-bench.jpg` (`#4`)                                                              |
+| Search panel                                                  | `search-panel.html`, `search-panel-desktop-open.jpg`, `-desktop-typing`, `-phone-open`, `-phone-typing`                                                                           |
 | All moods (**not built**; saved to revisit, owner 2026-11-23) | `moods-ideas.html`, `moods-idea-a-list.jpg`, `-b-fields.jpg`, `-c-chapters.jpg` (three directions, none chosen)                                                                   |
 | Homepage module ideas (optional extras)                       | `idea-*.jpg`                                                                                                                                                                      |
 
@@ -403,7 +412,8 @@ Phone: a single-slide spotlight, a 2-column shelf, three moods plus "3 more mood
 
 ### Bag (cart)
 
-There is no bag page: the bag is a **side panel**. It ends in **Checkout** (paying online). The checkout itself will
+There is no bag page: the bag is a **side panel**. **Account (`/account`) and checkout (`/checkout`) will be Shopify's
+(Shop Pay) once it is integrated** (owner, 2026-11-23): don't build those pages; they show "coming soon" until then. It ends in **Checkout** (paying online). The checkout itself will
 be designed later and may be replaced by a hosted shop checkout.
 
 - **Desktop:** Add to bag opens a 480 px panel from the right and dims the page. From top to bottom:
@@ -456,6 +466,23 @@ be designed later and may be replaced by a hosted shop checkout.
   Store these in the `Settings` singleton or a new config collection, validate with zod, and expose them through
   a public settings endpoint.
 
+- **Popular searches** (owner, 2026-11-23). The search panel shows 6 or 7 popular searches, only when it has just
+  opened and nothing is typed yet. Until the backend exists they are hardcoded in `site.json` `search.popular`; then
+  they come from a search table. **The search table feeds popular searches and nothing else.** Suggestions and
+  results while typing come from a separate search API over the catalogue, which never reads the search table; the
+  search table only records searches (below) to keep its ranking up to date.
+  - Fields: `id`, `searchQuery` (always a canonical catalogue name), `noResults` (decants that query returns),
+    `noClicked` (times it was searched or clicked), `rankingWeight`.
+  - Only **fragrance names or house names from our catalogue** go in. The server matches the typed text to the
+    catalogue (normalised, accents and case ignored, small typos allowed) and stores the catalogue's spelling:
+    "amouuage" is saved as "Amouage". Text that matches nothing ("anadwawd") or returns 0 decants is not saved.
+  - When the shop calls it (a passive call: `navigator.sendBeacon` or `fetch` with `keepalive`, never blocking the
+    page, never on each keystroke):
+    - the shopper clicks a listing in the search panel (for example Blue Talisman): call right away with that name;
+    - the shopper submits a search (Enter or "See all results"): open the results page and call with the query.
+  - The browser sends only the text. The server works out the canonical name and the result count itself (it never
+    trusts a count from the browser), and counts the same query once per visit so refreshing can't inflate it.
+  - Ranking: `rankingWeight = (noResults * 0.75 + noClicked * 0.25) * 0.1`; the top 6 or 7 are the popular searches.
 - Spotlight photos are cropped in admin with a **live preview** (the caption card, vignette, glow and reflection,
   for desktop about 3:2 and phone about 3:4), then saved and published. The old admin's cropper
   (`CropDialog.tsx`, `processImage.ts`, in git history on `main`) is a starting point.

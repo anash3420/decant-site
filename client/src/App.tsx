@@ -5,6 +5,7 @@ import { SiteHeader } from './components/SiteHeader.tsx'
 import { SiteFooter } from './components/SiteFooter.tsx'
 import { QuickBuy } from './components/QuickBuy.tsx'
 import { BagPanel } from './components/Bag.tsx'
+import { SearchPanel } from './components/SearchPanel.tsx'
 import Home from './pages/Home.tsx'
 
 // Pages other than the homepage load only when visited
@@ -35,6 +36,7 @@ function Layout() {
       </div>
       <QuickBuy />
       <BagPanel />
+      <SearchPanel />
       <ScrollRestoration />
     </>
   )

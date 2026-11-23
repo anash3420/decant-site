@@ -71,3 +71,11 @@ export interface ContactMessage {
  * shop through Resend and must validate everything again) when the backend exists.
  */
 export const sendMessage = (_message: ContactMessage) => mock(undefined)
+
+/**
+ * Records a search for the popular-searches table: the text of a submitted search, or the name of a listing clicked in
+ * the search panel. Fire and forget; the page never waits for it.
+ * shortcut: mocked, sends nothing. Swap for navigator.sendBeacon to the search-table endpoint (rules in CLAUDE.md:
+ * the server matches the text to a catalogue name and counts results itself) when the backend exists.
+ */
+export const recordSearch = (_query: string) => {}

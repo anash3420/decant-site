@@ -16,6 +16,7 @@ import { housePath, productPath } from '../lib/catalog.ts'
 import { site } from '../lib/content.ts'
 import { Photo } from './Photo.tsx'
 import { openBag } from '../lib/bag.ts'
+import { openSearch } from '../lib/search.ts'
 import { AccountIcon, ArrowRight, BagIcon, CloseIcon, HeartIcon, MailIcon, SearchIcon } from './icons.tsx'
 
 type Section = 'new' | 'decants' | 'fragrances' | 'houses'
@@ -103,9 +104,13 @@ export function PhoneMenu({ open, onClose }: { open: boolean; onClose: () => voi
           </button>
         </div>
 
-        {/* Opens the search panel; designed later */}
         <button
           type="button"
+          aria-haspopup="dialog"
+          onClick={() => {
+            onClose()
+            openSearch()
+          }}
           className="mx-4 mt-1 mb-2 flex h-11 items-center gap-2 rounded-full bg-[#f0e8df] px-3.5 text-left text-base text-muted"
         >
           <SearchIcon size={18} />
