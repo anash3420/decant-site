@@ -2,8 +2,7 @@
 // everything at checkout, so only slug, size and quantity are kept here. The bag panel's open state lives here too,
 // so Add to bag anywhere can open it.
 import { useSyncExternalStore } from 'react'
-import type { DecantListing } from '@shared/types.ts'
-import { maxQty } from '@shared/stock.ts'
+import type { ShopListing } from '@shared/types.ts'
 
 export interface BagLine {
   slug: string
@@ -48,24 +47,25 @@ function set(next: Partial<BagState>) {
 }
 
 export const lineKey = (l: { slug: string; sizeMl: number }) => `${l.slug}:${l.sizeMl}`
-const optionId = (sizeMl: number) => `${sizeMl}ml`
-const asItems = (lines: BagLine[]) => lines.map((l) => ({ slug: l.slug, optionId: optionId(l.sizeMl), qty: l.qty }))
 const find = (slug: string, sizeMl: number) => state.lines.find((l) => l.slug === slug && l.sizeMl === sizeMl)
 
-/** The most of this size the bag can hold, given the stock and the other sizes of it already in the bag */
-export function limitFor(listing: DecantListing, sizeMl: number) {
-  return maxQty(listing, optionId(sizeMl), asItems(state.lines))
-}
+/**
+ * The most of this size the bag can hold.
+ * shortcut: each size is capped on its own; sizes poured from the same bottles can together ask for more than is
+ * left, and checkout on the server catches that. Upgrade if the API ever sends a shared ml budget (it must not send ml).
+ */
+export const limitFor = (listing: ShopListing, sizeMl: number) =>
+  listing.prices.find((p) => p.sizeMl === sizeMl)?.maxQty ?? 0
 
 /** How many more of this size can go in the bag */
-export const roomFor = (listing: DecantListing, sizeMl: number) =>
+export const roomFor = (listing: ShopListing, sizeMl: number) =>
   Math.max(0, limitFor(listing, sizeMl) - (find(listing.slug, sizeMl)?.qty ?? 0))
 
 /**
  * Adds to the bag (never more than the stock allows) and opens it. Returns how many were added. `handoff` is for
  * quick buy, which closes as the bag opens.
  */
-export function addToBag(listing: DecantListing, sizeMl: number, qty: number, handoff = false) {
+export function addToBag(listing: ShopListing, sizeMl: number, qty: number, handoff = false) {
   const added = Math.min(qty, roomFor(listing, sizeMl))
   if (added <= 0) return 0
   const existing = find(listing.slug, sizeMl)
@@ -77,17 +77,17 @@ export function addToBag(listing: DecantListing, sizeMl: number, qty: number, ha
   return added
 }
 
-export function setQty(listing: DecantListing, sizeMl: number, qty: number) {
+export function setQty(listing: ShopListing, sizeMl: number, qty: number) {
   const capped = Math.max(1, Math.min(qty, limitFor(listing, sizeMl)))
   set({ lines: state.lines.map((l) => (l.slug === listing.slug && l.sizeMl === sizeMl ? { ...l, qty: capped } : l)) })
 }
 
 /** Changes a line's size. If that size is already in the bag the two lines join. */
-export function setSize(listing: DecantListing, fromMl: number, toMl: number) {
+export function setSize(listing: ShopListing, fromMl: number, toMl: number) {
   const line = find(listing.slug, fromMl)
   if (!line || fromMl === toMl) return
   const others = state.lines.filter((l) => l !== line)
-  const room = maxQty(listing, optionId(toMl), asItems(others))
+  const room = limitFor(listing, toMl)
   const target = others.find((l) => l.slug === listing.slug && l.sizeMl === toMl)
   const qty = Math.min(line.qty + (target?.qty ?? 0), room)
   if (qty <= 0) return
@@ -99,6 +99,20 @@ export function setSize(listing: DecantListing, fromMl: number, toMl: number) {
 
 export function removeLine(slug: string, sizeMl: number) {
   set({ lines: state.lines.filter((l) => !(l.slug === slug && l.sizeMl === sizeMl)) })
+}
+
+/**
+ * Once the catalogue loads: drops lines whose decant or size is gone or sold out, and caps quantities at today's
+ * stock, so a bag saved before a restock never counts or checks out what the shop no longer has.
+ */
+export function reconcile(catalog: ShopListing[]) {
+  const lines = state.lines.flatMap((l) => {
+    const listing = catalog.find((c) => c.slug === l.slug)
+    const max = listing ? limitFor(listing, l.sizeMl) : 0
+    return max > 0 ? [{ ...l, qty: Math.min(l.qty, max) }] : []
+  })
+  const same = lines.length === state.lines.length && lines.every((l, i) => l.qty === state.lines[i].qty)
+  if (!same) set({ lines, justAdded: lines.some((l) => lineKey(l) === state.justAdded) ? state.justAdded : null })
 }
 
 export const openBag = () => set({ open: true, handoff: false })
@@ -121,6 +135,8 @@ const useBagState = <T>(pick: (s: BagState) => T) =>
 /** Number of decants in the bag, for "Bag (n)" */
 export const useBagCount = () => useBagState((s) => s.lines.reduce((n, l) => n + l.qty, 0))
 export const useBagLines = () => useBagState((s) => s.lines)
+/** The lines right now, outside React (tests) */
+export const bagLines = () => state.lines
 export const useBagOpen = () => useBagState((s) => s.open)
 export const useBagHandoff = () => useBagState((s) => s.handoff)
 export const useJustAdded = () => useBagState((s) => s.justAdded)

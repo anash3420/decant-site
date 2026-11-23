@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
-import type { DecantListing } from '@shared/types.ts'
+import type { ShopListing } from '@shared/types.ts'
 import {
   activeCount,
   isOn,
@@ -29,7 +29,7 @@ interface FilterPanelProps {
   onChange: (filters: Filters, sort: SortValue) => void
   /** Decants the current choices show, for "Show N decants" */
   resultCount: number
-  catalog: DecantListing[]
+  catalog: ShopListing[]
   /** Leave out a group (the brand page has no House filter) */
   hide?: GroupKey[]
 }
@@ -278,7 +278,7 @@ function AccordTiles({
   group: Group
   filters: Filters
   onToggle: (value: string) => void
-  catalog: DecantListing[]
+  catalog: ShopListing[]
 }) {
   const [all, setAll] = useState(false)
   const options = all ? group.options : group.options.slice(0, ACCORDS_SHOWN.tiles)

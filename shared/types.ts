@@ -72,7 +72,7 @@ interface ListingBase {
   addedAt: string
 }
 
-/** Decanted from my own bottles; stock is derived from ml left */
+/** A decant as stored: stock is derived from ml left. Shoppers get a ShopListing instead (shared/shop.ts). */
 export interface DecantListing extends ListingBase {
   kind: 'decant'
   bottles: Bottle[]
@@ -80,6 +80,17 @@ export interface DecantListing extends ListingBase {
 }
 
 /** Vials picked up from other members and passed along */
+/** A size as shoppers get it: the price and the most they can add, never the ml left */
+export interface ShopPrice extends PriceTier {
+  maxQty: number
+}
+
+/** A decant as the shop receives it: no bottles, so ml left never reaches shoppers */
+export interface ShopListing extends ListingBase {
+  kind: 'decant'
+  prices: ShopPrice[]
+}
+
 export interface CatchReleaseListing extends ListingBase {
   kind: 'catch-release'
   vials: { id: string; sizeMl: number; format: string; price: number; qty: number; note?: string }[]

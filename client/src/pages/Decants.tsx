@@ -1,6 +1,6 @@
 import { Fragment, Suspense, use, useCallback, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import type { DecantListing } from '@shared/types.ts'
+import type { ShopListing } from '@shared/types.ts'
 import { getCatalog, getHome } from '../api/shop.ts'
 import { ProductCard, ProductCardSkeleton } from '../components/ProductCard.tsx'
 import { FilterPanel, SortMenu, SortSheet } from '../components/catalogue/FilterPanel.tsx'
@@ -175,7 +175,7 @@ function Catalogue() {
   )
 }
 
-const smallestSize = (catalog: DecantListing[]) => Math.min(...catalog.flatMap((l) => l.prices.map((p) => p.sizeMl)))
+const smallestSize = (catalog: ShopListing[]) => Math.min(...catalog.flatMap((l) => l.prices.map((p) => p.sizeMl)))
 
 /** Crumb, kicker, "All decants" over its count as a big outlined number, and the line to the right */
 function PageHead({ count, smallest }: { count?: number; smallest?: number }) {

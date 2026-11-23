@@ -1,11 +1,11 @@
 // Which decant the quick-buy drawer shows. Any card can open it; the drawer itself is mounted once in the layout.
 import { useSyncExternalStore } from 'react'
-import type { DecantListing } from '@shared/types.ts'
+import type { ShopListing } from '@shared/types.ts'
 
 interface QuickBuyState {
   open: boolean
   /** Kept after closing so the drawer can slide out with its content */
-  listing: DecantListing | null
+  listing: ShopListing | null
   /** Counts openings, so each one starts with a fresh size, quantity and button */
   opened: number
   /** Opened from the bag or closed into it, so the dimmed page stays steady instead of fading */
@@ -20,7 +20,7 @@ function set(next: QuickBuyState) {
   listeners.forEach((l) => l())
 }
 
-export const openQuickBuy = (listing: DecantListing, handoff = false) =>
+export const openQuickBuy = (listing: ShopListing, handoff = false) =>
   set({ open: true, listing, opened: state.opened + 1, handoff })
 export const closeQuickBuy = () => set({ ...state, open: false, handoff: false })
 /** Closes quick buy because the bag is opening in its place */

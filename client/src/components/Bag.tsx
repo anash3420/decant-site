@@ -1,13 +1,15 @@
-import { Suspense, use, useRef, useState, type ReactNode } from 'react'
+import { Suspense, use, useEffect, useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { Link } from 'react-router-dom'
-import type { DecantListing } from '@shared/types.ts'
-import { formatPrice, getOptions, isSoldOut } from '@shared/stock.ts'
+import type { ShopListing } from '@shared/types.ts'
+import { fromOption, getOptions } from '@shared/shop.ts'
+import { formatPrice } from '@shared/stock.ts'
 import { getCatalog } from '../api/shop.ts'
 import {
   closeBag,
   handOffBag,
   lineKey,
+  reconcile,
   removeLine,
   setQty,
   setSize,
@@ -19,7 +21,7 @@ import {
   useJustAdded,
   type BagLine,
 } from '../lib/bag.ts'
-import { byNewest, fromPrice, productPath } from '../lib/catalog.ts'
+import { productPath, similar } from '../lib/catalog.ts'
 import { fill, site } from '../lib/content.ts'
 import { openQuickBuy } from '../lib/quickBuy.ts'
 import { useDragDismiss } from '../lib/useDragDismiss.ts'
@@ -36,7 +38,7 @@ const EXIT_MS = 220
 type Drag = ReturnType<typeof useDragDismiss>
 
 interface Line extends BagLine {
-  listing: DecantListing
+  listing: ShopListing
   unitPrice: number
 }
 
@@ -96,6 +98,8 @@ export function BagPanel() {
 
 function Contents({ open, drag }: { open: boolean; drag: Drag }) {
   const catalog = use(getCatalog())
+  // A bag saved before a restock can hold decants or quantities the shop no longer has
+  useEffect(() => reconcile(catalog), [catalog])
   const bagLines = useBagLines()
   const justAdded = useJustAdded()
   // Lines folding away, and the size a line is moving to while the line it joins folds away
@@ -112,7 +116,13 @@ function Contents({ open, drag }: { open: boolean; drag: Drag }) {
   if (lines.length === 0) return <Empty />
 
   const subtotal = lines.reduce((sum, l) => sum + l.unitPrice * l.qty, 0)
-  const picks = picksFor(catalog, lines, 4)
+  // "You may also like": in-stock decants not in the bag, sharing the most accords with what is in it
+  const picks = similar(
+    catalog,
+    lines.flatMap((l) => l.listing.accords),
+    new Set(lines.map((l) => l.slug)),
+    4,
+  )
 
   /** Folds a line away, then runs `done` (which takes it out of the bag) */
   const exit = (key: string, done: () => void) => {
@@ -204,7 +214,7 @@ function Contents({ open, drag }: { open: boolean; drag: Drag }) {
                   />
                   <small className="block truncate text-[11px] text-muted">{p.house}</small>
                   <b className="block truncate font-display text-base leading-[1.2] font-normal">{p.name}</b>
-                  <span className="text-[13px] font-medium">From {formatPrice(fromPrice(p).price)}</span>
+                  <span className="text-[13px] font-medium">From {formatPrice(fromOption(p).price)}</span>
                 </Link>
               </li>
             ))}
@@ -455,8 +465,8 @@ function BagRow({ line, isNew, leaving, shownSize, onRemove, onResize }: BagRowP
 }
 
 /** Desktop pick: a tall cover photo with a quick-buy bag on it, then the card details */
-function PickCard({ listing }: { listing: DecantListing }) {
-  const { price, sizeMl } = fromPrice(listing)
+function PickCard({ listing }: { listing: ShopListing }) {
+  const { price, sizeMl } = fromOption(listing)
   const photo = listing.photos?.[0]
   const href = productPath(listing.slug)
   return (
@@ -516,16 +526,4 @@ function Empty() {
       </Link>
     </div>
   )
-}
-
-/** Picks for "You may also like": in-stock decants not in the bag, sharing the most accords with what is in it */
-function picksFor(catalog: DecantListing[], lines: Line[], n: number) {
-  const inBag = new Set(lines.map((l) => l.slug))
-  const accords = new Set(lines.flatMap((l) => l.listing.accords.map((a) => a.toLowerCase())))
-  return catalog
-    .filter((l) => !inBag.has(l.slug) && !isSoldOut(l))
-    .map((l) => ({ l, shared: l.accords.filter((a) => accords.has(a.toLowerCase())).length }))
-    .sort((a, b) => b.shared - a.shared || byNewest(a.l, b.l))
-    .slice(0, n)
-    .map((x) => x.l)
 }

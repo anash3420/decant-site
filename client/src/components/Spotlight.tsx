@@ -1,14 +1,15 @@
 import { memo, use, useRef, useState, type ComponentProps, type PointerEvent } from 'react'
 import { Link } from 'react-router-dom'
-import type { DecantListing } from '@shared/types.ts'
+import type { ShopListing } from '@shared/types.ts'
+import { fromOption } from '@shared/shop.ts'
 import { formatPrice } from '@shared/stock.ts'
 import { getCatalog, getHome, type SpotlightSlide } from '../api/shop.ts'
-import { fromPrice, productPath } from '../lib/catalog.ts'
+import { productPath } from '../lib/catalog.ts'
 import { ChevronLeft, ChevronRight } from './icons.tsx'
 
 const DESKTOP = '(min-width: 1024px)'
 
-type Item = { slide: SpotlightSlide; listing: DecantListing }
+type Item = { slide: SpotlightSlide; listing: ShopListing }
 
 /**
  * Homepage spotlight, "Pool of light": each photo fills its slide with a soft vignette, its colours pool down onto
@@ -165,8 +166,8 @@ function Layer({ slide, img, anim = '' }: { slide: SpotlightSlide; img: 'spot-po
 }
 
 /** The caption card glides up out of the bottom edge of the photo each time the slide changes */
-function Caption({ listing }: { listing: DecantListing }) {
-  const { price, sizeMl } = fromPrice(listing)
+function Caption({ listing }: { listing: ShopListing }) {
+  const { price, sizeMl } = fromOption(listing)
   return (
     <div className="spot-caption absolute bottom-2.5 left-2.5 z-[3] grid grid-cols-[auto_auto] gap-x-[22px] rounded-[10px] bg-white px-3.5 py-2.5 text-ink shadow-[0_10px_30px_rgb(15_23_32/0.18)] [--cap-gap:10px] lg:bottom-6 lg:left-6 lg:block lg:w-[270px] lg:rounded-xl lg:px-[22px] lg:py-[18px] lg:[--cap-gap:24px]">
       <span className="col-start-1 block text-[11px] font-medium tracking-[0.02em] text-wine lg:text-[13px]">

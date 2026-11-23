@@ -10,6 +10,7 @@ import Home from './pages/Home.tsx'
 // Pages other than the homepage load only when visited
 const ComingSoon = lazy(() => import('./pages/ComingSoon.tsx'))
 const Decants = lazy(() => import('./pages/Decants.tsx'))
+const Product = lazy(() => import('./pages/Product.tsx'))
 
 function Layout() {
   return (
@@ -64,6 +65,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'decants', element: <Decants /> },
+      { path: 'fragrance/:slug', element: <Product /> },
       { path: '*', element: <ComingSoon /> },
     ],
   },

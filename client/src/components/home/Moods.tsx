@@ -2,8 +2,9 @@ import { use, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { formatPrice } from '@shared/stock.ts'
 import { getCatalog, getHome, type Mood } from '../../api/shop.ts'
-import { fromPrice, productPath } from '../../lib/catalog.ts'
-import type { DecantListing } from '@shared/types.ts'
+import { productPath } from '../../lib/catalog.ts'
+import type { ShopListing } from '@shared/types.ts'
+import { fromOption } from '@shared/shop.ts'
 import { ChevronRight } from '../icons.tsx'
 
 /** Phones start with this many moods and a button for the rest */
@@ -47,7 +48,7 @@ function MoodList({
   delay,
 }: {
   mood: Mood
-  catalog: DecantListing[]
+  catalog: ShopListing[]
   className: string
   delay: number
 }) {
@@ -64,7 +65,7 @@ function MoodList({
       <p className="mt-1.5 mb-3.5 text-sm text-muted lg:min-h-[42px]">{mood.line}</p>
       <ul>
         {picks.map((l) => {
-          const { price, sizeMl } = fromPrice(l)
+          const { price, sizeMl } = fromOption(l)
           return (
             <li key={l.slug}>
               <Link to={productPath(l.slug)} className="group block py-[7px]">

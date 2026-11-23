@@ -10,8 +10,8 @@ were removed (they are in git history, on `main`). What exists now:
 - `server/src/models/`: the MongoDB schema (Mongoose 9). This is kept and is the base for the new backend.
 - `server/src/db.ts` (cached Mongoose connection) and `server/src/env.ts` (zod-validated environment).
 - `shared/`: types, stock maths, the lettermail rule, validation regexes and slugs, for both backend and frontend.
-- `client/`: the new frontend (Vite + React 19 + Tailwind v4 + React Router). The homepage is built; every other
-  route shows a lazy-loaded "coming soon" page.
+- `client/`: the new frontend (Vite + React 19 + Tailwind v4 + React Router). The homepage, All decants and the
+  fragrance page are built; every other route shows a lazy-loaded "coming soon" page.
 
 The new backend will be written from scratch as separate services; their layout isn't decided yet. The new frontend
 follows the "Storefront redesign" section below.
@@ -22,7 +22,7 @@ follows the "Storefront redesign" section below.
   free-shipping levels, ticker messages, the owner's note, footer links). Text may use `{lettermailFree}`,
   `{trackedFree}`, `{lettermailCost}`, `{trackedCost}`, filled by `lib/content.ts` `fill()`, so a price is written
   once. This moves to the database and admin later.
-- `api/shop.ts`: the only data layer. It serves `data/mock/*.json` (a snapshot of the 13 live decants and 11 houses,
+- `api/shop.ts`: the only data layer. It serves `data/mock/*.json` (already in the shopper shape, no bottles; a snapshot of the 13 live decants and 11 houses,
   plus homepage content: spotlight slides, featured houses, moods) after a short delay. Swap each function for a
   `fetch()` when the services exist. Each resource is one cached promise, read in components with React's `use()`
   inside `<Suspense>` with a same-size skeleton, so nothing shifts while loading.
@@ -58,6 +58,11 @@ follows the "Storefront redesign" section below.
   line "Just added". The header's "Bag (n)" (phone: a badge) and the phone menu open it. The free-shipping levels come
   from `site.json` `shipping`, its text from `site.json` `bag` (words in [brackets] are set in burgundy). "You may
   also like" picks in-stock decants not in the bag by shared accords. Checkout links to `/checkout` (not built).
+- Fragrance page (`pages/Product.tsx`, route `/fragrance/:slug`): `components/product/Gallery.tsx` (desktop stack,
+  phone swipe strip), `PhotoViewer.tsx` (full screen; zoom to 2× on desktop, the browser's pinch on phones),
+  `BuyCard.tsx` (size tiles with cost per ml, total, stepper, Add to bag, and the phone's sticky bar). "You may also
+  like" uses `similar()` in `lib/catalog.ts` (shared with the bag); recently viewed is `lib/recent.ts`. Copy is in
+  `site.json` `product`. Interlude M's four mock photos are linked from the web (brand CDN and Unsplash), not stored.
 - Desktop styles start at `lg` (1024 px); below that is the phone layout.
 
 ## Commands
@@ -65,7 +70,7 @@ follows the "Storefront redesign" section below.
 Run from the repo root:
 
 - `npm run setup` installs root tooling, client and server
-- `npm run check` runs typecheck + lint + format:check + client build (use this as the "done" check). Untracked
+- `npm run check` runs typecheck + lint + format:check + tests + client build (use this as the "done" check). Untracked
   folders (`design-previews/`, `.agents/`, `.impeccable/`) fail format:check; they aren't part of the code.
 - `npm run typecheck`, `npm run lint` / `lint:fix`, `npm run format` / `format:check`
 - `npm run build:vercel` writes `.vercel/output` (Build Output API, static frontend only for now).
@@ -81,7 +86,8 @@ Local database (needs MongoDB 7+ with `mongod` and `mongosh` on PATH), in `serve
 
 In `client/`, `npm run dev` serves http://localhost:5173 and proxies `/api` to :5050.
 
-There are no tests yet.
+`npm test` runs the tests (`node --test`, no framework): `shared/**/*.test.ts` and `client/src/**/*.test.ts`.
+`scripts/test-hooks.mjs` lets them resolve `@shared/*`. Client tests are typechecked by `client/tsconfig.node.json`.
 
 ## Schema (server/src/models)
 
@@ -104,8 +110,11 @@ There are no tests yet.
 
 Rules the old API enforced and the new backend should keep: the server prices everything (the browser sends only
 slug, size and quantity); stock is held inside a MongoDB transaction when an order is placed (decants take ml from
-the fullest bottle first); stock maths comes from `shared/stock.ts` (`getOptions`, `maxQty`, `isSoldOut`) so the
-frontend and backend agree.
+the fullest bottle first); stock maths on bottles is in `shared/stock.ts` (`getOptions`, `maxQty`, `isSoldOut`).
+**Shoppers never get bottles.** The API sends each decant through `toShopListing` (`shared/shop.ts`): the listing
+without bottles, each size carrying `maxQty`, the most a shopper can add, capped at 10 so it never gives away the ml
+left. The shop works only from that (`shared/shop.ts` `getOptions`, `isSoldOut`, `fromOption`); each size is capped
+on its own, so checkout on the server must recheck stock across sizes.
 
 **Shared imports.** The client uses the `@shared/*` alias (Vite + tsconfig); server code uses relative paths with
 the `.ts` extension (`'../../../shared/stock.ts'`). Change a rule in `shared/`, never in only one place.

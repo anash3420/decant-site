@@ -27,21 +27,16 @@
         }
       ],
       "addedAt": "2026-11-20T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "mock-sospiro-vibrato-1",
-          "sizeMl": 100,
-          "remainingMl": 100
-        }
-      ],
       "prices": [
         {
           "sizeMl": 5,
-          "price": 15
+          "price": 15,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 28
+          "price": 28,
+          "maxQty": 10
         }
       ]
     },
@@ -72,17 +67,11 @@
         }
       ],
       "addedAt": "2026-11-18T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1e0dc12b29cce796aa081",
-          "sizeMl": 7.5,
-          "remainingMl": 7.5
-        }
-      ],
       "prices": [
         {
           "sizeMl": 7.5,
-          "price": 36
+          "price": 36,
+          "maxQty": 1
         }
       ]
     },
@@ -113,17 +102,11 @@
         }
       ],
       "addedAt": "2026-11-12T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1e126182ec64e8c9d2af0",
-          "sizeMl": 7.5,
-          "remainingMl": 7.5
-        }
-      ],
       "prices": [
         {
           "sizeMl": 7.5,
-          "price": 20
+          "price": 20,
+          "maxQty": 1
         }
       ]
     },
@@ -154,25 +137,21 @@
         }
       ],
       "addedAt": "2026-10-16T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1b82617674a4046e0ecd2",
-          "sizeMl": 100,
-          "remainingMl": 87
-        }
-      ],
       "prices": [
         {
           "sizeMl": 3,
-          "price": 9
+          "price": 9,
+          "maxQty": 10
         },
         {
           "sizeMl": 5,
-          "price": 15
+          "price": 15,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 30
+          "price": 30,
+          "maxQty": 8
         }
       ]
     },
@@ -203,21 +182,16 @@
         }
       ],
       "addedAt": "2026-10-15T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1b90817674a4046e0ecd5",
-          "sizeMl": 100,
-          "remainingMl": 70
-        }
-      ],
       "prices": [
         {
           "sizeMl": 5,
-          "price": 12
+          "price": 12,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 20
+          "price": 20,
+          "maxQty": 7
         }
       ]
     },
@@ -248,21 +222,16 @@
         }
       ],
       "addedAt": "2026-10-14T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1b957dc7ea1e1e1f65420",
-          "sizeMl": 50,
-          "remainingMl": 40
-        }
-      ],
       "prices": [
         {
           "sizeMl": 5,
-          "price": 10
+          "price": 10,
+          "maxQty": 8
         },
         {
           "sizeMl": 10,
-          "price": 20
+          "price": 20,
+          "maxQty": 4
         }
       ]
     },
@@ -286,32 +255,46 @@
       "tint": "#B8A88A",
       "photos": [
         {
-          "label": "",
-          "src": "/mock/photos/amouage-interlude-m.webp",
-          "width": 720,
-          "height": 900
+          "label": "Bottle",
+          "src": "https://cdn.shopify.com/s/files/1/0823/5099/7796/files/INTERLUDE_MAN_100_ML.jpg?width=1600",
+          "width": 1600,
+          "height": 1600
+        },
+        {
+          "label": "Box",
+          "src": "https://cdn.shopify.com/s/files/1/0823/5099/7796/files/INTERLUDE_MAN_BOX_100ML.jpg?width=1600",
+          "width": 1600,
+          "height": 1600
+        },
+        {
+          "label": "Frankincense",
+          "src": "https://images.unsplash.com/photo-1790821074454-7bd7570c53d9?w=1600&q=80",
+          "width": 1600,
+          "height": 1067
+        },
+        {
+          "label": "Incense",
+          "src": "https://images.unsplash.com/photo-1627769916425-74c2344a3439?w=1600&q=80",
+          "width": 1600,
+          "height": 1067
         }
       ],
       "addedAt": "2026-10-13T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad07b0d6ed1555ae2333b08",
-          "sizeMl": 100,
-          "remainingMl": 82
-        }
-      ],
       "prices": [
         {
           "sizeMl": 3,
-          "price": 14
+          "price": 14,
+          "maxQty": 10
         },
         {
           "sizeMl": 5,
-          "price": 20
+          "price": 20,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 35
+          "price": 35,
+          "maxQty": 8
         }
       ]
     },
@@ -352,25 +335,21 @@
         }
       ],
       "addedAt": "2026-10-12T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad260e76045b1ed08717a19",
-          "sizeMl": 100,
-          "remainingMl": 63
-        }
-      ],
       "prices": [
         {
           "sizeMl": 3,
-          "price": 10
+          "price": 10,
+          "maxQty": 10
         },
         {
           "sizeMl": 5,
-          "price": 18
+          "price": 18,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 32
+          "price": 32,
+          "maxQty": 6
         }
       ]
     },
@@ -401,25 +380,21 @@
         }
       ],
       "addedAt": "2026-10-11T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad260661272dfc1b189a962",
-          "sizeMl": 50,
-          "remainingMl": 47
-        }
-      ],
       "prices": [
         {
           "sizeMl": 3,
-          "price": 11
+          "price": 11,
+          "maxQty": 10
         },
         {
           "sizeMl": 5,
-          "price": 17
+          "price": 17,
+          "maxQty": 9
         },
         {
           "sizeMl": 10,
-          "price": 35
+          "price": 35,
+          "maxQty": 4
         }
       ]
     },
@@ -450,21 +425,16 @@
         }
       ],
       "addedAt": "2026-10-10T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad2612e6045b1ed08717a1b",
-          "sizeMl": 100,
-          "remainingMl": 92
-        }
-      ],
       "prices": [
         {
           "sizeMl": 5,
-          "price": 12
+          "price": 12,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 20
+          "price": 20,
+          "maxQty": 9
         }
       ]
     },
@@ -494,21 +464,16 @@
         }
       ],
       "addedAt": "2026-10-09T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1ba9317674a4046e0ece8",
-          "sizeMl": 100,
-          "remainingMl": 75
-        }
-      ],
       "prices": [
         {
           "sizeMl": 5,
-          "price": 8
+          "price": 8,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 15
+          "price": 15,
+          "maxQty": 7
         }
       ]
     },
@@ -539,21 +504,16 @@
         }
       ],
       "addedAt": "2026-10-08T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1bac4dc7ea1e1e1f6542e",
-          "sizeMl": 100,
-          "remainingMl": 80
-        }
-      ],
       "prices": [
         {
           "sizeMl": 5,
-          "price": 8
+          "price": 8,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 15
+          "price": 15,
+          "maxQty": 8
         }
       ]
     },
@@ -584,21 +544,16 @@
         }
       ],
       "addedAt": "2026-10-07T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1be6117674a4046e0ecfa",
-          "sizeMl": 100,
-          "remainingMl": 70
-        }
-      ],
       "prices": [
         {
           "sizeMl": 5,
-          "price": 4.5
+          "price": 4.5,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 8
+          "price": 8,
+          "maxQty": 7
         }
       ]
     },
@@ -629,21 +584,16 @@
         }
       ],
       "addedAt": "2026-10-06T12:00:00.000Z",
-      "bottles": [
-        {
-          "id": "6ad1be9cdc7ea1e1e1f6543b",
-          "sizeMl": 100,
-          "remainingMl": 90
-        }
-      ],
       "prices": [
         {
           "sizeMl": 5,
-          "price": 4
+          "price": 4,
+          "maxQty": 10
         },
         {
           "sizeMl": 10,
-          "price": 8
+          "price": 8,
+          "maxQty": 9
         }
       ]
     }

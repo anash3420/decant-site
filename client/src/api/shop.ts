@@ -1,6 +1,6 @@
 // Data for the shop. Until the backend services exist, this serves mock data with a short delay so loading states
 // are real. Swap each function body for a fetch() to the service; components don't change.
-import type { DecantListing } from '@shared/types.ts'
+import type { ShopListing } from '@shared/types.ts'
 import catalogData from '../data/mock/catalog.json'
 import brandsData from '../data/mock/brands.json'
 import homeData from '../data/mock/home.json'
@@ -51,6 +51,6 @@ function once<T>(key: string, load: () => Promise<T>): Promise<T> {
   return cache.get(key) as Promise<T>
 }
 
-export const getCatalog = () => once('catalog', () => mock(catalogData.listings as DecantListing[]))
+export const getCatalog = () => once('catalog', () => mock(catalogData.listings as ShopListing[]))
 export const getBrands = () => once('brands', () => mock(brandsData.brands as Brand[]))
 export const getHome = () => once('home', () => mock(homeData as HomeContent))

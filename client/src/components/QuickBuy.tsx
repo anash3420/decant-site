@@ -1,8 +1,10 @@
 import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import type { DecantListing } from '@shared/types.ts'
-import { formatPrice, getOptions } from '@shared/stock.ts'
+import type { ShopListing } from '@shared/types.ts'
+import { getOptions } from '@shared/shop.ts'
+import { formatPrice } from '@shared/stock.ts'
 import { addToBag, roomFor, useBagCount } from '../lib/bag.ts'
+import { firstSentence } from '../lib/catalog.ts'
 import { dimClass, slideClass } from '../lib/overlay.ts'
 import { closeQuickBuy, handOffQuickBuy, useQuickBuy } from '../lib/quickBuy.ts'
 import { useModal } from '../lib/useModal.ts'
@@ -49,7 +51,7 @@ export function QuickBuy() {
   )
 }
 
-function Details({ listing }: { listing: DecantListing }) {
+function Details({ listing }: { listing: ShopListing }) {
   const options = getOptions(listing)
   const firstInStock = options.find((o) => o.available) ?? options[0]
   const [sizeMl, setSizeMl] = useState(firstInStock?.sizeMl ?? 0)
@@ -173,7 +175,7 @@ function Details({ listing }: { listing: DecantListing }) {
 }
 
 /** One large photo and two small ones; fewer photos fill the space instead of leaving gaps */
-function Mosaic({ listing }: { listing: DecantListing }) {
+function Mosaic({ listing }: { listing: ShopListing }) {
   const photos = (listing.photos ?? []).filter((p) => p.src).slice(0, 3)
   const alt = `${listing.house} ${listing.name}`
   const frame = 'isolate size-full rounded-[14px]'
@@ -200,10 +202,4 @@ function Mosaic({ listing }: { listing: DecantListing }) {
       ))}
     </div>
   )
-}
-
-/** The story's first sentence, for the italic line */
-function firstSentence(text: string) {
-  const match = text.match(/^.*?[.!?](?=\s|$)/)
-  return (match ? match[0] : text).trim()
 }

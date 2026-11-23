@@ -1,10 +1,11 @@
 // Filtering and sorting for the decant catalogue. The state lives in the URL, so menu links (/decants?accord=Woody)
 // and shared links open the same results. Within a group the choices widen the results (Woody or Amber); across
 // groups they narrow them (Woody and under $10).
-import type { DecantListing } from '@shared/types.ts'
+import type { ShopListing } from '@shared/types.ts'
+import { fromOption } from '@shared/shop.ts'
 import { formatPrice } from '@shared/stock.ts'
 import type { Mood } from '../api/shop.ts'
-import { byNewest, fromPrice, hasSize } from './catalog.ts'
+import { byNewest, hasSize } from './catalog.ts'
 
 export type GroupKey = 'price' | 'accord' | 'size' | 'mood' | 'house' | 'type' | 'worn'
 
@@ -36,9 +37,9 @@ export const SORTS = [
 
 export type SortValue = (typeof SORTS)[number]['value']
 
-const price = (l: DecantListing) => fromPrice(l).price
+const price = (l: ShopListing) => fromOption(l).price
 
-const SORTERS: Record<SortValue, (a: DecantListing, b: DecantListing) => number> = {
+const SORTERS: Record<SortValue, (a: ShopListing, b: ShopListing) => number> = {
   newest: byNewest,
   'price-asc': (a, b) => price(a) - price(b) || a.name.localeCompare(b.name),
   'price-desc': (a, b) => price(b) - price(a) || a.name.localeCompare(b.name),
@@ -57,13 +58,13 @@ const BANDS = [
 
 /* ── Type: the fragrance category, with designer private shown as designer ── */
 
-const typeOf = (l: DecantListing) => (l.category === 'designer-private' ? 'designer' : l.category)
+const typeOf = (l: ShopListing) => (l.category === 'designer-private' ? 'designer' : l.category)
 const TYPE_LABELS: Record<string, string> = { niche: 'Niche', designer: 'Designer', dupe: 'Dupe' }
 
 const same = (a: string, b: string) => a.toLowerCase() === b.toLowerCase()
 
 /** Does the decant match one choice in a group? */
-function matches(l: DecantListing, key: GroupKey, value: string, moods: Mood[]): boolean {
+function matches(l: ShopListing, key: GroupKey, value: string, moods: Mood[]): boolean {
   switch (key) {
     case 'price':
       return BANDS.find((b) => b.value === value)?.test(price(l)) ?? false
@@ -82,7 +83,7 @@ function matches(l: DecantListing, key: GroupKey, value: string, moods: Mood[]):
   }
 }
 
-export function applyFilters(catalog: DecantListing[], filters: Filters, moods: Mood[], sort: SortValue) {
+export function applyFilters(catalog: ShopListing[], filters: Filters, moods: Mood[], sort: SortValue) {
   return catalog
     .filter((l) =>
       GROUP_KEYS.every((key) => filters[key].length === 0 || filters[key].some((v) => matches(l, key, v, moods))),
@@ -91,7 +92,7 @@ export function applyFilters(catalog: DecantListing[], filters: Filters, moods: 
 }
 
 /** Every group with its options and whole-catalogue counts. Options with no decants are left out. */
-export function buildGroups(catalog: DecantListing[], moods: Mood[]): Record<GroupKey, Group> {
+export function buildGroups(catalog: ShopListing[], moods: Mood[]): Record<GroupKey, Group> {
   const count = (key: GroupKey, value: string) => catalog.filter((l) => matches(l, key, value, moods)).length
   const withCounts = (key: GroupKey, opts: { value: string; label: string }[]) =>
     opts.map((o) => ({ ...o, count: count(key, o.value) })).filter((o) => o.count > 0)
@@ -202,7 +203,7 @@ export function choiceLabel(groups: Record<GroupKey, Group>, key: GroupKey, valu
  * add something are offered.
  */
 export function widenings(
-  catalog: DecantListing[],
+  catalog: ShopListing[],
   filters: Filters,
   moods: Mood[],
   groups: Record<GroupKey, Group>,

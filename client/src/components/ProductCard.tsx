@@ -1,15 +1,16 @@
 import { memo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import type { DecantListing } from '@shared/types.ts'
+import type { ShopListing } from '@shared/types.ts'
+import { fromOption } from '@shared/shop.ts'
 import { formatPrice } from '@shared/stock.ts'
-import { fromPrice, isNew, productPath } from '../lib/catalog.ts'
+import { isNew, productPath } from '../lib/catalog.ts'
 import { openQuickBuy } from '../lib/quickBuy.ts'
 import { useWishlisted } from '../lib/wishlist.ts'
 import { Photo } from './Photo.tsx'
 import { ArrowRight, BagIcon, HeartIcon } from './icons.tsx'
 
 interface ProductCardProps {
-  listing: DecantListing
+  listing: ShopListing
   /** Load the photo right away (cards in the first screenful) */
   priority?: boolean
 }
@@ -19,7 +20,7 @@ interface ProductCardProps {
  * sit on the page. The whole card links to the fragrance page; the heart sits above that link.
  */
 export const ProductCard = memo(function ProductCard({ listing, priority }: ProductCardProps) {
-  const { price, sizeMl } = fromPrice(listing)
+  const { price, sizeMl } = fromOption(listing)
   const photo = listing.photos?.[0]
   const second = listing.photos?.[1]
   const href = productPath(listing.slug)
@@ -92,7 +93,7 @@ export const ProductCard = memo(function ProductCard({ listing, priority }: Prod
  * Desktop only (mouse and trackpad): a round burgundy bag on the photo's corner appears on hover, or when the card
  * has keyboard focus. It opens the quick-buy drawer from the right.
  */
-function QuickBuyButton({ listing }: { listing: DecantListing }) {
+function QuickBuyButton({ listing }: { listing: ShopListing }) {
   return (
     <button
       type="button"

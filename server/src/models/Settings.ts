@@ -11,7 +11,7 @@ const settingsSchema = new Schema(
       type: [
         new Schema(
           {
-            id: { type: String, enum: ['pickup', 'lettermail', 'tracked'], required: true },
+            id: { type: String, enum: ['lettermail', 'tracked'], required: true },
             label: { type: String, required: true },
             cost: { type: Number, required: true, min: 0 },
             detail: { type: String, default: '' },

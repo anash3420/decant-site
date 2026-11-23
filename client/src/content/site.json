@@ -133,5 +133,55 @@
     },
     "alsoLike": "You may also like",
     "shopAll": "Shop all {count} decants"
+  },
+  "product": {
+    "notes": {
+      "kicker": "The notes",
+      "title": "From first spray to drydown",
+      "note": "Read left to right, like the day it lasts",
+      "steps": [
+        {
+          "key": "top",
+          "name": "Top",
+          "line": "The first minutes"
+        },
+        {
+          "key": "heart",
+          "name": "Heart",
+          "line": "Once it settles"
+        },
+        {
+          "key": "base",
+          "name": "Base",
+          "line": "What stays with you"
+        }
+      ]
+    },
+    "house": {
+      "link": "Meet the house"
+    },
+    "alsoLike": {
+      "kicker": "You may also like",
+      "note": "Chosen for the accords they share",
+      "link": {
+        "label": "All decants",
+        "to": "/decants"
+      }
+    },
+    "recent": {
+      "kicker": "Recently viewed",
+      "title": "Still on your mind",
+      "note": "Kept on this device only",
+      "clear": "Clear"
+    },
+    "sizeLabel": "Choose your size",
+    "inStock": "In stock",
+    "soldOut": "Sold out",
+    "notFound": {
+      "title": "This decant isn’t here",
+      "text": "It may have sold out or moved. Every decant in stock is in the catalogue.",
+      "button": "Shop all decants",
+      "to": "/decants"
+    }
   }
 }

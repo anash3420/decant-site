@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronRight } from './icons.tsx'
 
@@ -10,12 +11,14 @@ interface SectionHeadingProps {
   description?: string
   /** The italic line in the space to the right (under the title on phones). Don't repeat the title's information. */
   note: string
-  link: { label: string; to: string }
+  link?: { label: string; to: string }
+  /** In place of the link, e.g. a button */
+  action?: ReactNode
   id?: string
 }
 
 /** Atelier-light section heading: outlined number behind, kicker, title, and a fine line ending in a link */
-export function SectionHeading({ index, kicker, title, description, note, link, id }: SectionHeadingProps) {
+export function SectionHeading({ index, kicker, title, description, note, link, action, id }: SectionHeadingProps) {
   return (
     <div className="relative isolate mb-[18px] lg:mb-[22px] lg:flex lg:items-end lg:justify-between">
       <div className="relative">
@@ -40,13 +43,16 @@ export function SectionHeading({ index, kicker, title, description, note, link, 
           {note}
         </em>
         <i aria-hidden="true" className="trail-line mt-1 flex-1 lg:order-1 lg:mt-0" />
-        <Link
-          to={link.to}
-          className="mt-1 flex min-h-11 items-center gap-1 text-[15px] whitespace-nowrap text-wine lg:order-3 lg:mt-0 lg:min-h-0 lg:link-line lg:pb-0.5"
-        >
-          {link.label}
-          <ChevronRight size={14} />
-        </Link>
+        {action}
+        {link && (
+          <Link
+            to={link.to}
+            className="mt-1 flex min-h-11 items-center gap-1 text-[15px] whitespace-nowrap text-wine lg:order-3 lg:mt-0 lg:min-h-0 lg:link-line lg:pb-0.5"
+          >
+            {link.label}
+            <ChevronRight size={14} />
+          </Link>
+        )}
       </div>
     </div>
   )

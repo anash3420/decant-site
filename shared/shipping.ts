@@ -1,7 +1,7 @@
 import type { Fragrance } from './types.ts'
 import type { Option } from './stock.ts'
 
-// Lettermail limits: small, flat parcels only. Anything bigger has to be picked up or sent tracked.
+// Lettermail limits: small, flat parcels only. Anything bigger is sent tracked.
 // Defaults here; the server's settings document can override them.
 export interface LettermailLimits {
   maxDecantMl: number
@@ -18,7 +18,7 @@ interface Line {
 
 /** Why lettermail can't be used for these lines, or null if it can */
 export function lettermailBlockedReason(lines: Line[], limits = DEFAULT_LETTERMAIL_LIMITS): string | null {
-  if (lines.some((l) => l.f.kind === 'full-bottle')) return 'Full bottles ship tracked or are picked up.'
+  if (lines.some((l) => l.f.kind === 'full-bottle')) return 'Full bottles ship tracked.'
 
   const bigDecant = lines.find((l) => l.f.kind === 'decant' && (l.option.sizeMl ?? 0) > limits.maxDecantMl)
   if (bigDecant)

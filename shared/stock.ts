@@ -73,10 +73,3 @@ export function maxQty(f: Fragrance, optionId: string, items: InquiryItem[]): nu
 }
 
 export const isSoldOut = (f: Fragrance) => !getOptions(f).some((o) => o.available)
-
-/** Cheapest available option (or cheapest overall when sold out), for "From $X" labels */
-export function fromOption(f: Fragrance): Option {
-  const options = getOptions(f)
-  const pool = options.some((o) => o.available) ? options.filter((o) => o.available) : options
-  return pool.reduce((min, o) => (o.price < min.price ? o : min), pool[0])
-}

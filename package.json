@@ -13,9 +13,10 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm --prefix client run build",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm --prefix client run build",
     "build:vercel": "node scripts/vercel-build.mjs",
-    "preview:vercel": "node scripts/vercel-preview.mjs"
+    "preview:vercel": "node scripts/vercel-preview.mjs",
+    "test": "node --disable-warning=ExperimentalWarning --import ./scripts/test-hooks.mjs --test \"shared/**/*.test.ts\" \"client/src/**/*.test.ts\""
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
