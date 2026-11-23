@@ -42,6 +42,22 @@ follows the "Storefront redesign" section below.
 - Phone menu: `components/PhoneMenu.tsx`, a drawer from the left opened by the header's menu button. It stays
   mounted (inert while closed) so it slides both ways; one accordion open at a time (grid-rows animation); Escape,
   the dimmed page or any link closes it and focus returns to the menu button. It reads the same `menus.json`.
+- All decants (`pages/Decants.tsx`, route `/decants`): filter and sort state lives in the URL (`lib/filters.ts`), using
+  the params the menus link with (`accord`, `price`, `size`, `mood`, `house`, `type`, `worn`, `sort`). Within a group
+  choices widen the results, across groups they narrow them; option counts are whole-catalogue totals. Filter & Sort
+  (`components/catalogue/FilterPanel.tsx`) is one component: a left drawer on desktop, a bottom sheet on phones, both
+  portalled to `body` (`lib/useModal.ts` handles Escape, scroll lock and focus). Page copy is in `site.json` `catalogue`.
+- Drawers and sheets (filters, sort, quick buy, bag) share their motion through `lib/overlay.ts`: open 400 ms
+  `ease-lux`, close 260 ms `ease-out`, and with reduced motion a 200 ms fade instead of the slide. Quick buy and the
+  bag hand over to each other without the dim fading (`handOffQuickBuy`, `handOffBag`). On touch, the phone sheets
+  and the bag can be dragged away (`lib/useDragDismiss.ts`).
+- Quick buy (desktop, mouse only): `components/QuickBuy.tsx`, a 500 px drawer from the right mounted once in the
+  layout and opened from any card through `lib/quickBuy.ts`. Add to bag closes it and opens the bag.
+- Bag: `components/Bag.tsx` (`BagPanel`, mounted once in the layout) with its state in `lib/bag.ts`: lines of slug,
+  size and quantity in localStorage, capped by `shared/stock.ts` `maxQty`; `addToBag` opens the panel and marks the
+  line "Just added". The header's "Bag (n)" (phone: a badge) and the phone menu open it. The free-shipping levels come
+  from `site.json` `shipping`, its text from `site.json` `bag` (words in [brackets] are set in burgundy). "You may
+  also like" picks in-stock decants not in the bag by shared accords. Checkout links to `/checkout` (not built).
 - Desktop styles start at `lg` (1024 px); below that is the phone layout.
 
 ## Commands
@@ -144,6 +160,10 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
 - **Never show** ml left in a bottle ("92 ml left", "Only 20 ml left", the old shop's ml-left card badge,
   "Fill level" photos) or **spray counts**. Availability is only in stock or sold out. **Cost per ml** appears only
   on the fragrance page's size tiles (owner's later decision); cards, menus and the quick buy show prices only.
+- **Brand voice, never first person singular** (owner, 2026-11-22): the site speaks as a brand, not a sole owner.
+  Never write "I", "me", "my" or "mine" in any shop text (content, components, meta tags, alt text). Use the brand
+  voice ("we", "our" sparingly) or neutral wording ("poured from authentic full bottles", not "from my own bottles").
+  The homepage band's kicker reads "From us to you"; "From me to you" below is only the section's working name.
 - **No personal name on the site** (owner, 2026-11-22): the owner's first name must not appear in the note, footer,
   links ("Write to us", not "Write to Anash") or anywhere else. The shop name "Anash's Fragrances" and the A.S. logo
   stay for now; the shop will be renamed to a brand without the owner's name (a candidate is "Niche Decants",
@@ -258,8 +278,7 @@ Phone: a single-slide spotlight, a 2-column shelf, three moods plus "3 more mood
   - Price uses **bands** (Under $10, $10 to $15, Over $15), never a slider.
   - Active filters show as white chips with a burgundy outline.
   - Short results get an "Only N match, widen your search" box.
-  - "Not sure where to start? Shop by mood" is the **8th card**. A 2-column "A note: Looking for something that
-    isn't here?" tile ends the grid.
+  - "Not sure where to start? Shop by mood" is the **8th card**. No note tile ends the grid (owner removed it, 2026-11-22).
 - **Phone:** under the heading, a scrolling row of accord pills (Everything 13, Woody 10…). Then a row with a burgundy
   "Filter (n)" button and a "Sort Newest" button. Filter opens a bottom sheet: accord tiles (three round bottle
   thumbnails, name and count) in 2 columns, then Price, Size and Mood, Clear all, and a sticky "Show N decants" button.

@@ -71,7 +71,7 @@ function ShelfHeading() {
       index={asIndex(count)}
       kicker="The collection"
       title="The shelf"
-      note="Poured to order from my own bottles"
+      note="Poured to order from full bottles"
       link={{ label: 'All decants', to: '/decants' }}
     />
   )
@@ -101,7 +101,7 @@ function MoodsHeading() {
       index={asIndex(moods.length)}
       kicker="By occasion"
       title="Shop by mood"
-      description="A few of my favourites for each moment. Prices are for the smallest size."
+      description="A few favourites for each moment. Prices are for the smallest size."
       note={`${numberWord(picks)} picks in each`}
       link={{ label: 'All moods', to: '/moods' }}
     />

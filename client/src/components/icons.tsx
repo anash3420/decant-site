@@ -76,6 +76,39 @@ export const ArrowRight = (p: IconProps) => (
     <path d="M5 12h14M13 6l6 6-6 6" />
   </Icon>
 )
+export const ChevronDown = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m6 9.5 6 6 6-6" />
+  </Icon>
+)
+export const CheckIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m5.5 12.5 4 4 9-9" />
+  </Icon>
+)
+export const MinusIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M6 12h12" />
+  </Icon>
+)
+export const PlusIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M12 6v12M6 12h12" />
+  </Icon>
+)
+export const TrashIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" />
+  </Icon>
+)
+/** Filter & Sort: two sliders */
+export const SlidersIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M4 8h9M17 8h3M4 16h3M11 16h9" />
+    <circle cx="15" cy="8" r="2" />
+    <circle cx="9" cy="16" r="2" />
+  </Icon>
+)
 
 /** The champagne four-point sparkle used between ticker messages */
 export const Sparkle = ({ size = 11 }: { size?: number }) => (

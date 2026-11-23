@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { openBag, useBagCount } from '../lib/bag.ts'
 import { site } from '../lib/content.ts'
 import { LogoMark } from './LogoMark.tsx'
 import { MegaMenu, type MenuKey } from './MegaMenu.tsx'
@@ -140,10 +141,15 @@ function DesktopBar() {
           <Link to="/wishlist" aria-label="Wishlist" className="transition-colors hover:text-wine">
             <HeartIcon />
           </Link>
-          <Link to="/bag" className="flex items-center gap-1.5 transition-colors hover:text-wine">
+          <button
+            type="button"
+            onClick={openBag}
+            aria-haspopup="dialog"
+            className="flex items-center gap-1.5 transition-colors hover:text-wine"
+          >
             <BagIcon />
-            Bag
-          </Link>
+            <BagLabel />
+          </button>
         </div>
       </div>
 
@@ -172,6 +178,36 @@ function DesktopBar() {
   )
 }
 
+/** "Bag (n)" once something is in it. Its own component so adding to the bag re-renders only this. */
+function BagLabel() {
+  const count = useBagCount()
+  return <span className="tabular-nums">Bag{count > 0 && ` (${count})`}</span>
+}
+
+/** Phone: the bag button, with the number of decants in a small badge */
+function PhoneBagButton() {
+  const count = useBagCount()
+  return (
+    <button
+      type="button"
+      onClick={openBag}
+      aria-haspopup="dialog"
+      aria-label={count > 0 ? `Bag, ${count} ${count === 1 ? 'decant' : 'decants'}` : 'Bag'}
+      className="relative flex size-11 items-center justify-center transition-transform duration-[120ms] ease-out active:scale-95"
+    >
+      <BagIcon />
+      {count > 0 && (
+        <span
+          aria-hidden="true"
+          className="absolute top-[7px] right-[5px] flex h-4 min-w-4 items-center justify-center rounded-full bg-wine px-1 text-[10px] text-white tabular-nums"
+        >
+          {count}
+        </span>
+      )}
+    </button>
+  )
+}
+
 /** Phone: menu, name, bag. The menu button opens the drawer; closing it puts focus back on the button. */
 function PhoneBar() {
   const [open, setOpen] = useState(false)
@@ -194,13 +230,7 @@ function PhoneBar() {
           <MenuIcon />
         </button>
         <Wordmark className="min-h-11 justify-center" />
-        <Link
-          to="/bag"
-          aria-label="Bag"
-          className="flex size-11 items-center justify-center transition-transform duration-[120ms] ease-out active:scale-95"
-        >
-          <BagIcon />
-        </Link>
+        <PhoneBagButton />
       </div>
       <PhoneMenu open={open} onClose={close} />
     </>

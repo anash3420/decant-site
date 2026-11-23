@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import type { DecantListing } from '@shared/types.ts'
 import { formatPrice } from '@shared/stock.ts'
 import { fromPrice, isNew, productPath } from '../lib/catalog.ts'
+import { openQuickBuy } from '../lib/quickBuy.ts'
 import { useWishlisted } from '../lib/wishlist.ts'
 import { Photo } from './Photo.tsx'
 import { ArrowRight, BagIcon, HeartIcon } from './icons.tsx'
@@ -56,7 +57,7 @@ export const ProductCard = memo(function ProductCard({ listing, priority }: Prod
           </span>
         )}
         <WishButton slug={listing.slug} name={listing.name} />
-        <QuickBuyButton href={href} name={listing.name} />
+        <QuickBuyButton listing={listing} />
       </div>
 
       <p className="mt-2.5 text-xs leading-snug text-muted lg:mt-3.5 lg:text-[13px]">{listing.house}</p>
@@ -89,13 +90,15 @@ export const ProductCard = memo(function ProductCard({ listing, priority }: Prod
 
 /**
  * Desktop only (mouse and trackpad): a round burgundy bag on the photo's corner appears on hover, or when the card
- * has keyboard focus. It will open the quick-buy drawer; until that is built it opens the fragrance page.
+ * has keyboard focus. It opens the quick-buy drawer from the right.
  */
-function QuickBuyButton({ href, name }: { href: string; name: string }) {
+function QuickBuyButton({ listing }: { listing: DecantListing }) {
   return (
-    <Link
-      to={href}
-      aria-label={`Quick buy ${name}`}
+    <button
+      type="button"
+      onClick={() => openQuickBuy(listing)}
+      aria-haspopup="dialog"
+      aria-label={`Quick buy ${listing.name}`}
       className="group/qb absolute right-3 bottom-3 z-10 hidden size-11 scale-90 items-center justify-center rounded-full bg-wine text-white opacity-0 shadow-[0_6px_16px_rgb(109_31_51/0.3)] transition-[opacity,transform] duration-200 ease-out group-focus-within:scale-100 group-focus-within:opacity-100 motion-reduce:scale-100 fine:flex fine:group-hover:scale-100 fine:group-hover:opacity-100"
     >
       <BagIcon size={20} />
@@ -105,7 +108,7 @@ function QuickBuyButton({ href, name }: { href: string; name: string }) {
       >
         Quick buy
       </span>
-    </Link>
+    </button>
   )
 }
 

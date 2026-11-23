@@ -15,6 +15,7 @@ import { formatPrice } from '@shared/stock.ts'
 import { housePath, productPath } from '../lib/catalog.ts'
 import { site } from '../lib/content.ts'
 import { Photo } from './Photo.tsx'
+import { openBag } from '../lib/bag.ts'
 import { AccountIcon, ArrowRight, BagIcon, CloseIcon, HeartIcon, MailIcon, SearchIcon } from './icons.tsx'
 
 type Section = 'new' | 'decants' | 'fragrances' | 'houses'
@@ -88,13 +89,18 @@ export function PhoneMenu({ open, onClose }: { open: boolean; onClose: () => voi
           <Link to="/" className="flex min-h-11 items-center justify-center font-display text-[19px]">
             {site.shopName}
           </Link>
-          <Link
-            to="/bag"
+          <button
+            type="button"
             aria-label="Bag"
+            aria-haspopup="dialog"
+            onClick={() => {
+              onClose()
+              openBag()
+            }}
             className="flex size-11 items-center justify-center transition-transform duration-[120ms] ease-out active:scale-95"
           >
             <BagIcon />
-          </Link>
+          </button>
         </div>
 
         {/* Opens the search panel; designed later */}

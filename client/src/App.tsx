@@ -3,10 +3,13 @@ import { createBrowserRouter, Outlet, RouterProvider, ScrollRestoration } from '
 import { Ticker } from './components/Ticker.tsx'
 import { SiteHeader } from './components/SiteHeader.tsx'
 import { SiteFooter } from './components/SiteFooter.tsx'
+import { QuickBuy } from './components/QuickBuy.tsx'
+import { BagPanel } from './components/Bag.tsx'
 import Home from './pages/Home.tsx'
 
 // Pages other than the homepage load only when visited
 const ComingSoon = lazy(() => import('./pages/ComingSoon.tsx'))
+const Decants = lazy(() => import('./pages/Decants.tsx'))
 
 function Layout() {
   return (
@@ -22,6 +25,8 @@ function Layout() {
         </main>
         <SiteFooter />
       </div>
+      <QuickBuy />
+      <BagPanel />
       <ScrollRestoration />
     </>
   )
@@ -58,6 +63,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <Home /> },
+      { path: 'decants', element: <Decants /> },
       { path: '*', element: <ComingSoon /> },
     ],
   },

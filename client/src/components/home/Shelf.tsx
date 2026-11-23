@@ -80,7 +80,7 @@ function MoreTile({ count, sizes }: { count: number; sizes: number[] }) {
   return (
     <div className="burgundy burgundy-mid reveal col-span-full flex flex-col gap-2.5 self-stretch rounded-[14px] px-5 py-[22px] lg:col-span-2 lg:justify-between lg:p-7">
       <h3 className="font-display text-2xl leading-[1.15] lg:text-[34px] lg:leading-[1.1]">
-        {numberWord(count)} fragrances, all poured from my own bottles.
+        {numberWord(count)} fragrances, all poured from authentic full bottles.
       </h3>
       <p className="text-sm text-wine-soft lg:text-base">Decants in {sizeList} ml.</p>
       <Link

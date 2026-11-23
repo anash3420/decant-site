@@ -2,7 +2,7 @@
   "shopName": "Anash’s Fragrances",
   "location": "Calgary, Alberta",
   "email": "customer-service@cfefragrances.com",
-  "about": "Fragrance decants poured from my own bottles in Calgary, Alberta, and posted across Canada.",
+  "about": "Niche and designer fragrance decants, hand-poured in Calgary, Alberta, from authentic full bottles and posted across Canada.",
   "checkoutLine": "Secure checkout by card or Interac",
   "shipping": {
     "lettermail": {
@@ -26,7 +26,7 @@
       "enabled": true
     },
     {
-      "text": "Poured to order from my own bottles",
+      "text": "Poured to order from full bottles",
       "enabled": true
     },
     {
@@ -43,12 +43,12 @@
     }
   ],
   "note": {
-    "kicker": "From me to you",
-    "quote": "Every decant is poured by hand from my own bottles, labelled, and packed to travel safely.",
+    "kicker": "From us to you",
+    "quote": "Every decant is poured by hand from an authentic full bottle, labelled, and packed to travel safely.",
     "steps": [
       {
         "title": "Poured",
-        "text": "From my own bottles, into glass atomizers"
+        "text": "From authentic full bottles, into glass atomizers"
       },
       {
         "title": "Labelled and packed",
@@ -101,5 +101,37 @@
         "to": "/contact"
       }
     ]
+  },
+  "catalogue": {
+    "kicker": "The collection",
+    "lead": "{count} fragrances, each poured to order from a full bottle.",
+    "phoneLead": "Start with how you want to smell.",
+    "note": "Sizes from {smallest} ml, posted across Canada",
+    "link": {
+      "label": "How decants are poured",
+      "to": "/how-decants-are-poured"
+    },
+    "moodTile": {
+      "title": "Not sure where to start?",
+      "text": "{count} short lists, one for each kind of day.",
+      "button": "Shop by mood",
+      "to": "/moods"
+    }
+  },
+  "bag": {
+    "title": "Your bag",
+    "toLettermail": "You’re [{amount}] away from free lettermail",
+    "toTracked": "Lettermail is free. Add [{amount}] for free tracked shipping",
+    "allFree": "[Free tracked shipping] unlocked",
+    "note": "Delivery and taxes are worked out at checkout.",
+    "checkout": "Checkout",
+    "empty": {
+      "title": "Your bag is empty",
+      "text": "Every decant is poured to order. Find one to start with.",
+      "button": "Shop all decants",
+      "to": "/decants"
+    },
+    "alsoLike": "You may also like",
+    "shopAll": "Shop all {count} decants"
   }
 }

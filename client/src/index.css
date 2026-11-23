@@ -34,6 +34,8 @@
   --animate-menu-out: menu-out 150ms var(--ease-out) forwards;
   /* The heart when a decant is saved */
   --animate-heart-pop: heart-pop 320ms var(--ease-out);
+  /* A free-shipping stop on the bag's bar, once, as it is reached */
+  --animate-stop-pop: stop-pop 240ms var(--ease-out);
 }
 
 @keyframes fade-in {
@@ -93,6 +95,11 @@
 @keyframes drift {
   50% {
     transform: scale(1.02);
+  }
+}
+@keyframes stop-pop {
+  45% {
+    transform: scale(1.2);
   }
 }
 @keyframes heart-pop {
@@ -401,7 +408,8 @@
 @media (prefers-reduced-motion: reduce) {
   .ticker-track,
   .photo::before,
-  .animate-heart-pop {
+  .animate-heart-pop,
+  .animate-stop-pop {
     animation: none;
   }
   .animate-rise,
