@@ -27,8 +27,9 @@ import { openQuickBuy } from '../lib/quickBuy.ts'
 import { useDragDismiss } from '../lib/useDragDismiss.ts'
 import { useModal } from '../lib/useModal.ts'
 import { dimClass, slideClass } from '../lib/overlay.ts'
+import { Dropdown } from './Dropdown.tsx'
 import { Photo } from './Photo.tsx'
-import { ArrowRight, BagIcon, ChevronDown, CloseIcon, MinusIcon, PlusIcon, TrashIcon } from './icons.tsx'
+import { ArrowRight, BagIcon, CloseIcon, MinusIcon, PlusIcon, TrashIcon } from './icons.tsx'
 
 const copy = site.bag
 
@@ -388,24 +389,22 @@ function BagRow({ line, isNew, leaving, shownSize, onRemove, onResize }: BagRowP
             </Link>
 
             <div className="flex flex-wrap items-center gap-1.5 lg:flex-nowrap lg:gap-2">
-              {/* The size menu: a native select under a pill, so it works with any keyboard or screen reader */}
-              <label className="relative flex h-11 items-center gap-1 rounded-full border border-rose-line bg-white pr-2.5 pl-3 text-sm whitespace-nowrap focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-wine lg:h-10">
-                <span>{shownSize} ml</span>
-                <ChevronDown size={14} className="text-muted" />
-                <select
-                  value={shownSize}
-                  onChange={(e) => onResize(Number(e.target.value))}
-                  aria-label={`Size of ${listing.name}`}
-                  className="absolute inset-0 cursor-pointer appearance-none [font-size:16px] opacity-0"
-                >
-                  {sizes.map((o) => (
-                    <option key={o.id} value={o.sizeMl} disabled={!o.available}>
-                      {o.sizeMl} ml, {formatPrice(o.price)}
-                      {o.available ? '' : ' (sold out)'}
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <Dropdown
+                value={shownSize}
+                options={sizes.map((o) => ({
+                  value: o.sizeMl,
+                  label: `${o.sizeMl} ml`,
+                  detail: o.available ? formatPrice(o.price) : 'Sold out',
+                  disabled: !o.available,
+                }))}
+                onChange={onResize}
+                label={`Size of ${listing.name}`}
+                buttonClassName="flex h-11 items-center gap-1 rounded-full border bg-white pr-2.5 pl-3 text-sm whitespace-nowrap lg:h-10"
+                menuClassName="left-0 w-48 origin-top-left"
+                chevronSize={14}
+              >
+                {shownSize} ml
+              </Dropdown>
 
               <div className="flex items-center rounded-full border border-rose-line bg-white">
                 {/* Phone: at one, the minus becomes a bin (phones have no Remove link) */}

@@ -72,6 +72,8 @@ follows the "Storefront redesign" section below.
   with `house` set: no House filter, accord pills or mood tile), a "Want another…" note tile (mailto) and four other
   houses (`components/HouseTile.tsx`, `compact`). The banner uses `brand.banner` when the owner uploads one, else
   the house's first decant photo, blurred behind and sharp on the right.
+- Dropdowns use `components/Dropdown.tsx` (the shop's pill button and white menu; Escape, click outside, arrow keys;
+  opens upwards when there isn't room). Used by the sort menu and the bag's size menu; don't use a native `<select>`.
 - Desktop styles start at `lg` (1024 px); below that is the phone layout.
 
 ## Commands

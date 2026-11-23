@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import type { ShopListing } from '@shared/types.ts'
 import {
@@ -15,6 +15,7 @@ import {
 import { dimClass, slideClass } from '../../lib/overlay.ts'
 import { useDragDismiss } from '../../lib/useDragDismiss.ts'
 import { useModal } from '../../lib/useModal.ts'
+import { Dropdown } from '../Dropdown.tsx'
 import { CheckIcon, ChevronDown, CloseIcon } from '../icons.tsx'
 
 /** Accords shown before "Show all N accords" */
@@ -398,86 +399,16 @@ export function SortSheet({
  * closes it, and the arrow keys move between choices.
  */
 export function SortMenu({ sort, onSort }: { sort: SortValue; onSort: (sort: SortValue) => void }) {
-  const [open, setOpen] = useState(false)
-  const rootRef = useRef<HTMLDivElement>(null)
-  const buttonRef = useRef<HTMLButtonElement>(null)
-  const listRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (!open) return
-    // Start on the current choice
-    listRef.current?.querySelector<HTMLButtonElement>('[aria-checked="true"]')?.focus()
-    const onDown = (e: globalThis.PointerEvent) => {
-      if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
-    }
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setOpen(false)
-        buttonRef.current?.focus()
-      }
-    }
-    document.addEventListener('pointerdown', onDown)
-    window.addEventListener('keydown', onKey)
-    return () => {
-      document.removeEventListener('pointerdown', onDown)
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [open])
-
-  const move = (e: ReactKeyboardEvent) => {
-    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return
-    e.preventDefault()
-    const items = [...(listRef.current?.querySelectorAll<HTMLButtonElement>('button') ?? [])]
-    const i = items.indexOf(document.activeElement as HTMLButtonElement)
-    items[(i + (e.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length]?.focus()
-  }
-
   return (
-    <div ref={rootRef} className="relative">
-      <button
-        ref={buttonRef}
-        type="button"
-        aria-haspopup="menu"
-        aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
-        className={`flex h-11 items-center gap-2 rounded-full border bg-white px-[18px] text-sm whitespace-nowrap text-muted transition-colors duration-150 hover:border-wine ${open ? 'border-wine' : 'border-rose-line'}`}
-      >
-        Sorted by <b className="font-medium text-ink">{sortLabel(sort)}</b>
-        <ChevronDown
-          size={16}
-          className={`text-ink transition-transform duration-200 ease-out ${open ? 'rotate-180' : ''}`}
-        />
-      </button>
-      {open && (
-        <div
-          ref={listRef}
-          role="menu"
-          aria-label="Sort by"
-          onKeyDown={move}
-          className="absolute top-full right-0 z-30 mt-2 w-60 origin-top-right animate-menu-in rounded-[14px] border border-line bg-white p-1.5 shadow-[0_16px_40px_-12px_rgb(20_8_12/0.25)]"
-        >
-          {SORTS.map((s) => {
-            const on = s.value === sort
-            return (
-              <button
-                key={s.value}
-                type="button"
-                role="menuitemradio"
-                aria-checked={on}
-                onClick={() => {
-                  onSort(s.value)
-                  setOpen(false)
-                  buttonRef.current?.focus()
-                }}
-                className={`flex h-11 w-full items-center gap-2.5 rounded-[10px] px-3 text-left text-[15px] transition-colors duration-150 outline-none hover:bg-[#f6efe9] focus-visible:bg-[#f6efe9] ${on ? 'font-medium text-wine' : ''}`}
-              >
-                <span className="flex-1">{s.label}</span>
-                {on && <CheckIcon size={16} />}
-              </button>
-            )
-          })}
-        </div>
-      )}
-    </div>
+    <Dropdown
+      value={sort}
+      options={SORTS.map((s) => ({ value: s.value, label: s.label }))}
+      onChange={onSort}
+      label="Sort by"
+      buttonClassName="flex h-11 items-center gap-2 rounded-full border bg-white px-[18px] text-sm whitespace-nowrap text-muted"
+      menuClassName="right-0 w-60 origin-top-right"
+    >
+      Sorted by <b className="font-medium text-ink">{sortLabel(sort)}</b>
+    </Dropdown>
   )
 }
