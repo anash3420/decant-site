@@ -11,7 +11,7 @@ were removed (they are in git history, on `main`). What exists now:
 - `server/src/db.ts` (cached Mongoose connection) and `server/src/env.ts` (zod-validated environment).
 - `shared/`: types, stock maths, the lettermail rule, validation regexes and slugs, for both backend and frontend.
 - `client/`: the new frontend (Vite + React 19 + Tailwind v4 + React Router). The homepage, All decants, All houses, the
-  house (brand) page and the fragrance page are built; every other route shows a lazy-loaded "coming soon" page.
+  house (brand) page, the fragrance page and the wishlist are built; every other route shows a lazy-loaded "coming soon" page.
 
 The new backend will be written from scratch as separate services; their layout isn't decided yet. The new frontend
 follows the "Storefront redesign" section below.
@@ -74,6 +74,21 @@ follows the "Storefront redesign" section below.
   the house's first decant photo, blurred behind and sharp on the right.
 - Dropdowns use `components/Dropdown.tsx` (the shop's pill button and white menu; Escape, click outside, arrow keys;
   opens upwards when there isn't room). Used by the sort menu and the bag's size menu; don't use a native `<select>`.
+- Wishlist (`pages/Wishlist.tsx`, route `/wishlist`, linked from the header heart and the phone menu): every decant
+  hearted in this browser (`lib/wishlist.ts`, `useWishlist`), newest first, as standard cards; unhearting removes
+  it. Browser only, not tied to accounts yet. Decants no longer in the shop are left out.
+- Footer payment badges: SVGs in `public/payment/` from Shopify's MIT-licensed `payment_icons` (keep its
+  `LICENSE.txt` with them); which ones show is `site.json` `paymentMethods`. Update that list once checkout's payment
+  provider is chosen, so the footer only shows methods the checkout really takes.
+- How decants are poured (`pages/HowPoured.tsx`, route `/how-decants-are-poured`): four steps on a burgundy trail,
+  the sizes the shop pours (from the catalogue) and a burgundy band to All decants. The process facts are the
+  owner's (2026-11-23): sterile syringe, tools cleaned between fragrances, a new glass atomizer every time, labelled
+  with house and fragrance, sealed, posted within 1–2 business days. Text in `site.json` `poured`.
+- Contact us (`pages/Contact.tsx`, route `/contact`, the footer's "Write to us"): detail cards (email, location, How
+  decants are poured), then a form: full name, email, subject (the shop `Dropdown`; subjects in `site.json` `contact`),
+  message, up to 10 attachments of 10 MB each. Checked in the browser before sending. **Sending is mocked**
+  (`sendMessage` in `api/shop.ts` resolves without sending): wire it to the contact service, which must validate
+  again and email the shop (Resend).
 - Desktop styles start at `lg` (1024 px); below that is the phone layout.
 
 ## Commands
@@ -185,6 +200,9 @@ and spacing), and each `.jpg` is a render of it. Read the matching `.jpg` first,
   Never write "I", "me", "my" or "mine" in any shop text (content, components, meta tags, alt text). Use the brand
   voice ("we", "our" sparingly) or neutral wording ("poured from authentic full bottles", not "from my own bottles").
   The homepage band's kicker reads "From us to you"; "From me to you" below is only the section's working name.
+- **No technical decisions in shop copy** (owner, 2026-11-23): never tell shoppers how the site works inside: where
+  things are stored ("Kept on this device only", "saved in your browser"), what is mocked, temporary or not built
+  yet, or how data is handled. Those notes belong in code comments and this file, not on the page.
 - **No personal name on the site** (owner, 2026-11-22): the owner's first name must not appear in the note, footer,
   links ("Write to us", not "Write to Anash") or anywhere else. The shop name "Anash's Fragrances" and the A.S. logo
   stay for now; the shop will be renamed to a brand without the owner's name (a candidate is "Niche Decants",
@@ -339,7 +357,8 @@ Phone: a single-slide spotlight, a 2-column shelf, three moods plus "3 more mood
   - **Left: the photos stacked and scrolling.** Each photo **fills its frame** (cover, about 780 px tall, rounded) with
     no captions or "1 / 4" counters. A round outline **bubble** (expand icon only, white hairline, light blur) sits
     bottom right and opens the viewer.
-  - **Right: a sticky white buy card ("R2").** It holds the house logo, the name in Fraunces, then "Concentration ·
+  - **Right: a sticky white buy card ("R2").** It holds the house name (not the logo; owner, 2026-11-23) as a link to its page, light burgundy (`wine-light`)
+    that darkens to burgundy with an underline growing from nothing on hover, the name in Fraunces, then "Concentration ·
     Gender · Year", one italic line of the story, and the accords with dots. Below those:
     - "Choose your size": tiles showing only the size (big Fraunces "5 ml") and its **cost per ml** ("$4.00 / ml").
       The selected tile is filled burgundy.

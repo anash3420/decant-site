@@ -12,6 +12,8 @@
   --color-muted: #6e645b;
   --color-quiet: #5a4a47;
   --color-wine: #6d1f33;
+  /* A lighter burgundy that still reads on white (4.8:1), for links that darken to wine on hover */
+  --color-wine-light: #a85a6f;
   --color-wine-soft: #e7cdd3;
   --color-line: #e4ddd3;
   --color-rose-line: #e3c6cc;
@@ -32,8 +34,6 @@
   --animate-menu-in: menu-in 240ms var(--ease-out) both;
   /* ...and fade out a little faster when they close */
   --animate-menu-out: menu-out 150ms var(--ease-out) forwards;
-  /* The heart when a decant is saved */
-  --animate-heart-pop: heart-pop 320ms var(--ease-out);
   /* A free-shipping stop on the bag's bar, once, as it is reached */
   --animate-stop-pop: stop-pop 240ms var(--ease-out);
 }
@@ -102,9 +102,44 @@
     transform: scale(1.2);
   }
 }
-@keyframes heart-pop {
-  40% {
-    transform: scale(1.22);
+/* Saving a decant (.heart-burst): the heart springs in, a ring spreads, sparks fly out */
+@keyframes heart-spring {
+  0% {
+    transform: scale(0.5);
+  }
+  38% {
+    transform: scale(1.3);
+  }
+  62% {
+    transform: scale(0.9);
+  }
+  82% {
+    transform: scale(1.06);
+  }
+}
+@keyframes heart-ring {
+  from {
+    transform: scale(0.35);
+    opacity: 0.85;
+    border-width: 3px;
+  }
+  to {
+    transform: scale(1.55);
+    opacity: 0;
+    border-width: 0.5px;
+  }
+}
+@keyframes heart-sparks {
+  0% {
+    transform: scale(0.35);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
   }
 }
 
@@ -117,7 +152,8 @@
   background-image: linear-gradient(var(--link-line-color, color-mix(in srgb, currentColor 55%, transparent)) 0 0);
   background-repeat: no-repeat;
   background-position: left bottom;
-  background-size: 25% 1px;
+  /* The resting length; a link can start from nothing with [--link-line-from:0%] */
+  background-size: var(--link-line-from, 25%) 1px;
   @media (hover: hover) and (pointer: fine) {
     transition: background-size 500ms var(--ease-out);
     &:hover,
@@ -164,6 +200,50 @@
 
 @layer components {
   /* ── Announcement ticker ──────────────────────────────────────────── */
+
+  /* The save moment around a heart (components/SavedHeart.tsx) */
+  .heart-burst {
+    position: relative;
+  }
+  .heart-burst > svg {
+    animation: heart-spring 560ms var(--ease-out);
+  }
+  .heart-burst::before,
+  .heart-burst::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    pointer-events: none;
+  }
+  /* A thin burgundy ring spreading out and fading */
+  .heart-burst::before {
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border: 1.5px solid var(--color-wine);
+    border-radius: 50%;
+    opacity: 0;
+    animation: heart-ring 520ms var(--ease-out);
+  }
+  /* Eight sparks, burgundy and champagne gold, flying out from the heart */
+  .heart-burst::after {
+    width: 3px;
+    height: 3px;
+    margin: -1.5px 0 0 -1.5px;
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow:
+      0 -17px 0 0.5px var(--color-wine),
+      12px -12px 0 #c99a5b,
+      17px 0 0 0.5px var(--color-wine),
+      12px 12px 0 #c99a5b,
+      0 17px 0 0.5px var(--color-wine),
+      -12px 12px 0 #c99a5b,
+      -17px 0 0 0.5px var(--color-wine),
+      -12px -12px 0 #c99a5b;
+    animation: heart-sparks 620ms var(--ease-out) 60ms;
+  }
 
   .ticker {
     /* The same deep burgundy-black as the burgundy panels and the All decants menu */
@@ -414,7 +494,9 @@
 @media (prefers-reduced-motion: reduce) {
   .ticker-track,
   .photo::before,
-  .animate-heart-pop,
+  .heart-burst > svg,
+  .heart-burst::before,
+  .heart-burst::after,
   .animate-stop-pop {
     animation: none;
   }

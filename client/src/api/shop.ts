@@ -56,3 +56,18 @@ function once<T>(key: string, load: () => Promise<T>): Promise<T> {
 export const getCatalog = () => once('catalog', () => mock(catalogData.listings as ShopListing[]))
 export const getBrands = () => once('brands', () => mock(brandsData.brands as Brand[]))
 export const getHome = () => once('home', () => mock(homeData as HomeContent))
+
+export interface ContactMessage {
+  name: string
+  email: string
+  subject: string
+  message: string
+  files: File[]
+}
+
+/**
+ * Sends a Contact us message.
+ * shortcut: mocked, it resolves without sending anything. Swap for a POST to the contact service (which emails the
+ * shop through Resend and must validate everything again) when the backend exists.
+ */
+export const sendMessage = (_message: ContactMessage) => mock(undefined)

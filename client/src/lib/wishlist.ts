@@ -33,6 +33,14 @@ function subscribe(listener: () => void) {
   return () => listeners.delete(listener)
 }
 
+/** Every saved decant, in the order they were saved */
+export const useWishlist = () =>
+  useSyncExternalStore(
+    subscribe,
+    () => saved,
+    () => saved,
+  )
+
 export function useWishlisted(slug: string) {
   const isSaved = useSyncExternalStore(
     subscribe,

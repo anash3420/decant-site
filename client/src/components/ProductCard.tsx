@@ -7,7 +7,8 @@ import { isNew, productPath } from '../lib/catalog.ts'
 import { openQuickBuy } from '../lib/quickBuy.ts'
 import { useWishlisted } from '../lib/wishlist.ts'
 import { Photo } from './Photo.tsx'
-import { ArrowRight, BagIcon, HeartIcon } from './icons.tsx'
+import { SavedHeart } from './SavedHeart.tsx'
+import { ArrowRight, BagIcon } from './icons.tsx'
 
 interface ProductCardProps {
   listing: ShopListing
@@ -129,12 +130,7 @@ function WishButton({ slug, name }: { slug: string; name: string }) {
       aria-label={saved ? `Remove ${name} from your wishlist` : `Save ${name} to your wishlist`}
       className="absolute top-1.5 right-1.5 z-10 flex size-10 items-center justify-center rounded-full bg-white/90 text-ink transition-transform duration-150 ease-out active:scale-[0.9] lg:top-2.5 lg:right-2.5"
     >
-      <HeartIcon
-        key={popped}
-        size={20}
-        fill={saved ? 'currentColor' : 'none'}
-        className={`${saved ? 'text-wine' : ''} ${saved && popped ? 'animate-heart-pop' : ''}`}
-      />
+      <SavedHeart saved={saved} burst={popped} />
     </button>
   )
 }

@@ -10,7 +10,7 @@ interface SectionHeadingProps {
   /** Desktop only, under the title */
   description?: string
   /** The italic line in the space to the right (under the title on phones). Don't repeat the title's information. */
-  note: string
+  note?: string
   link?: { label: string; to: string }
   /** In place of the link, e.g. a button */
   action?: ReactNode
@@ -39,9 +39,11 @@ export function SectionHeading({ index, kicker, title, description, note, link, 
       </div>
 
       <div className="mt-1.5 flex flex-wrap items-center gap-x-3.5 lg:mt-0 lg:mb-3 lg:ml-10 lg:min-w-0 lg:flex-1 lg:flex-nowrap lg:gap-[18px]">
-        <em className="basis-full font-display text-base whitespace-nowrap text-quiet lg:order-2 lg:basis-auto lg:text-[19px]">
-          {note}
-        </em>
+        {note && (
+          <em className="basis-full font-display text-base whitespace-nowrap text-quiet lg:order-2 lg:basis-auto lg:text-[19px]">
+            {note}
+          </em>
+        )}
         <i aria-hidden="true" className="trail-line mt-1 flex-1 lg:order-1 lg:mt-0" />
         {action}
         {link && (

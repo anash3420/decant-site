@@ -70,7 +70,7 @@ function Fragrance({ slug }: { slug: string }) {
 
       <div className="flex flex-col gap-[18px] lg:grid lg:grid-cols-[1fr_470px] lg:items-start lg:gap-16">
         <Gallery photos={listing.photos ?? []} house={listing.house} name={listing.name} />
-        <BuyCard listing={listing} brand={brand} />
+        <BuyCard listing={listing} />
       </div>
 
       <Notes listing={listing} />
@@ -121,7 +121,6 @@ function Fragrance({ slug }: { slug: string }) {
             index="03"
             kicker={copy.recent.kicker}
             title={copy.recent.title}
-            note={copy.recent.note}
             action={
               <button
                 type="button"

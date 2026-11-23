@@ -31,11 +31,26 @@ export function SiteFooter() {
         </ul>
       </div>
 
-      <div className="col-span-full mt-2 flex flex-col gap-1.5 border-t border-line pt-[22px] text-[13px] lg:flex-row lg:justify-between">
+      <div className="col-span-full mt-2 flex flex-col gap-3 border-t border-line pt-[22px] text-[13px] lg:flex-row lg:items-center lg:justify-between">
         <span>
           © {year} {site.shopName}
         </span>
-        <span>{site.checkoutLine}</span>
+        {/* Payment badges (MIT, Shopify's payment_icons; licence in public/payment) */}
+        <ul aria-label="Payment methods" className="flex flex-wrap gap-1.5">
+          {site.paymentMethods.map((p) => (
+            <li key={p.name}>
+              <img
+                src={p.icon}
+                alt={p.name}
+                width={38}
+                height={24}
+                loading="lazy"
+                draggable={false}
+                className="block h-6 w-[38px] select-none"
+              />
+            </li>
+          ))}
+        </ul>
       </div>
     </footer>
   )

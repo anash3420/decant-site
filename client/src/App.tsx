@@ -13,6 +13,9 @@ const Decants = lazy(() => import('./pages/Decants.tsx'))
 const Product = lazy(() => import('./pages/Product.tsx'))
 const AllHouses = lazy(() => import('./pages/AllHouses.tsx'))
 const Brand = lazy(() => import('./pages/Brand.tsx'))
+const Wishlist = lazy(() => import('./pages/Wishlist.tsx'))
+const HowPoured = lazy(() => import('./pages/HowPoured.tsx'))
+const Contact = lazy(() => import('./pages/Contact.tsx'))
 
 function Layout() {
   return (
@@ -70,6 +73,9 @@ const router = createBrowserRouter([
       { path: 'fragrance/:slug', element: <Product /> },
       { path: 'houses', element: <AllHouses /> },
       { path: 'houses/:slug', element: <Brand /> },
+      { path: 'wishlist', element: <Wishlist /> },
+      { path: 'how-decants-are-poured', element: <HowPoured /> },
+      { path: 'contact', element: <Contact /> },
       { path: '*', element: <ComingSoon /> },
     ],
   },

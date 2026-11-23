@@ -3,7 +3,44 @@
   "location": "Calgary, Alberta",
   "email": "customer-service@cfefragrances.com",
   "about": "Niche and designer fragrance decants, hand-poured in Calgary, Alberta, from authentic full bottles and posted across Canada.",
-  "checkoutLine": "Secure checkout by card or Interac",
+  "paymentMethods": [
+    {
+      "name": "American Express",
+      "icon": "/payment/american_express.svg"
+    },
+    {
+      "name": "Apple Pay",
+      "icon": "/payment/apple_pay.svg"
+    },
+    {
+      "name": "Diners Club",
+      "icon": "/payment/diners_club.svg"
+    },
+    {
+      "name": "Discover",
+      "icon": "/payment/discover.svg"
+    },
+    {
+      "name": "Google Pay",
+      "icon": "/payment/google_pay.svg"
+    },
+    {
+      "name": "Mastercard",
+      "icon": "/payment/master.svg"
+    },
+    {
+      "name": "PayPal",
+      "icon": "/payment/paypal.svg"
+    },
+    {
+      "name": "Visa",
+      "icon": "/payment/visa.svg"
+    },
+    {
+      "name": "Interac",
+      "icon": "/payment/interac.svg"
+    }
+  ],
   "shipping": {
     "lettermail": {
       "label": "Lettermail",
@@ -35,10 +72,6 @@
     },
     {
       "text": "Decants from 3 ml",
-      "enabled": true
-    },
-    {
-      "text": "Secure checkout by card or Interac",
       "enabled": true
     }
   ],
@@ -166,7 +199,6 @@
     "recent": {
       "kicker": "Recently viewed",
       "title": "Still on your mind",
-      "note": "Kept on this device only",
       "clear": "Clear"
     },
     "sizeLabel": "Choose your size",
@@ -207,6 +239,122 @@
       "text": "It may have moved or sold out. Every house in stock is on the houses page.",
       "button": "All houses",
       "to": "/houses"
+    }
+  },
+  "wishlist": {
+    "kicker": "Saved",
+    "title": "Wishlist",
+    "lead": "Decants you’ve hearted, newest first.",
+    "link": {
+      "label": "All decants",
+      "to": "/decants"
+    },
+    "empty": {
+      "title": "Nothing saved yet",
+      "text": "Tap the heart on any decant to keep it here for later.",
+      "button": "Shop all decants",
+      "to": "/decants"
+    }
+  },
+  "poured": {
+    "kicker": "Help",
+    "title": "How decants are poured",
+    "lead": "From a full bottle to your door, poured to order.",
+    "steps": [
+      {
+        "title": "Drawn from a full bottle",
+        "text": "Every decant starts with an authentic full bottle. A sterile syringe draws the fragrance straight from it, and the tools are cleaned between fragrances so scents never mix."
+      },
+      {
+        "title": "Into a new glass atomizer",
+        "text": "Each decant goes into a brand-new Evrair atomizer: a pressurized glass bottle with a gold metal sprayer crimped on. Atomizers are never reused."
+      },
+      {
+        "title": "Labelled, sealed and packed",
+        "text": "Labelled with the house and the fragrance, sealed so it can’t leak in the mail, and packed to travel safely."
+      },
+      {
+        "title": "Posted within 1–2 business days",
+        "text": "Poured and posted within one to two business days of your order, from {location}. Lettermail is {lettermailCost}, free from {lettermailFree}; tracked is {trackedCost}, free from {trackedFree}."
+      }
+    ],
+    "sizes": {
+      "kicker": "Sizes",
+      "title": "Choose your size",
+      "text": "Each fragrance comes in a few of these sizes, all poured the same way."
+    },
+    "cta": {
+      "title": "Find your first decant",
+      "text": "Every decant in the shop is poured this way, to order.",
+      "button": "Shop all decants",
+      "to": "/decants"
+    }
+  },
+  "contact": {
+    "kicker": "Help",
+    "title": "Contact us",
+    "lead": "Questions about a decant or an order? Write to us.",
+    "cards": {
+      "email": {
+        "kicker": "Email",
+        "text": "Write any time"
+      },
+      "place": {
+        "kicker": "Based in",
+        "text": "Poured and posted across Canada"
+      },
+      "poured": {
+        "kicker": "Before you write",
+        "link": "How decants are poured",
+        "to": "/how-decants-are-poured",
+        "text": "Sizes, atomizers and posting times"
+      }
+    },
+    "form": {
+      "title": "Send a message",
+      "name": {
+        "label": "Full name",
+        "hint": "Enter your first and last name"
+      },
+      "email": {
+        "label": "Email",
+        "hint": "your@email.com"
+      },
+      "subject": {
+        "label": "Subject",
+        "placeholder": "Select a subject",
+        "options": [
+          "Order status",
+          "Feedback",
+          "Report an issue",
+          "Request refund or discount",
+          "Product question",
+          "Other"
+        ]
+      },
+      "message": {
+        "label": "Message"
+      },
+      "files": {
+        "button": "Attach files",
+        "hint": "Attach up to {max} files. The maximum allowed size per file is {mb} MB.",
+        "remove": "Remove"
+      },
+      "send": "Send",
+      "sending": "Sending…",
+      "sent": {
+        "title": "Message sent",
+        "text": "Thank you. We’ll reply to {email}.",
+        "again": "Send another message"
+      },
+      "errors": {
+        "required": "Please fill this in.",
+        "email": "Enter an email address like name@example.com.",
+        "subject": "Choose a subject.",
+        "tooMany": "You can attach up to {max} files.",
+        "tooBig": "{name} is over {mb} MB.",
+        "send": "Your message couldn’t be sent. Please try again, or email {email}."
+      }
     }
   }
 }

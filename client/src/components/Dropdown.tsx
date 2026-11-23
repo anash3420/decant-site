@@ -21,6 +21,10 @@ interface DropdownProps<T> {
   /** Width and side, e.g. "right-0 w-60" */
   menuClassName: string
   chevronSize?: number
+  /** As a form field: the button's id (for its label), an error state, and the id of its error message */
+  id?: string
+  invalid?: boolean
+  describedBy?: string
 }
 
 /**
@@ -30,6 +34,7 @@ interface DropdownProps<T> {
  */
 export function Dropdown<T extends string | number>(props: DropdownProps<T>) {
   const { value, options, onChange, label, children, buttonClassName, menuClassName, chevronSize = 16 } = props
+  const { id, invalid, describedBy } = props
   const [open, setOpen] = useState(false)
   const [up, setUp] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
@@ -38,8 +43,12 @@ export function Dropdown<T extends string | number>(props: DropdownProps<T>) {
 
   useEffect(() => {
     if (!open) return
-    // Start on the current choice
-    listRef.current?.querySelector<HTMLButtonElement>('[aria-checked="true"]')?.focus()
+    // Start on the current choice, or the first when nothing is chosen yet
+    const list = listRef.current
+    ;(
+      list?.querySelector<HTMLButtonElement>('[aria-checked="true"]') ??
+      list?.querySelector<HTMLButtonElement>('button:not(:disabled)')
+    )?.focus()
     const onDown = (e: PointerEvent) => {
       if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
     }
@@ -78,11 +87,14 @@ export function Dropdown<T extends string | number>(props: DropdownProps<T>) {
     <div ref={rootRef} onKeyDown={onKeyDown} data-no-drag className="relative">
       <button
         ref={buttonRef}
+        id={id}
         type="button"
+        aria-invalid={invalid || undefined}
+        aria-describedby={describedBy}
         aria-haspopup="menu"
         aria-expanded={open}
         onClick={toggle}
-        className={`${buttonClassName} transition-colors duration-150 hover:border-wine ${open ? 'border-wine' : 'border-rose-line'}`}
+        className={`${buttonClassName} transition-colors duration-150 hover:border-wine ${open ? 'border-wine' : invalid ? 'border-[#b42318]' : 'border-rose-line'}`}
       >
         {children}
         <ChevronDown
