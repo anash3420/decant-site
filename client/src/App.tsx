@@ -11,6 +11,8 @@ import Home from './pages/Home.tsx'
 const ComingSoon = lazy(() => import('./pages/ComingSoon.tsx'))
 const Decants = lazy(() => import('./pages/Decants.tsx'))
 const Product = lazy(() => import('./pages/Product.tsx'))
+const AllHouses = lazy(() => import('./pages/AllHouses.tsx'))
+const Brand = lazy(() => import('./pages/Brand.tsx'))
 
 function Layout() {
   return (
@@ -66,6 +68,8 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'decants', element: <Decants /> },
       { path: 'fragrance/:slug', element: <Product /> },
+      { path: 'houses', element: <AllHouses /> },
+      { path: 'houses/:slug', element: <Brand /> },
       { path: '*', element: <ComingSoon /> },
     ],
   },

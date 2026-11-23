@@ -183,5 +183,35 @@
       "button": "Shop all decants",
       "to": "/decants"
     }
+  },
+  "houses": {
+    "kicker": "The houses",
+    "title": "All houses",
+    "lead": "{count} houses, from {first} to {last}.",
+    "leadOne": "One house for now: {first}.",
+    "browse": "Browse by letter",
+    "all": "All",
+    "shop": "Shop"
+  },
+  "brand": {
+    "kicker": "The houses",
+    "note": {
+      "kicker": "A note",
+      "title": "Want another {house}?",
+      "text": "Tell us which one and we’ll pour it from our next bottle.",
+      "link": "Write to us"
+    },
+    "others": {
+      "kicker": "Other houses",
+      "more": "More",
+      "link": "All {count} houses",
+      "to": "/houses"
+    },
+    "notFound": {
+      "title": "This house isn’t here",
+      "text": "It may have moved or sold out. Every house in stock is on the houses page.",
+      "button": "All houses",
+      "to": "/houses"
+    }
   }
 }

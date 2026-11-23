@@ -10,8 +10,8 @@ were removed (they are in git history, on `main`). What exists now:
 - `server/src/models/`: the MongoDB schema (Mongoose 9). This is kept and is the base for the new backend.
 - `server/src/db.ts` (cached Mongoose connection) and `server/src/env.ts` (zod-validated environment).
 - `shared/`: types, stock maths, the lettermail rule, validation regexes and slugs, for both backend and frontend.
-- `client/`: the new frontend (Vite + React 19 + Tailwind v4 + React Router). The homepage, All decants and the
-  fragrance page are built; every other route shows a lazy-loaded "coming soon" page.
+- `client/`: the new frontend (Vite + React 19 + Tailwind v4 + React Router). The homepage, All decants, All houses, the
+  house (brand) page and the fragrance page are built; every other route shows a lazy-loaded "coming soon" page.
 
 The new backend will be written from scratch as separate services; their layout isn't decided yet. The new frontend
 follows the "Storefront redesign" section below.
@@ -63,6 +63,15 @@ follows the "Storefront redesign" section below.
   `BuyCard.tsx` (size tiles with cost per ml, total, stepper, Add to bag, and the phone's sticky bar). "You may also
   like" uses `similar()` in `lib/catalog.ts` (shared with the bag); recently viewed is `lib/recent.ts`. Copy is in
   `site.json` `product`. Interlude M's four mock photos are linked from the web (brand CDN and Unsplash), not stored.
+- All houses (`pages/AllHouses.tsx`, route `/houses`): A to Z letter sections of house tiles; a sticky letter rail
+  (desktop) or round letter buttons (phone) that follow the scroll; type chips (`?type=niche`) using `typeOf` from
+  `lib/filters.ts`. Only houses with decants appear (`lib/houses.ts` `housesOf`). Shop pages share their head
+  (`components/PageHead.tsx`).
+- House page (`pages/Brand.tsx`, route `/houses/:slug`): photo banner with the name (the owner hasn't picked name or
+  logo; name is built), then `Listings` from `pages/Decants.tsx` (the same Filter & Sort and grid as All decants,
+  with `house` set: no House filter, accord pills or mood tile), a "Want another…" note tile (mailto) and four other
+  houses (`components/HouseTile.tsx`, `compact`). The banner uses `brand.banner` when the owner uploads one, else
+  the house's first decant photo, blurred behind and sharp on the right.
 - Desktop styles start at `lg` (1024 px); below that is the phone layout.
 
 ## Commands

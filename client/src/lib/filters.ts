@@ -58,8 +58,8 @@ const BANDS = [
 
 /* ── Type: the fragrance category, with designer private shown as designer ── */
 
-const typeOf = (l: ShopListing) => (l.category === 'designer-private' ? 'designer' : l.category)
-const TYPE_LABELS: Record<string, string> = { niche: 'Niche', designer: 'Designer', dupe: 'Dupe' }
+export const typeOf = (l: ShopListing) => (l.category === 'designer-private' ? 'designer' : l.category)
+export const TYPE_LABELS: Record<string, string> = { niche: 'Niche', designer: 'Designer', dupe: 'Dupe' }
 
 const same = (a: string, b: string) => a.toLowerCase() === b.toLowerCase()
 

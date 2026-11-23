@@ -16,6 +16,8 @@ export interface Brand {
   name: string
   description: string
   logo: Image
+  /** The house page's banner, uploaded by the owner. Until there is one, the page uses a decant's photo. */
+  banner?: Image
 }
 
 export interface SpotlightSlide {

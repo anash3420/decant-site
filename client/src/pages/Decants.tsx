@@ -1,7 +1,8 @@
-import { Fragment, Suspense, use, useCallback, useMemo, useState } from 'react'
+import { Fragment, Suspense, use, useCallback, useMemo, useState, type ReactNode } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import type { ShopListing } from '@shared/types.ts'
 import { getCatalog, getHome } from '../api/shop.ts'
+import { PageHead } from '../components/PageHead.tsx'
 import { ProductCard, ProductCardSkeleton } from '../components/ProductCard.tsx'
 import { FilterPanel, SortMenu, SortSheet } from '../components/catalogue/FilterPanel.tsx'
 import { ArrowRight, ChevronDown, ChevronRight, CloseIcon, SlidersIcon } from '../components/icons.tsx'
@@ -44,6 +45,46 @@ export default function Decants() {
 
 function Catalogue() {
   const catalog = use(getCatalog())
+  return (
+    <>
+      <PageHead
+        crumb="All decants"
+        kicker={copy.kicker}
+        title="All decants"
+        count={catalog.length}
+        lead={copy.lead.replace('{count}', numberWord(catalog.length))}
+        phoneLead={copy.phoneLead}
+      >
+        <em className="font-display text-[19px] whitespace-nowrap text-quiet">
+          {copy.note.replace('{smallest}', String(smallestSize(catalog)))}
+        </em>
+        <Link
+          to={copy.link.to}
+          className="flex items-center gap-1.5 link-line pb-0.5 text-[15px] whitespace-nowrap text-wine"
+        >
+          {copy.link.label}
+          <ArrowRight size={14} />
+        </Link>
+      </PageHead>
+      <Listings catalog={catalog} />
+    </>
+  )
+}
+
+interface ListingsProps {
+  /** The decants this page lists */
+  catalog: ShopListing[]
+  /** On a house's page: no House filter, no accord pills or mood tile, and the count leaves out houses */
+  house?: boolean
+  /** A tile after the cards (the house page's note) */
+  tile?: ReactNode
+}
+
+/**
+ * Filter & Sort and the grid, for any list of decants: All decants and each house's page. The choices live in the
+ * URL, so menu links and shared links open the same results.
+ */
+export function Listings({ catalog, house, tile }: ListingsProps) {
   const { moods } = use(getHome())
   const [params, setParams] = useSearchParams()
   const { filters, sort } = useMemo(() => readParams(params), [params])
@@ -74,15 +115,15 @@ function Catalogue() {
 
   return (
     <>
-      <PageHead count={catalog.length} smallest={smallestSize(catalog)} />
-
       {/* Phone: a scrolling row of accords, one at a time */}
-      <AccordPills
-        group={groups.accord}
-        total={catalog.length}
-        filters={filters}
-        onPick={(accord) => update({ ...filters, accord: accord ? [accord] : [] }, sort)}
-      />
+      {!house && (
+        <AccordPills
+          group={groups.accord}
+          total={catalog.length}
+          filters={filters}
+          onPick={(accord) => update({ ...filters, accord: accord ? [accord] : [] }, sort)}
+        />
+      )}
 
       {/* Phone: Filter and Sort stay under the thumb as the grid scrolls */}
       <div className="sticky top-0 z-30 -mx-4 mb-3.5 flex gap-2.5 border-y border-line bg-[rgb(245_239_231/0.92)] px-4 py-2.5 backdrop-blur-sm lg:hidden">
@@ -118,7 +159,12 @@ function Catalogue() {
           {active > 0 && <Badge n={active} />}
         </button>
         <div className="flex flex-1 flex-wrap items-center gap-2.5">
-          <ResultCount shown={results.length} total={catalog.length} houses={houses} active={active} />
+          <ResultCount
+            shown={results.length}
+            total={catalog.length}
+            houses={house ? undefined : houses}
+            active={active}
+          />
           <ActiveChips groups={groups} filters={filters} onChange={(f) => update(f, sort)} />
         </div>
         <SortMenu sort={sort} onSort={(s) => update(filters, s)} />
@@ -138,7 +184,7 @@ function Catalogue() {
       <div className="grid grid-cols-2 items-start gap-x-2.5 gap-y-[22px] md:grid-cols-3 lg:grid-cols-4 lg:gap-[18px]">
         {results.map((listing, i) => (
           <Fragment key={listing.slug}>
-            {active === 0 && i === MOOD_TILE_AT && <MoodTile count={moods.length} />}
+            {!house && active === 0 && i === MOOD_TILE_AT && <MoodTile count={moods.length} />}
             <div className="reveal">
               <div
                 className={changed ? 'animate-card-in' : undefined}
@@ -149,6 +195,7 @@ function Catalogue() {
             </div>
           </Fragment>
         ))}
+        {tile}
       </div>
 
       {short && (
@@ -169,6 +216,7 @@ function Catalogue() {
         onChange={update}
         resultCount={results.length}
         catalog={catalog}
+        hide={house ? ['house'] : undefined}
       />
       <SortSheet open={sortSheet} onClose={closeSort} sort={sort} onSort={(s) => update(filters, s)} />
     </>
@@ -176,57 +224,6 @@ function Catalogue() {
 }
 
 const smallestSize = (catalog: ShopListing[]) => Math.min(...catalog.flatMap((l) => l.prices.map((p) => p.sizeMl)))
-
-/** Crumb, kicker, "All decants" over its count as a big outlined number, and the line to the right */
-function PageHead({ count, smallest }: { count?: number; smallest?: number }) {
-  return (
-    <header className="relative isolate mb-5 lg:mb-10 lg:flex lg:items-end lg:justify-between">
-      <div className="relative">
-        <nav aria-label="Breadcrumb" className="mb-14 hidden text-[13px] text-muted lg:block">
-          <Link to="/" className="hover:text-wine">
-            Home
-          </Link>
-          <span aria-hidden="true" className="mx-1.5 text-[#c9b9b0]">
-            /
-          </span>
-          <span aria-current="page">All decants</span>
-        </nav>
-        <div className="relative">
-          <span
-            aria-hidden="true"
-            className="outline-num -top-[34px] -left-2 text-[120px] lg:-top-[58px] lg:-left-3.5 lg:text-[210px]"
-          >
-            {count === undefined ? '' : String(count).padStart(2, '0')}
-          </span>
-          <p className="mb-2.5 flex items-center gap-2.5 text-[13px] tracking-[0.14em] text-wine uppercase">
-            Shop
-            <i aria-hidden="true" className="block h-px w-11 bg-wine/60" />
-            {copy.kicker}
-          </p>
-          <h1 className="font-display text-[40px] leading-none lg:text-[64px]">All decants</h1>
-          <p className="mt-2.5 font-display text-base text-quiet italic lg:hidden">{copy.phoneLead}</p>
-          <p className="mt-2.5 hidden min-h-[29px] font-display text-[19px] text-quiet italic lg:block">
-            {count !== undefined && copy.lead.replace('{count}', numberWord(count))}
-          </p>
-        </div>
-      </div>
-
-      <div className="mb-3 ml-10 hidden min-w-0 flex-1 items-center gap-[18px] lg:flex">
-        <i aria-hidden="true" className="trail-line flex-1" />
-        <em className="font-display text-[19px] whitespace-nowrap text-quiet">
-          {smallest !== undefined && copy.note.replace('{smallest}', String(smallest))}
-        </em>
-        <Link
-          to={copy.link.to}
-          className="flex items-center gap-1.5 link-line pb-0.5 text-[15px] whitespace-nowrap text-wine"
-        >
-          {copy.link.label}
-          <ArrowRight size={14} />
-        </Link>
-      </div>
-    </header>
-  )
-}
 
 function Badge({ n }: { n: number }) {
   return (
@@ -244,14 +241,16 @@ function ResultCount({
 }: {
   shown: number
   total: number
-  houses: number
+  /** Left out on a house's page */
+  houses?: number
   active: number
 }) {
   return (
     <p className="mr-1.5 text-[15px] text-muted">
       {active === 0 ? (
         <>
-          <b className="font-medium text-ink">{total}</b> decants from {plural(houses, 'house')}
+          <b className="font-medium text-ink">{total}</b> {total === 1 ? 'decant' : 'decants'}
+          {houses !== undefined && ` from ${plural(houses, 'house')}`}
         </>
       ) : (
         <>
@@ -281,7 +280,9 @@ function PhoneCount({
       {only
         ? `${choiceLabel(groups, 'accord', filters.accord[0]).toLowerCase()} ${shown === 1 ? 'decant' : 'decants'}`
         : shown === total
-          ? 'decants'
+          ? shown === 1
+            ? 'decant'
+            : 'decants'
           : `of ${total} decants`}
     </p>
   )
@@ -429,7 +430,7 @@ function Widen({
 function Fallback() {
   return (
     <div aria-hidden="true">
-      <PageHead />
+      <PageHead crumb="All decants" kicker={copy.kicker} title="All decants" phoneLead={copy.phoneLead} />
       <div className="mb-3 h-11 lg:hidden" />
       <div className="mb-5 h-12" />
       <div className="grid grid-cols-2 gap-x-2.5 gap-y-[22px] md:grid-cols-3 lg:grid-cols-4 lg:gap-[18px]">
