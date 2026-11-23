@@ -112,19 +112,25 @@
         "to": "/houses"
       }
     ],
-    "help": [
-      {
-        "label": "Shipping",
-        "to": "/shipping"
-      },
-      {
-        "label": "Track an order",
-        "to": "/track"
-      },
+    "resources": [
       {
         "label": "How decants are poured",
         "to": "/how-decants-are-poured"
       },
+      {
+        "label": "Shipping & Refund Policy",
+        "to": "/shipping-and-refund-policy"
+      },
+      {
+        "label": "Privacy policy",
+        "to": "/privacy-policy"
+      },
+      {
+        "label": "Terms of service",
+        "to": "/terms-of-service"
+      }
+    ],
+    "contact": [
       {
         "label": "Write to us",
         "to": "/contact"
@@ -160,7 +166,12 @@
       "to": "/decants"
     },
     "alsoLike": "You may also like",
-    "shopAll": "Shop all {count} decants"
+    "shopAll": "Shop all {count} decants",
+    "orderNote": {
+      "add": "Add a note to your order",
+      "label": "Order note",
+      "hint": "Anything we should know about your order?"
+    }
   },
   "product": {
     "notes": {
@@ -356,5 +367,311 @@
         "send": "Your message couldn’t be sent. Please try again, or email {email}."
       }
     }
+  },
+  "privacy": {
+    "kicker": "Resources",
+    "title": "Privacy policy",
+    "updated": "Last updated November 23, 2026",
+    "sections": [
+      {
+        "title": "What we collect",
+        "text": [
+          "When you place an order, we collect the details you give us to complete it, such as your name, delivery address and email address.",
+          "When you write to us through the contact form, we collect your name, email address, your message and any files you attach.",
+          "When you browse the shop, our hosting provider automatically receives your device’s internet protocol (IP) address and basic details about your browser and operating system."
+        ]
+      },
+      {
+        "title": "How we use it",
+        "text": [
+          "We use your information to process and deliver your order, to answer your messages, and to run and improve the shop.",
+          "We only send you emails about the shop, new decants or other news if you’ve agreed to receive them, and you can stop them at any time."
+        ]
+      },
+      {
+        "title": "Your consent",
+        "text": [
+          "When you give us your information to place an order, arrange delivery or ask a question, you agree to our using it for that purpose only.",
+          "If we want to use your information for anything else, such as marketing, we’ll ask you first or give you a clear way to say no.",
+          "You can withdraw your consent at any time, for us to contact you or to keep collecting, using or sharing your information, by emailing {email}."
+        ]
+      },
+      {
+        "title": "When we share it",
+        "text": [
+          "We share your information only with the services we need to run the shop, such as hosting, payments and delivery, or when the law requires us to."
+        ]
+      },
+      {
+        "title": "Shopify",
+        "text": [
+          "Our store is hosted on Shopify Inc., which provides the online platform we use to sell our decants to you. Your information is kept in Shopify’s data storage, databases and general application, on secure servers protected by a firewall.",
+          "Payments: if you pay through a direct payment gateway, Shopify stores your card details, encrypted to the Payment Card Industry Data Security Standard (PCI-DSS). Your transaction details are kept only as long as needed to complete your purchase, and are then deleted.",
+          "Every direct payment gateway follows the PCI-DSS standards managed by the PCI Security Standards Council, a joint effort of Visa, Mastercard, American Express and Discover. These standards help make sure card information is handled securely by us and our service providers.",
+          "To learn more, read Shopify’s [Terms of Service](https://www.shopify.com/legal/terms) and [Privacy Statement](https://www.shopify.com/legal/privacy)."
+        ]
+      },
+      {
+        "title": "Other services",
+        "text": [
+          "The other services we use collect, use and share your information only as far as they need to provide their service to us.",
+          "Some of them, such as payment gateways and other payment processors, have their own privacy policies for the information we must give them to complete your purchase. We recommend reading those policies to understand how they handle your information.",
+          "Some of these services may be based, or have facilities, in a different country from you or from us. If your purchase uses one of them, your information may become subject to the laws of that country. For example, if you are in Canada and your payment is processed in the United States, your information may be subject to United States law.",
+          "Once you leave our shop or are sent to another website or app, this privacy policy no longer applies.",
+          "Links on our shop may take you to other websites. We aren’t responsible for how those sites handle privacy, and we encourage you to read their privacy statements."
+        ]
+      },
+      {
+        "title": "Security",
+        "text": [
+          "We take reasonable steps and follow standard industry practice so your personal information isn’t lost, misused, accessed, shared, changed or destroyed without permission.",
+          "Card details are encrypted while they travel to the payment provider. No way of sending or storing information over the internet is completely secure, but we follow the PCI-DSS requirements and other widely accepted industry standards."
+        ]
+      },
+      {
+        "title": "Cookies and your browser",
+        "text": [
+          "Shopify sets cookies that keep your session and your cart working and count visits to the shop. You can choose to block cookies in your browser, though parts of the shop may then stop working.",
+          "Your bag, your wishlist and the decants you’ve viewed recently are kept in your own browser, so they’re still there when you come back. Clearing your browser’s data for this site removes them."
+        ]
+      },
+      {
+        "title": "Age of consent",
+        "text": [
+          "By using this site, you confirm that you’ve reached the age of majority in your province or state of residence, or that you have, and you’ve allowed a minor in your care to use it."
+        ]
+      },
+      {
+        "title": "Changes to this policy",
+        "text": [
+          "We may update this policy at any time, so please check it from time to time. Changes take effect as soon as they’re posted here, with the date at the top. If we make important changes, we’ll say so here.",
+          "If the shop is sold or merged with another business, your information may pass to the new owners so they can keep serving you."
+        ]
+      },
+      {
+        "title": "Questions and contact",
+        "text": [
+          "To see, correct, change or delete the personal information we hold about you, to make a complaint, or to ask anything about this policy, email us at {email}."
+        ]
+      }
+    ]
+  },
+  "terms": {
+    "kicker": "Resources",
+    "title": "Terms of service",
+    "updated": "Last updated November 23, 2026",
+    "sections": [
+      {
+        "title": "Overview",
+        "text": [
+          "This website is run by {shopName}. Throughout the site, “we”, “us” and “our” mean {shopName}. We offer this website, with all its information, tools and services, to you on the condition that you accept the terms, conditions, policies and notices set out here.",
+          "By visiting the site or buying from us, you use our “Service” and agree to these terms of service (the “Terms”), including the other terms and policies they refer or link to. These Terms apply to everyone who uses the site, including people who browse, buy or send us content.",
+          "Please read these Terms carefully before using the site. If you don’t agree to all of them, please don’t use the site or its services.",
+          "New features or tools added to the shop are covered by these Terms too. The current version is always on this page. We may update, change or replace any part of these Terms by posting the changes here, so please check this page from time to time. Using the site after changes are posted means you accept them.",
+          "Our store is hosted on Shopify Inc., which provides the online platform we use to sell our decants to you."
+        ]
+      },
+      {
+        "title": "1. Using the shop",
+        "text": [
+          "By agreeing to these Terms, you confirm that you’ve reached the age of majority in your province or state of residence, or that you have, and you’ve allowed a minor in your care to use this site.",
+          "You may not use our products for any illegal or unauthorized purpose, or break any law where you live while using the Service, including copyright law.",
+          "You must not send any worms, viruses or other harmful code.",
+          "Breaking any of these Terms will immediately end your right to use the Service."
+        ]
+      },
+      {
+        "title": "2. General conditions",
+        "text": [
+          "We may refuse service to anyone, for any reason, at any time.",
+          "Your content, apart from card details, may travel over networks unencrypted and may be adjusted to meet the technical needs of connecting networks or devices. Card details are always encrypted while they travel.",
+          "You may not copy, reproduce, sell, resell or exploit any part of the Service, its use or access to it, without our written permission.",
+          "The headings in these Terms are only there to help you read them and don’t change their meaning."
+        ]
+      },
+      {
+        "title": "3. Accuracy of information",
+        "text": [
+          "We aren’t responsible if information on this site isn’t accurate, complete or up to date. It’s provided as general information only and shouldn’t be your only basis for decisions without checking more complete or current sources. You rely on it at your own risk.",
+          "The site may include past information, which is there for reference only and may no longer be current. We may change the site’s content at any time but don’t have to update it. It’s up to you to keep an eye on changes."
+        ]
+      },
+      {
+        "title": "4. Changes to the Service and prices",
+        "text": [
+          "Prices may change without notice.",
+          "We may change or stop the Service, or any part of it, at any time without notice.",
+          "We aren’t liable to you or anyone else for any change, price change, suspension or ending of the Service."
+        ]
+      },
+      {
+        "title": "5. Products",
+        "text": [
+          "Some products may be available only online and in limited quantities.",
+          "We do our best to show the colours and images of our products accurately, but we can’t promise your screen will show any colour exactly.",
+          "We may, but don’t have to, limit sales to any person, region or jurisdiction, case by case, and may limit the quantities we offer. Product descriptions and prices may change at any time without notice, at our discretion, and we may stop selling any product at any time. Any offer on this site is void where the law prohibits it.",
+          "We don’t promise that the quality of anything you buy or receive from us will meet your expectations, or that any errors in the Service will be corrected."
+        ]
+      },
+      {
+        "title": "6. Orders and billing information",
+        "text": [
+          "We may refuse any order. We may, at our discretion, limit or cancel quantities bought per person, per household or per order, including orders placed with the same account, the same card, or the same billing or shipping address. If we change or cancel an order, we may try to let you know using the email address, billing address or phone number given with the order. We may limit or refuse orders that appear to come from dealers, resellers or distributors.",
+          "You agree to give current, complete and accurate details for every purchase, and to update them promptly, including your email address and card details, so we can complete your order and contact you when needed."
+        ]
+      },
+      {
+        "title": "7. Third-party tools",
+        "text": [
+          "We may give you access to tools from other providers that we don’t monitor, control or influence.",
+          "These tools are provided “as is” and “as available”, without any warranty, promise or condition and without our endorsement. We accept no liability for your use of them.",
+          "You use any such tools entirely at your own risk and discretion, and should make sure you know and accept the provider’s own terms.",
+          "New services or features we add to the site in the future are covered by these Terms too."
+        ]
+      },
+      {
+        "title": "8. Third-party links",
+        "text": [
+          "Some content, products and services available through the Service may come from other businesses.",
+          "Links on this site may take you to websites that aren’t ours. We don’t check their content or accuracy, and we aren’t responsible for any of their material, products or services.",
+          "We aren’t liable for any harm or loss from buying or using anything through another website. Please read their policies carefully before buying, and send any complaints or questions about their products to them."
+        ]
+      },
+      {
+        "title": "9. Your messages and suggestions",
+        "text": [
+          "If you send us ideas, suggestions, plans or other material, through the contact form, by email or any other way, whether we asked for them or not, you agree we may edit, copy, publish, share, translate and otherwise use them in any medium, without restriction. We don’t have to keep them confidential, pay for them or reply to them.",
+          "We may, but don’t have to, review, edit or remove content we decide is unlawful, offensive, threatening, defamatory, obscene or otherwise objectionable, or that breaks anyone’s intellectual property or these Terms.",
+          "You agree that what you send won’t break anyone’s rights, including copyright, trademark, privacy or personal rights, and won’t contain unlawful, abusive or obscene material, viruses or other harmful code. You may not use a false email address, pretend to be someone else, or otherwise mislead us or others about who sent something. You are responsible for what you send and its accuracy, and we accept no liability for content sent by you or anyone else."
+        ]
+      },
+      {
+        "title": "10. Personal information",
+        "text": [
+          "How we handle personal information you give us is set out in our [Privacy policy](/privacy-policy)."
+        ]
+      },
+      {
+        "title": "11. Errors and omissions",
+        "text": [
+          "Information on the site may sometimes contain typing errors, mistakes or gaps, including in product descriptions, prices, promotions, offers, shipping charges, delivery times and availability. We may correct them, change or update information, or cancel orders if anything on the site is inaccurate, at any time and without notice, including after you’ve placed your order.",
+          "We don’t have to update, change or clarify information on the site, including prices, except where the law requires it. A date shown on the site doesn’t mean everything on it has been updated."
+        ]
+      },
+      {
+        "title": "12. Uses that aren’t allowed",
+        "text": [
+          "Besides the other limits in these Terms, you may not use the site or its content: to do or encourage anything unlawful; to break any international, federal, provincial, state or local law or regulation; to infringe our intellectual property or anyone else’s; to harass, abuse, insult, harm, defame, intimidate or discriminate against anyone because of gender, sexual orientation, religion, ethnicity, race, age, national origin or disability; to give false or misleading information; to upload or send viruses or other harmful code that could affect the Service, other websites or the internet; to collect or track other people’s personal information; to spam, phish, pharm, pretext, spider, crawl or scrape; for any obscene or immoral purpose; or to get around the security of the Service, other websites or the internet. We may end your use of the Service for any of these."
+        ]
+      },
+      {
+        "title": "13. Disclaimer of warranties and limitation of liability",
+        "text": [
+          "We don’t promise that your use of the Service will be uninterrupted, timely, secure or free of errors, or that any results from using it will be accurate or reliable.",
+          "We may remove the Service for any length of time, or stop it entirely, without notice.",
+          "You agree that you use the Service, or are unable to use it, at your own risk. Unless we say otherwise, the Service and everything provided through it are offered “as is” and “as available”, without warranties or conditions of any kind, stated or implied, including those of merchantability, merchantable quality, fitness for a particular purpose, durability, title and non-infringement.",
+          "{shopName}, and the people and businesses who work with us, including suppliers and service providers, are not liable for any injury, loss or claim, or for any direct, indirect, incidental, punitive, special or consequential damages of any kind, including lost profits, revenue, savings or data, or replacement costs, whether in contract, tort (including negligence), strict liability or otherwise, arising from your use of the Service or of any product bought through it, or from any other claim related to it, including errors or gaps in any content, even if told such damage was possible. Where the law doesn’t allow these exclusions or limits, our liability is limited to the fullest extent the law allows."
+        ]
+      },
+      {
+        "title": "14. Indemnity",
+        "text": [
+          "You agree to protect and compensate {shopName}, and our partners, contractors, suppliers and service providers, against any claim or demand by anyone else, including reasonable legal fees, arising from your breaking these Terms or the documents they refer to, or from your breaking any law or anyone’s rights."
+        ]
+      },
+      {
+        "title": "15. Severability",
+        "text": [
+          "If any part of these Terms is found unlawful, void or unenforceable, it will still apply as far as the law allows, and the unenforceable part will be treated as separate. This won’t affect the rest of these Terms."
+        ]
+      },
+      {
+        "title": "16. Ending this agreement",
+        "text": [
+          "Obligations and liabilities that arose before this agreement ends continue after it ends.",
+          "These Terms apply until either you or we end them. You can end them at any time by telling us you no longer wish to use the Service, or by no longer using the site.",
+          "If we decide, or suspect, that you haven’t followed these Terms, we may end this agreement at any time without notice. You will still owe any amounts due up to that date, and we may refuse you access to the Service or any part of it."
+        ]
+      },
+      {
+        "title": "17. Entire agreement",
+        "text": [
+          "If we don’t enforce a right or part of these Terms, we haven’t given it up.",
+          "These Terms, together with any policies or rules we post on this site about the Service, are the whole agreement between you and us about the Service. They replace any earlier agreements, messages or proposals, spoken or written, including earlier versions of these Terms.",
+          "Anything unclear in these Terms won’t be read against us because we wrote them."
+        ]
+      },
+      {
+        "title": "18. Governing law",
+        "text": [
+          "These Terms, and any separate agreements under which we provide services to you, are governed by the laws of the Province of Alberta and the federal laws of Canada that apply there."
+        ]
+      },
+      {
+        "title": "19. Changes to these Terms",
+        "text": [
+          "You can read the current version of these Terms at any time on this page.",
+          "We may update, change or replace any part of these Terms at our discretion by posting the changes on our website. It’s up to you to check for changes. Using the site or the Service after changes are posted means you accept them."
+        ]
+      },
+      {
+        "title": "20. Contact",
+        "text": [
+          "Questions about these Terms can be sent to {email}."
+        ]
+      }
+    ]
+  },
+  "shippingPolicy": {
+    "kicker": "Resources",
+    "title": "Shipping & Refund Policy",
+    "updated": "Last updated November 23, 2026",
+    "sections": [
+      {
+        "title": "Where we ship",
+        "text": [
+          "We ship within Canada only."
+        ]
+      },
+      {
+        "title": "How we ship",
+        "text": [
+          "Orders are posted from {location} with Canada Post or ICS ground shipping."
+        ]
+      },
+      {
+        "title": "Shipping options and costs",
+        "text": [
+          "Lettermail: {lettermailCost}, free on orders from {lettermailFree}.",
+          "Tracked shipping: {trackedCost}, free on orders from {trackedFree}. Tracked orders come with a tracking number.",
+          "Lettermail is for small, flat parcels. Decants larger than {lettermailMaxMl} ml always go by tracked shipping."
+        ]
+      },
+      {
+        "title": "When your order ships",
+        "text": [
+          "Every decant is poured to order. Your order is poured and posted within one to two business days."
+        ]
+      },
+      {
+        "title": "Complimentary sample",
+        "text": [
+          "You can have one complimentary sample with your order on request. Tell us which one you’d like in your order note, or leave it to us and we’ll choose one we think you’ll enjoy based on your order."
+        ]
+      },
+      {
+        "title": "Refunds",
+        "text": [
+          "Because decants are poured to order, we can’t accept returns once an order has shipped.",
+          "If your order arrives damaged, or you’re not happy with the quality of the materials used for your decants, [contact us](/contact) and we’ll help you with a replacement order or store credit as a gift card."
+        ]
+      },
+      {
+        "title": "Questions",
+        "text": [
+          "For anything about shipping or refunds, email {email}."
+        ]
+      }
+    ]
   }
 }

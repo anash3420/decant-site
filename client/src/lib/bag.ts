@@ -17,9 +17,14 @@ interface BagState {
   justAdded: string | null
   /** Opened or closed as a hand-over from quick buy (or to it), so the dimmed page stays steady instead of fading */
   handoff: boolean
+  /** The shopper's note for the order (a sample they'd like, anything we should know), sent with it at checkout */
+  note: string
 }
 
 const KEY = 'bag'
+const NOTE_KEY = 'bag-note'
+/** Longest order note we keep */
+export const NOTE_MAX = 500
 const listeners = new Set<() => void>()
 
 function read(): BagLine[] {
@@ -31,17 +36,24 @@ function read(): BagLine[] {
   }
 }
 
-let state: BagState = { lines: read(), open: false, justAdded: null, handoff: false }
+function readNote() {
+  try {
+    return (localStorage.getItem(NOTE_KEY) ?? '').slice(0, NOTE_MAX)
+  } catch {
+    return ''
+  }
+}
+
+let state: BagState = { lines: read(), open: false, justAdded: null, handoff: false, note: readNote() }
 
 function set(next: Partial<BagState>) {
   const linesChanged = next.lines && next.lines !== state.lines
   state = { ...state, ...next }
-  if (linesChanged) {
-    try {
-      localStorage.setItem(KEY, JSON.stringify(state.lines))
-    } catch {
-      // Private windows can refuse storage; the bag still works for this visit
-    }
+  try {
+    if (linesChanged) localStorage.setItem(KEY, JSON.stringify(state.lines))
+    if (next.note !== undefined) localStorage.setItem(NOTE_KEY, state.note)
+  } catch {
+    // Private windows can refuse storage; the bag still works for this visit
   }
   listeners.forEach((l) => l())
 }
@@ -116,6 +128,7 @@ export function reconcile(catalog: ShopListing[]) {
 }
 
 export const openBag = () => set({ open: true, handoff: false })
+export const setNote = (note: string) => set({ note: note.slice(0, NOTE_MAX) })
 export const closeBag = () => set({ open: false, justAdded: null, handoff: false })
 /** Closes the bag because quick buy is opening over it */
 export const handOffBag = () => set({ open: false, justAdded: null, handoff: true })
@@ -140,3 +153,4 @@ export const bagLines = () => state.lines
 export const useBagOpen = () => useBagState((s) => s.open)
 export const useBagHandoff = () => useBagState((s) => s.handoff)
 export const useJustAdded = () => useBagState((s) => s.justAdded)
+export const useBagNote = () => useBagState((s) => s.note)

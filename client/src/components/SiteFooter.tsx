@@ -17,11 +17,18 @@ export function SiteFooter() {
       </div>
 
       <FooterColumn title="Shop" links={site.footer.shop} />
-      <FooterColumn title="Help" links={site.footer.help} />
+      <FooterColumn title="Resources" links={site.footer.resources} />
 
       <div className="col-span-2 lg:col-span-1">
         <h2 className="mb-3.5 text-[15px] font-medium text-ink">Contact</h2>
         <ul>
+          {site.footer.contact.map((l) => (
+            <li key={l.to}>
+              <Link to={l.to} className={linkClass}>
+                {l.label}
+              </Link>
+            </li>
+          ))}
           <li>
             <a href={`mailto:${site.email}`} className={linkClass}>
               {site.email}

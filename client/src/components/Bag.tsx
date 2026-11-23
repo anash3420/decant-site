@@ -9,14 +9,17 @@ import {
   closeBag,
   handOffBag,
   lineKey,
+  NOTE_MAX,
   reconcile,
   removeLine,
   setQty,
+  setNote,
   setSize,
   limitFor,
   useBagCount,
   useBagHandoff,
   useBagLines,
+  useBagNote,
   useBagOpen,
   useJustAdded,
   type BagLine,
@@ -224,6 +227,7 @@ function Contents({ open, drag }: { open: boolean; drag: Drag }) {
       )}
 
       <div className="border-t border-line bg-[#fbf8f4] px-4 pt-3 pb-5 shadow-[0_-10px_24px_rgb(40_20_20/0.04)] lg:px-7 lg:pt-4 lg:pb-6">
+        <OrderNote />
         <p className="flex items-baseline justify-between">
           <span className="text-[15px]">Subtotal</span>
           <b className="text-xl font-medium tabular-nums">{formatPrice(subtotal)}</b>
@@ -307,6 +311,54 @@ function FreeShipping({ subtotal }: { subtotal: number }) {
             <span className="hidden lg:inline">{s.label}</span>
           </span>
         ))}
+      </div>
+    </div>
+  )
+}
+
+/**
+ * "Add a note to your order": opens a box for the order note (which complimentary sample, anything else). The note
+ * is kept with the bag and goes with the order at checkout; the box starts open when there already is one.
+ */
+function OrderNote() {
+  const note = useBagNote()
+  const [open, setOpen] = useState(note.length > 0)
+  const t = copy.orderNote
+  return (
+    <div className="mb-3 border-b border-line pb-2 lg:mb-3.5">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls="order-note"
+        onClick={() => setOpen((o) => !o)}
+        className="flex min-h-11 w-full items-center justify-between gap-2 text-[15px] text-wine"
+      >
+        <span className="link-line pb-0.5">{t.add}</span>
+        <PlusIcon size={16} className={`transition-transform duration-300 ease-out ${open ? 'rotate-45' : ''}`} />
+      </button>
+      <div
+        id="order-note"
+        className={`grid transition-[grid-template-rows] duration-300 ease-lux ${open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+      >
+        <div className="overflow-hidden" inert={!open}>
+          <label htmlFor="order-note-text" className="sr-only">
+            {t.label}
+          </label>
+          <textarea
+            id="order-note-text"
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            maxLength={NOTE_MAX}
+            rows={2}
+            placeholder={t.hint}
+            className="my-1 block w-full resize-none rounded-xl border border-rose-line bg-white px-3.5 py-2.5 text-base outline-none placeholder:text-muted focus:border-wine focus:ring-2 focus:ring-wine/15 lg:min-h-[92px]"
+          />
+          {note.length > NOTE_MAX - 50 && (
+            <p className="text-right text-xs text-muted tabular-nums">
+              {note.length}/{NOTE_MAX}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   )

@@ -16,6 +16,7 @@ const Brand = lazy(() => import('./pages/Brand.tsx'))
 const Wishlist = lazy(() => import('./pages/Wishlist.tsx'))
 const HowPoured = lazy(() => import('./pages/HowPoured.tsx'))
 const Contact = lazy(() => import('./pages/Contact.tsx'))
+const Legal = lazy(() => import('./pages/Legal.tsx'))
 
 function Layout() {
   return (
@@ -76,6 +77,9 @@ const router = createBrowserRouter([
       { path: 'wishlist', element: <Wishlist /> },
       { path: 'how-decants-are-poured', element: <HowPoured /> },
       { path: 'contact', element: <Contact /> },
+      { path: 'privacy-policy', element: <Legal key="privacy" page="privacy" /> },
+      { path: 'terms-of-service', element: <Legal key="terms" page="terms" /> },
+      { path: 'shipping-and-refund-policy', element: <Legal key="shipping" page="shippingPolicy" /> },
       { path: '*', element: <ComingSoon /> },
     ],
   },

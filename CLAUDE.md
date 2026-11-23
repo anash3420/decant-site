@@ -57,7 +57,8 @@ follows the "Storefront redesign" section below.
   size and quantity in localStorage, capped by `shared/stock.ts` `maxQty`; `addToBag` opens the panel and marks the
   line "Just added". The header's "Bag (n)" (phone: a badge) and the phone menu open it. The free-shipping levels come
   from `site.json` `shipping`, its text from `site.json` `bag` (words in [brackets] are set in burgundy). "You may
-  also like" picks in-stock decants not in the bag by shared accords. Checkout links to `/checkout` (not built).
+  also like" picks in-stock decants not in the bag by shared accords. Checkout links to `/checkout` (not built). Above the subtotal, "Add a note to your order" opens
+  an order note (up to 500 characters, kept with the bag in `lib/bag.ts`); checkout must send it with the order.
 - Fragrance page (`pages/Product.tsx`, route `/fragrance/:slug`): `components/product/Gallery.tsx` (desktop stack,
   phone swipe strip), `PhotoViewer.tsx` (full screen; zoom to 2× on desktop, the browser's pinch on phones),
   `BuyCard.tsx` (size tiles with cost per ml, total, stepper, Add to bag, and the phone's sticky bar). "You may also
@@ -89,6 +90,14 @@ follows the "Storefront redesign" section below.
   message, up to 10 attachments of 10 MB each. Checked in the browser before sending. **Sending is mocked**
   (`sendMessage` in `api/shop.ts` resolves without sending): wire it to the contact service, which must validate
   again and email the shop (Resend).
+- Policy pages (`pages/Legal.tsx`): privacy (`/privacy-policy`), terms (`/terms-of-service`) and Shipping & Refund
+  Policy (`/shipping-and-refund-policy`; owner, 2026-11-23: Canada only, Canada Post or ICS ground, no pickup, one
+  complimentary sample on request, no returns once shipped, damaged or unsatisfactory orders get a replacement or
+  gift-card store credit). Sections in `site.json` `privacy`, `terms` and `shippingPolicy` ([text](url) becomes a link; `/…` links open in place). The terms follow Niche
+  Essence's Shopify-template terms in our own words, with no returns policy reference and Alberta/Canada as the
+  governing law (to be reviewed). Written in our own words after Niche Essence's Shopify-template policy (owner, 2026-11-23), assuming the shop
+  is hosted on Shopify; no Google Analytics or mailing address. Footer columns: Shop, Resources (How decants are poured, Shipping & Refund
+  Policy, Privacy policy, Terms of service; Shipping and Track an order removed for now), Contact (Write to us, email, location).
 - Desktop styles start at `lg` (1024 px); below that is the phone layout.
 
 ## Commands
